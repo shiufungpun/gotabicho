@@ -1,3 +1,4 @@
+import './global.css';
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {ActivityIndicator, Text, View} from 'react-native';

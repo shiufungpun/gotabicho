@@ -3,14 +3,14 @@ import * as SQLite from 'expo-sqlite';
 let db: SQLite.SQLiteDatabase | null = null;
 
 export const getDB = async () => {
-  if (db) return db;
-  db = await SQLite.openDatabaseAsync('gotabicho.db');
-  return db;
+    if (db) return db;
+    db = await SQLite.openDatabaseAsync('gotabicho.db');
+    return db;
 };
 
 export const initDatabase = async () => {
-  const db = await getDB();
-  await db.execAsync(`
+    const db = await getDB();
+    await db.execAsync(`
     PRAGMA foreign_keys = ON;
 
     CREATE TABLE IF NOT EXISTS trips (
@@ -57,4 +57,11 @@ export const initDatabase = async () => {
       FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
     );
   `);
+
+    // Migration to add total_budget if it doesn't exist
+    try {
+        await db.execAsync('ALTER TABLE trips ADD COLUMN total_budget REAL;');
+    } catch (e) {
+        // Column likely already exists
+    }
 };

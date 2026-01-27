@@ -6,7 +6,7 @@ import {useTrips} from '../hooks/useTrips';
 import {Trip} from '../types';
 
 export default function TripListScreen() {
-    const {trips, loading} = useTrips();
+    const {trips} = useTrips();
     const navigation = useNavigation<any>();
     const insets = useSafeAreaInsets();
     const scrollY = useRef(new Animated.Value(0)).current;
@@ -27,15 +27,45 @@ export default function TripListScreen() {
         extrapolate: 'clamp',
     });
 
-    const renderItem = ({item}: { item: Trip }) => (
-        <TouchableOpacity
-            style={styles.card}
-            onPress={() => navigation.navigate('TripHome', {tripId: item.id, title: item.name})}
-        >
-            <Text style={styles.title}>{item.name}</Text>
-            <Text style={styles.subtitle}>{item.start_date} - {item.end_date}</Text>
-        </TouchableOpacity>
-    );
+    const renderItem = ({item}: { item: Trip & { total_expenses: number } }) => {
+        const budget = item.total_budget || 0;
+        const spent = item.total_expenses || 0;
+        const hasBudget = budget > 0;
+        const progress = hasBudget ? Math.min(spent / budget, 1) : 0;
+        const isOverBudget = hasBudget && spent > budget;
+
+        return (
+            <TouchableOpacity
+                style={styles.card}
+                onPress={() => navigation.navigate('TripHome', {tripId: item.id, title: item.name})}
+            >
+                <View style={styles.cardHeader}>
+                    <Text style={styles.title}>{item.name}</Text>
+                    {hasBudget && (
+                        <Text style={[styles.budgetLimit, isOverBudget && styles.overBudget]}>
+                            {spent.toLocaleString()} / {budget.toLocaleString()} {item.base_currency}
+                        </Text>
+                    )}
+                </View>
+                <Text style={styles.subtitle}>{item.start_date} - {item.end_date}</Text>
+
+                {hasBudget && (
+                    <View style={styles.progressContainer}>
+                        <View style={[
+                            styles.progressBar,
+                            {
+                                width: `${progress * 100}%`,
+                                backgroundColor: isOverBudget ? '#ff4444' : '#4caf50'
+                            }
+                        ]}/>
+                    </View>
+                )}
+                {!hasBudget && spent > 0 && (
+                    <Text style={styles.spentText}>Spent: {spent.toLocaleString()} {item.base_currency}</Text>
+                )}
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -98,8 +128,37 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowOffset: {width: 0, height: 2}
     },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
     title: {fontSize: 18, fontWeight: 'bold'},
     subtitle: {color: '#666', marginTop: 4},
+    budgetLimit: {
+        fontSize: 18,
+        color: '#666',
+        fontWeight: '500'
+    },
+    overBudget: {
+        color: '#ff4444'
+    },
+    progressContainer: {
+        height: 6,
+        backgroundColor: '#eee',
+        borderRadius: 3,
+        marginTop: 12,
+        overflow: 'hidden'
+    },
+    progressBar: {
+        height: '100%',
+        borderRadius: 3
+    },
+    spentText: {
+        fontSize: 18,
+        color: '#666',
+        marginTop: 8
+    },
     empty: {textAlign: 'center', marginTop: 40, color: '#888'},
     fabContainer: {position: 'absolute', bottom: 20, right: 20, left: 20}
 });
