@@ -1,71 +1,78 @@
-import { Participant, Expense, ExpenseShare, ParticipantStats, Settlement } from '../types';
+import {Participant, ParticipantStats, ReceiptWithDetails, Settlement} from '../types';
 
 export const calculateParticipantStats = (
-  participants: Participant[],
-  expenses: Expense[],
-  shares: ExpenseShare[]
+    participants: Participant[],
+    receipts: ReceiptWithDetails[]
 ): ParticipantStats[] => {
-  return participants.map(p => {
-    const paid_total = expenses
-      .filter(e => e.paid_by_participant_id === p.id)
-      .reduce((sum, e) => sum + e.amount, 0);
+    return participants.map(p => {
+        // 1. Calculate how much this participant PAID (as a payer of receipts)
+        const paid_total = receipts
+            .filter(r => r.paid_by_participant_id === p.id)
+            .reduce((sum, r) => sum + r.total_amount, 0);
 
-    const spent_total = shares
-      .filter(s => s.participant_id === p.id)
-      .reduce((sum, s) => sum + s.share_amount, 0);
+        // 2. Calculate how much this participant SPENT (sum of their shares in all items)
+        // Flatten all items and then all shares to find shares for this participant
+        const spent_total = receipts.reduce((rSum, receipt) => {
+            const receiptShareSum = receipt.items.reduce((iSum, item) => {
+                const myShare = item.shares.find(s => s.participant_id === p.id);
+                return iSum + (myShare ? myShare.share_amount : 0);
+            }, 0);
+            return rSum + receiptShareSum;
+        }, 0);
 
-    return {
-      ...p,
-      paid_total,
-      spent_total,
-      balance: paid_total - spent_total
-    };
-  });
+        return {
+            ...p,
+            paid_total,
+            spent_total,
+            balance: paid_total - spent_total
+        };
+    });
 };
 
+
 export const calculateSettlements = (stats: ParticipantStats[]): Settlement[] => {
-  let debtors = stats.filter(s => s.balance < -0.01).map(s => ({ ...s, balance: s.balance }));
-  let creditors = stats.filter(s => s.balance > 0.01).map(s => ({ ...s, balance: s.balance }));
+    let debtors = stats.filter(s => s.balance < -0.01).map(s => ({...s, balance: s.balance}));
+    let creditors = stats.filter(s => s.balance > 0.01).map(s => ({...s, balance: s.balance}));
 
-  // Sort by magnitude (largest debt/credit first) to try and minimize transactions (basic greedy)
-  debtors.sort((a, b) => a.balance - b.balance); // Ascending (most negative first)
-  creditors.sort((a, b) => b.balance - a.balance); // Descending (most positive first)
+    // Sort by magnitude (largest debt/credit first) to try and minimize transactions (basic greedy)
+    debtors.sort((a, b) => a.balance - b.balance); // Ascending (most negative first)
+    creditors.sort((a, b) => b.balance - a.balance); // Descending (most positive first)
 
-  const settlements: Settlement[] = [];
+    const settlements: Settlement[] = [];
 
-  let i = 0; // debtor index
-  let j = 0; // creditor index
+    let i = 0; // debtor index
+    let j = 0; // creditor index
 
-  while (i < debtors.length && j < creditors.length) {
-    const debtor = debtors[i];
-    const creditor = creditors[j];
+    while (i < debtors.length && j < creditors.length) {
+        const debtor = debtors[i];
+        const creditor = creditors[j];
 
-    const amount = Math.min(Math.abs(debtor.balance), creditor.balance);
+        const amount = Math.min(Math.abs(debtor.balance), creditor.balance);
 
-    // Round to 2 decimals to avoid float epsilon issues
-    const roundedAmount = Math.round(amount * 100) / 100;
+        // Round to 2 decimals to avoid float epsilon issues
+        const roundedAmount = Math.round(amount * 100) / 100;
 
-    if (roundedAmount > 0) {
-      settlements.push({
-        from_participant_id: debtor.id,
-        to_participant_id: creditor.id,
-        from_name: debtor.name,
-        to_name: creditor.name,
-        amount: roundedAmount,
-      });
+        if (roundedAmount > 0) {
+            settlements.push({
+                from_participant_id: debtor.id,
+                to_participant_id: creditor.id,
+                from_name: debtor.name,
+                to_name: creditor.name,
+                amount: roundedAmount,
+            });
+        }
+
+        debtor.balance += roundedAmount;
+        creditor.balance -= roundedAmount;
+
+        // If settled, move to next
+        if (Math.abs(debtor.balance) < 0.01) {
+            i++;
+        }
+        if (creditor.balance < 0.01) {
+            j++;
+        }
     }
 
-    debtor.balance += roundedAmount;
-    creditor.balance -= roundedAmount;
-
-    // If settled, move to next
-    if (Math.abs(debtor.balance) < 0.01) {
-      i++;
-    }
-    if (creditor.balance < 0.01) {
-      j++;
-    }
-  }
-
-  return settlements;
+    return settlements;
 };

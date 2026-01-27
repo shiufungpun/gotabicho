@@ -2,25 +2,27 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RouteProp, useRoute} from '@react-navigation/native';
+import {Text} from 'react-native';
 
 import TripListScreen from '../screens/TripListScreen';
 import AddTripScreen from '../screens/AddTripScreen';
-import TripOverviewScreen from '../screens/TripOverviewScreen';
-import ExpenseListScreen from '../screens/ExpenseListScreen';
-import AddExpenseScreen from '../screens/AddExpenseScreen';
+import TripExpensesScreen from '../screens/TripExpensesScreen';
+import AddReceiptScreen from '../screens/AddReceiptScreen';
+import ReceiptDetailScreen from '../screens/ReceiptDetailScreen';
 import ParticipantListScreen from '../screens/ParticipantListScreen';
 import SettlementScreen from '../screens/SettlementScreen';
-import {Text} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Types for params
-type RootStackParamList = {
+export type RootStackParamList = {
     TripList: undefined;
     AddTrip: undefined;
     TripHome: { tripId: number; title: string };
-    AddExpense: { tripId: number };
+    AddReceipt: { tripId: number };
+    ReceiptDetail: { receiptId: number };
+    TripExpenses: { tripId: number }; // For direct access if needed, or via Tab
 };
 
 function TripTabNavigator() {
@@ -35,16 +37,10 @@ function TripTabNavigator() {
             }}
         >
             <Tab.Screen
-                name="Overview"
-                component={TripOverviewScreen}
+                name="Expenses"
+                component={TripExpensesScreen}
                 initialParams={{tripId}}
                 options={{tabBarIcon: ({color}) => <Text style={{color}}>📊</Text>}}
-            />
-            <Tab.Screen
-                name="Expenses"
-                component={ExpenseListScreen}
-                initialParams={{tripId}}
-                options={{tabBarIcon: ({color}) => <Text style={{color}}>💸</Text>}}
             />
             <Tab.Screen
                 name="Participants"
@@ -73,8 +69,9 @@ export default function AppNavigator() {
                 options={({route}: any) => ({title: route.params.title})}
             />
             <Stack.Group screenOptions={{presentation: 'modal'}}>
-                <Stack.Screen name="AddExpense" component={AddExpenseScreen} options={{title: 'Add Expense'}}/>
+                <Stack.Screen name="AddReceipt" component={AddReceiptScreen} options={{title: 'Add Receipt'}}/>
             </Stack.Group>
+            <Stack.Screen name="ReceiptDetail" component={ReceiptDetailScreen} options={{title: 'Receipt Details'}}/>
         </Stack.Navigator>
     );
 }

@@ -18,22 +18,34 @@ export interface Participant {
     updated_at: number;
 }
 
-export interface Expense {
+export interface Receipt {
     id: number;
     trip_id: number;
-    amount: number;
+    total_amount: number;
     currency: string;
-    category: string;
     paid_by_participant_id: number;
-    date: string;
-    memo: string;
+    date: string; // ISO string
+    store_name: string;
+    memo?: string;
     created_at: number;
     updated_at: number;
 }
 
-export interface ExpenseShare {
+export interface ReceiptItem {
     id: number;
-    expense_id: number;
+    receipt_id: number;
+    name: string;
+    category: string;
+    amount: number;
+    memo?: string;
+    order_index: number;
+    created_at: number;
+    updated_at: number;
+}
+
+export interface ReceiptItemShare {
+    id: number;
+    receipt_item_id: number;
     participant_id: number;
     share_amount: number;
 }
@@ -45,7 +57,7 @@ export interface TripStats {
 
 export interface ParticipantStats extends Participant {
     spent_total: number; // calculated from shares
-    paid_total: number;  // calculated from expenses paid
+    paid_total: number;  // calculated from receipts paid
     balance: number;     // paid_total - spent_total (positive means owe me, negative means I owe)
 }
 
@@ -56,3 +68,12 @@ export interface Settlement {
     from_name: string;
     to_name: string;
 }
+
+export interface ReceiptWithDetails extends Receipt {
+    payer_name: string;
+    items: (ReceiptItem & {
+        shares: ReceiptItemShare[];
+    })[];
+}
+
+
