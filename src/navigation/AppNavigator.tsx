@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {Text} from 'react-native';
+import {useTheme} from '../theme';
 
 import TripListScreen from '../screens/TripListScreen';
 import AddTripScreen from '../screens/AddTripScreen';
@@ -28,12 +29,18 @@ export type RootStackParamList = {
 function TripTabNavigator() {
     const route = useRoute<RouteProp<RootStackParamList, 'TripHome'>>();
     const {tripId, title} = route.params;
+    const {colors} = useTheme();
 
     return (
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: '#1565c0',
+                tabBarActiveTintColor: colors.primary,
+                tabBarInactiveTintColor: colors.textSecondary,
+                tabBarStyle: {
+                    backgroundColor: colors.surface,
+                    borderTopColor: colors.border,
+                },
             }}
         >
             <Tab.Screen

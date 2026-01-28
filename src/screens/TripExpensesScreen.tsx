@@ -14,6 +14,8 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/AppNavigator';
 import {useTripDetails} from '../hooks/useTripDetails';
 import {ReceiptWithDetails} from '../types';
+import {useTheme} from '../theme';
+import {ThemedView} from '../components';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TripExpenses'>;
 
@@ -27,6 +29,7 @@ export default function TripExpensesScreen({route, navigation}: Props) {
     const {trip, receipts, participants} = useTripDetails(tripId);
     const insets = useSafeAreaInsets();
     const scrollY = useSharedValue(0);
+    const {colors} = useTheme();
 
     const myId = useMemo(() => {
         // Find "You" - assuming name is 'You' as per requirements
@@ -78,13 +81,13 @@ export default function TripExpensesScreen({route, navigation}: Props) {
             });
         });
 
-        // Colors for chart
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+        // Use theme colors for chart
+        const chartColors = colors.chartColors;
         let colorIndex = 0;
 
         const pieData = Object.keys(categoryMap).map(key => {
             const val = categoryMap[key];
-            const color = colors[colorIndex % colors.length];
+            const color = chartColors[colorIndex % chartColors.length];
             colorIndex++;
             return {value: val, color: color, text: key};
         });
@@ -94,7 +97,7 @@ export default function TripExpensesScreen({route, navigation}: Props) {
             budget: trip?.total_budget || 0,
             categoryPieData: pieData
         };
-    }, [receipts, trip]);
+    }, [receipts, trip, colors]);
 
     const progress = budget > 0 ? Math.min(totalSpent / budget, 1) : 0;
 
@@ -225,13 +228,13 @@ export default function TripExpensesScreen({route, navigation}: Props) {
     };
 
     return (
-        <View className="flex-1 bg-gray-50">
+        <ThemedView style={{flex: 1}}>
             {/* Animated Header */}
             <Animated.View
                 style={[
                     styles.header,
                     headerAnimatedStyle,
-                    {paddingTop: insets.top}
+                    {paddingTop: insets.top, backgroundColor: colors.primary}
                 ]}
             >
                 {/* Expanded Content (Charts, etc) */}
@@ -310,7 +313,7 @@ export default function TripExpensesScreen({route, navigation}: Props) {
             >
                 <Ionicons name="add" size={30} color="white"/>
             </TouchableOpacity>
-        </View>
+        </ThemedView>
     );
 }
 
@@ -320,7 +323,6 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#1E293B', // Slate 800
         zIndex: 10,
         overflow: 'hidden',
         borderBottomLeftRadius: 24,

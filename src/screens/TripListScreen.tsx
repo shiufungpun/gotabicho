@@ -1,15 +1,18 @@
 import React, {useRef} from 'react';
-import {Animated, Button, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, Button, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTrips} from '../hooks/useTrips';
 import {Trip} from '../types';
+import {useTheme} from '../theme';
+import {ThemedCard, ThemedText, ThemedView} from '../components';
 
 export default function TripListScreen() {
     const {trips} = useTrips();
     const navigation = useNavigation<any>();
     const insets = useSafeAreaInsets();
     const scrollY = useRef(new Animated.Value(0)).current;
+    const {colors} = useTheme();
 
     const HEADER_MAX_HEIGHT = 120 + insets.top;
     const HEADER_MIN_HEIGHT = 60 + insets.top;
@@ -36,41 +39,62 @@ export default function TripListScreen() {
 
         return (
             <TouchableOpacity
-                style={styles.card}
                 onPress={() => navigation.navigate('TripHome', {tripId: item.id, title: item.name})}
             >
-                <View style={styles.cardHeader}>
-                    <Text style={styles.title}>{item.name}</Text>
-                    {hasBudget && (
-                        <Text style={[styles.budgetLimit, isOverBudget && styles.overBudget]}>
-                            {spent.toLocaleString()} / {budget.toLocaleString()} {item.base_currency}
-                        </Text>
-                    )}
-                </View>
-                <Text style={styles.subtitle}>{item.start_date} - {item.end_date}</Text>
-
-                {hasBudget && (
-                    <View style={styles.progressContainer}>
-                        <View style={[
-                            styles.progressBar,
-                            {
-                                width: `${progress * 100}%`,
-                                backgroundColor: isOverBudget ? '#ff4444' : '#4caf50'
-                            }
-                        ]}/>
+                <ThemedCard style={styles.card}>
+                    <View style={styles.cardHeader}>
+                        <ThemedText style={styles.title}>{item.name}</ThemedText>
+                        {hasBudget && (
+                            <ThemedText
+                                variant="secondary"
+                                style={[styles.budgetLimit, isOverBudget && {color: colors.budgetOver}]}
+                            >
+                                {spent.toLocaleString()} / {budget.toLocaleString()} {item.base_currency}
+                            </ThemedText>
+                        )}
                     </View>
-                )}
-                {!hasBudget && spent > 0 && (
-                    <Text style={styles.spentText}>Spent: {spent.toLocaleString()} {item.base_currency}</Text>
-                )}
+                    <ThemedText variant="secondary" style={styles.subtitle}>
+                        {item.start_date} - {item.end_date}
+                    </ThemedText>
+
+                    {hasBudget && (
+                        <View style={[styles.progressContainer, {backgroundColor: colors.progressBackground}]}>
+                            <View style={[
+                                styles.progressBar,
+                                {
+                                    width: `${progress * 100}%`,
+                                    backgroundColor: isOverBudget ? colors.budgetOver : colors.budgetNormal
+                                }
+                            ]}/>
+                        </View>
+                    )}
+                    {!hasBudget && spent > 0 && (
+                        <ThemedText variant="secondary" style={styles.spentText}>
+                            Spent: {spent.toLocaleString()} {item.base_currency}
+                        </ThemedText>
+                    )}
+                </ThemedCard>
             </TouchableOpacity>
         );
     };
 
     return (
-        <View style={styles.container}>
-            <Animated.View style={[styles.header, {height: headerHeight, paddingTop: insets.top}]}>
-                <Animated.Text style={[styles.headerTitle, {fontSize}]}>御旅帳</Animated.Text>
+        <ThemedView style={styles.container}>
+            <Animated.View style={[
+                styles.header,
+                {
+                    height: headerHeight,
+                    paddingTop: insets.top,
+                    backgroundColor: colors.surface,
+                    borderBottomColor: colors.border,
+                    shadowColor: colors.shadow,
+                }
+            ]}>
+                <Animated.Text className={"font-yuji"} style={[
+                    {fontSize, color: colors.text}
+                ]}>
+                    御旅帳
+                </Animated.Text>
             </Animated.View>
             <Animated.FlatList
                 data={trips}
@@ -82,54 +106,42 @@ export default function TripListScreen() {
                     [{nativeEvent: {contentOffset: {y: scrollY}}}],
                     {useNativeDriver: false}
                 )}
-                ListEmptyComponent={<Text style={styles.empty}>No trips yet. Create one!</Text>}
+                ListEmptyComponent={
+                    <ThemedText variant="tertiary" style={styles.empty}>
+                        No trips yet. Create one!
+                    </ThemedText>
+                }
             />
             <View style={styles.fabContainer}>
                 <Button title="New Trip" onPress={() => navigation.navigate('AddTrip')}/>
             </View>
-        </View>
+        </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: '#f5f5f5'},
+    container: {flex: 1},
     header: {
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#fff',
         overflow: 'hidden',
         justifyContent: 'flex-end',
         paddingBottom: 12,
         paddingHorizontal: 16,
         zIndex: 1,
         elevation: 4,
-        shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 4,
         shadowOffset: {width: 0, height: 2},
         borderBottomWidth: 1,
-        borderBottomColor: '#ddd'
-    },
-    headerTitle: {
-        fontFamily: Platform.select({
-            android: 'ZenOldMincho_400Regular',
-            ios: 'ZenOldMincho-Regular',
-        }),
-        color: '#333'
     },
     list: {paddingHorizontal: 16, paddingBottom: 80},
     card: {
-        backgroundColor: 'white',
         padding: 16,
         borderRadius: 8,
         marginBottom: 12,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        shadowOffset: {width: 0, height: 2}
     },
     cardHeader: {
         flexDirection: 'row',
@@ -137,18 +149,13 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     title: {fontSize: 18, fontWeight: 'bold'},
-    subtitle: {color: '#666', marginTop: 4},
+    subtitle: {marginTop: 4},
     budgetLimit: {
         fontSize: 18,
-        color: '#666',
         fontWeight: '500'
-    },
-    overBudget: {
-        color: '#ff4444'
     },
     progressContainer: {
         height: 6,
-        backgroundColor: '#eee',
         borderRadius: 3,
         marginTop: 12,
         overflow: 'hidden'
@@ -159,9 +166,8 @@ const styles = StyleSheet.create({
     },
     spentText: {
         fontSize: 18,
-        color: '#666',
         marginTop: 8
     },
-    empty: {textAlign: 'center', marginTop: 40, color: '#888'},
+    empty: {textAlign: 'center', marginTop: 40},
     fabContainer: {position: 'absolute', bottom: 20, right: 20, left: 20}
 });

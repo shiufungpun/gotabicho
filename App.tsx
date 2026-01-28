@@ -1,13 +1,15 @@
 import './global.css';
 import React, {useEffect, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {ActivityIndicator, Text, View} from 'react-native';
+import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {ActivityIndicator, useColorScheme} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {initDatabase} from './src/db/db';
 import AppNavigator from './src/navigation/AppNavigator';
+import {ThemedText, ThemedView} from './src/components';
 
 export default function App() {
     const [ready, setReady] = useState(false);
+    const colorScheme = useColorScheme();
 
     useEffect(() => {
         initDatabase()
@@ -18,18 +20,20 @@ export default function App() {
             .catch(e => console.error('DB Init Error:', e));
     }, []);
 
+    const navigationTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+
     if (!ready) {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <ActivityIndicator size="large"/>
-                <Text>Initializing Database...</Text>
-            </View>
+                <ThemedText>Initializing Database...</ThemedText>
+            </ThemedView>
         );
     }
 
     return (
         <SafeAreaProvider>
-            <NavigationContainer>
+            <NavigationContainer theme={navigationTheme}>
                 <AppNavigator/>
             </NavigationContainer>
         </SafeAreaProvider>

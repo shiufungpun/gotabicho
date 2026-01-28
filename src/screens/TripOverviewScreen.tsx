@@ -2,54 +2,72 @@ import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import {useTripDetails} from '../hooks/useTripDetails';
+import {useTheme} from '../theme';
+import {ThemedText, ThemedView} from '../components';
 
 export default function TripOverviewScreen() {
     const route = useRoute<any>();
-    const {tripId} = route.params || {}; // Usually passed by TabNavigator params or context
-    // Note: nested navigators might need route.params from parent if not passed down.
-    // We'll handle this in Navigation setup.
+    const {tripId} = route.params || {};
+    const {colors} = useTheme();
 
-    // If used inside Tab.Screen directly which is inside Stack, params might be tricky.
-    // Better to use a context or expect params properly.
-    // We will assume initialParams are passed to the screens.
+    const {trip, participants, receipts} = useTripDetails(tripId);
 
-    const {trip, participants, expenses, loading} = useTripDetails(tripId);
+    if (!trip) return (
+        <ThemedView style={styles.center}>
+            <ThemedText>Loading...</ThemedText>
+        </ThemedView>
+    );
 
-    if (!trip) return <View style={styles.center}><Text>Loading...</Text></View>;
-
-    const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const totalSpent = receipts.reduce((sum: number, r) => sum + r.total_amount, 0);
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>{trip.name}</Text>
-                <Text style={styles.dates}>{trip.start_date} ~ {trip.end_date}</Text>
-                <View style={styles.totalBox}>
-                    <Text style={styles.totalLabel}>Total Expenses</Text>
-                    <Text style={styles.totalValue}>¥ {totalSpent.toLocaleString()}</Text>
+        <ScrollView style={[styles.container, {backgroundColor: colors.background}]}>
+            <ThemedView variant="surface" style={styles.header}>
+                <ThemedText style={styles.title}>{trip.name}</ThemedText>
+                <ThemedText variant="secondary" style={styles.dates}>
+                    {trip.start_date} ~ {trip.end_date}
+                </ThemedText>
+                <View style={[styles.totalBox, {backgroundColor: colors.primaryLight}]}>
+                    <ThemedText variant="primaryColor" style={styles.totalLabel}>
+                        Total Expenses
+                    </ThemedText>
+                    <Text style={[styles.totalValue, {color: colors.primary}]}>
+                        ¥ {totalSpent.toLocaleString()}
+                    </Text>
                 </View>
-            </View>
+            </ThemedView>
 
-            <Text style={styles.sectionTitle}>Participants Summary</Text>
+            <ThemedText style={styles.sectionTitle}>Participants Summary</ThemedText>
             {participants.map(p => {
                 const remaining = p.budget_total ? p.budget_total - p.spent_total : null;
                 return (
-                    <View key={p.id} style={styles.participantRow}>
+                    <ThemedView
+                        key={p.id}
+                        variant="surface"
+                        style={[styles.participantRow, {borderBottomColor: colors.divider}]}
+                    >
                         <View style={{flex: 1}}>
-                            <Text style={styles.pName}>{p.name}</Text>
+                            <ThemedText style={styles.pName}>{p.name}</ThemedText>
                             {p.budget_total && (
-                                <Text style={styles.budget}>Budget: ¥{p.budget_total.toLocaleString()}</Text>
+                                <ThemedText variant="tertiary" style={styles.budget}>
+                                    Budget: ¥{p.budget_total.toLocaleString()}
+                                </ThemedText>
                             )}
                         </View>
                         <View style={{alignItems: 'flex-end'}}>
-                            <Text style={styles.spent}>Spent: ¥{p.spent_total.toLocaleString()}</Text>
+                            <ThemedText style={styles.spent}>
+                                Spent: ¥{p.spent_total.toLocaleString()}
+                            </ThemedText>
                             {remaining !== null && (
-                                <Text style={[styles.remaining, {color: remaining < 0 ? 'red' : 'green'}]}>
+                                <Text style={[
+                                    styles.remaining,
+                                    {color: remaining < 0 ? colors.error : colors.success}
+                                ]}>
                                     {remaining >= 0 ? 'Left' : 'Over'}: ¥{Math.abs(remaining).toLocaleString()}
                                 </Text>
                             )}
                         </View>
-                    </View>
+                    </ThemedView>
                 );
             })}
         </ScrollView>
@@ -57,25 +75,23 @@ export default function TripOverviewScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: '#f5f5f5'},
+    container: {flex: 1},
     center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-    header: {backgroundColor: 'white', padding: 20, marginBottom: 10},
+    header: {padding: 20, marginBottom: 10},
     title: {fontSize: 24, fontWeight: 'bold'},
-    dates: {color: '#666', marginTop: 4, marginBottom: 16},
-    totalBox: {backgroundColor: '#e3f2fd', padding: 16, borderRadius: 8, alignItems: 'center'},
-    totalLabel: {fontSize: 14, color: '#1565c0'},
-    totalValue: {fontSize: 32, fontWeight: 'bold', color: '#1565c0', marginTop: 4},
+    dates: {marginTop: 4, marginBottom: 16},
+    totalBox: {padding: 16, borderRadius: 8, alignItems: 'center'},
+    totalLabel: {fontSize: 14},
+    totalValue: {fontSize: 32, fontWeight: 'bold', marginTop: 4},
     sectionTitle: {fontSize: 18, fontWeight: '600', margin: 16, marginBottom: 8},
     participantRow: {
-        backgroundColor: 'white',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
     pName: {fontSize: 16, fontWeight: '500'},
-    budget: {fontSize: 12, color: '#888', marginTop: 2},
+    budget: {fontSize: 12, marginTop: 2},
     spent: {fontSize: 14, fontWeight: '500'},
     remaining: {fontSize: 12, marginTop: 2}
 });
