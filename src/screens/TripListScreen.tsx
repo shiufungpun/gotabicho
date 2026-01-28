@@ -49,7 +49,7 @@ export default function TripListScreen() {
             >
                 <ThemedCard style={styles.card}>
                     <View style={styles.cardHeader}>
-                        <ThemedText style={styles.title}>{item.name}</ThemedText>
+                        <ThemedText textStyle={"header"}>{item.name}</ThemedText>
                         {hasBudget && (
                             <ThemedText
                                 variant="secondary"
