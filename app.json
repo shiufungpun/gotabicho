@@ -2,6 +2,16 @@
   "expo": {
     "userInterfaceStyle": "automatic",
     "name": "Gotabicho",
-    "slug": "gotabicho"
+    "slug": "gotabicho",
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/zen-old-mincho/400Regular/ZenOldMincho_400Regular.ttf"
+          ]
+        }
+      ]
+    ]
   }
 }

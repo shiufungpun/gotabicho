@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {Animated, Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, Button, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTrips} from '../hooks/useTrips';
@@ -70,7 +70,7 @@ export default function TripListScreen() {
     return (
         <View style={styles.container}>
             <Animated.View style={[styles.header, {height: headerHeight, paddingTop: insets.top}]}>
-                <Animated.Text style={[styles.headerTitle, {fontSize}]}>My Trips</Animated.Text>
+                <Animated.Text style={[styles.headerTitle, {fontSize}]}>御旅帳</Animated.Text>
             </Animated.View>
             <Animated.FlatList
                 data={trips}
@@ -113,7 +113,10 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ddd'
     },
     headerTitle: {
-        fontWeight: 'bold',
+        fontFamily: Platform.select({
+            android: 'ZenOldMincho_400Regular',
+            ios: 'ZenOldMincho-Regular',
+        }),
         color: '#333'
     },
     list: {paddingHorizontal: 16, paddingBottom: 80},
