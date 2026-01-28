@@ -8,7 +8,8 @@
         "expo-font",
         {
           "fonts": [
-            "node_modules/@expo-google-fonts/zen-old-mincho/400Regular/ZenOldMincho_400Regular.ttf"
+            "node_modules/@expo-google-fonts/zen-old-mincho/400Regular/ZenOldMincho_400Regular.ttf",
+            "node_modules/@expo-google-fonts/yuji-syuku/400Regular/YujiSyuku_400Regular.ttf"
           ]
         }
       ]

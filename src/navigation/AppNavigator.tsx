@@ -68,7 +68,8 @@ function TripTabNavigator() {
 export default function AppNavigator() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="TripList" component={TripListScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="TripList" component={TripListScreen}
+                          options={{headerShown: false}}/>
             <Stack.Screen name="AddTrip" component={AddTripScreen} options={{title: 'New Trip'}}/>
             <Stack.Screen
                 name="TripHome"

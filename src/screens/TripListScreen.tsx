@@ -14,8 +14,8 @@ export default function TripListScreen() {
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
 
-    const HEADER_MAX_HEIGHT = 120 + insets.top;
-    const HEADER_MIN_HEIGHT = 60 + insets.top;
+    const HEADER_MAX_HEIGHT = 100 + insets.top;
+    const HEADER_MIN_HEIGHT = 80 + insets.top;
     const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
     const headerHeight = scrollY.interpolate({
@@ -26,7 +26,13 @@ export default function TripListScreen() {
 
     const fontSize = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [32, 24],
+        outputRange: [42, 24],
+        extrapolate: 'clamp',
+    });
+
+    const subtitleFontSize = scrollY.interpolate({
+        inputRange: [0, HEADER_SCROLL_DISTANCE],
+        outputRange: [12, 6],
         extrapolate: 'clamp',
     });
 
@@ -90,11 +96,18 @@ export default function TripListScreen() {
                     shadowColor: colors.shadow,
                 }
             ]}>
-                <Animated.Text className={"font-yuji"} style={[
-                    {fontSize, color: colors.text}
-                ]}>
-                    御旅帳
-                </Animated.Text>
+                <View className={"items-center"}>
+                    <Animated.Text className={"font-yuji"} style={[
+                        {fontSize, color: colors.text}
+                    ]}>
+                        御旅帳
+                    </Animated.Text>
+                    <Animated.Text className={""} style={[
+                        {fontSize: subtitleFontSize, color: colors.text}
+                    ]}>
+                        G O T A B I C H O
+                    </Animated.Text>
+                </View>
             </Animated.View>
             <Animated.FlatList
                 data={trips}

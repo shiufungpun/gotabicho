@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {ActivityIndicator, useColorScheme} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {useFonts, YujiSyuku_400Regular} from '@expo-google-fonts/yuji-syuku';
 import {initDatabase} from './src/db/db';
 import AppNavigator from './src/navigation/AppNavigator';
 import {ThemedText, ThemedView} from './src/components';
@@ -10,6 +11,9 @@ import {ThemedText, ThemedView} from './src/components';
 export default function App() {
     const [ready, setReady] = useState(false);
     const colorScheme = useColorScheme();
+    const [fontsLoaded] = useFonts({
+        YujiSyuku_400Regular,
+    });
 
     useEffect(() => {
         initDatabase()
@@ -22,7 +26,7 @@ export default function App() {
 
     const navigationTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
 
-    if (!ready) {
+    if (!ready || !fontsLoaded) {
         return (
             <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <ActivityIndicator size="large"/>
