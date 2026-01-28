@@ -59,7 +59,7 @@ export default function TripListScreen() {
                             </ThemedText>
                         )}
                     </View>
-                    <ThemedText variant="secondary" style={styles.subtitle}>
+                    <ThemedText variant="secondary">
                         {item.start_date} - {item.end_date}
                     </ThemedText>
 
@@ -75,7 +75,7 @@ export default function TripListScreen() {
                         </View>
                     )}
                     {!hasBudget && spent > 0 && (
-                        <ThemedText variant="secondary" style={styles.spentText}>
+                        <ThemedText variant="secondary">
                             Spent: {spent.toLocaleString()} {item.base_currency}
                         </ThemedText>
                     )}
@@ -161,8 +161,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    title: {fontSize: 18, fontWeight: 'bold'},
-    subtitle: {marginTop: 4},
     budgetLimit: {
         fontSize: 18,
         fontWeight: '500'
@@ -176,10 +174,6 @@ const styles = StyleSheet.create({
     progressBar: {
         height: '100%',
         borderRadius: 3
-    },
-    spentText: {
-        fontSize: 18,
-        marginTop: 8
     },
     empty: {textAlign: 'center', marginTop: 40},
     fabContainer: {position: 'absolute', bottom: 20, right: 20, left: 20}
