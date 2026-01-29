@@ -14,9 +14,14 @@ const ActiveTripCard: React.FC<TripCardProps> = ({trip}) => {
     const {colors} = useTheme();
     if (!trip) {
         return <>
-            <ThemedView className={"bg-amber-500"}>
-                <ThemedText textStyle={"header"} variant={"primary"}>2222</ThemedText>
-            </ThemedView>
+            <TouchableOpacity
+                onPress={() => undefined}
+            >
+                <ThemedView className={"border-2 border-dashed border-gray-300 p-4 rounded-lg mb-3"}>
+                    
+                    <ThemedText textStyle={"header"} variant={"primary"}></ThemedText>
+                </ThemedView>
+            </TouchableOpacity>
         </>
     }
 
