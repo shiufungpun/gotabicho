@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {Animated, Button, StyleSheet, View} from 'react-native';
+import {Animated, Button, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTrips} from '../hooks/useTrips';
@@ -43,24 +43,28 @@ export default function TripListScreen() {
     };
 
     return (
-        <ThemedView style={styles.container}>
-            <Animated.View style={[
-                styles.header,
-                {
-                    height: headerHeight,
-                    paddingTop: insets.top,
-                    backgroundColor: colors.surface,
-                    borderBottomColor: colors.border,
-                    shadowColor: colors.shadow,
-                }
-            ]}>
-                <View className={"items-center"}>
-                    <Animated.Text className={"font-yuji"} style={[
+        <ThemedView className="flex-1">
+            <Animated.View className="absolute top-0 left-0 right-0 overflow-hidden justify-end pb-3 px-4 z-10 border-b"
+                           style={[
+                               {
+                                   height: headerHeight,
+                                   paddingTop: insets.top,
+                                   backgroundColor: colors.surface,
+                                   borderBottomColor: colors.border,
+                                   shadowColor: colors.shadow,
+                                   elevation: 4,
+                                   shadowOpacity: 0.1,
+                                   shadowRadius: 4,
+                                   shadowOffset: {width: 0, height: 2},
+                               }
+                           ]}>
+                <View className="items-center">
+                    <Animated.Text className="font-yuji" style={[
                         {fontSize, color: colors.text}
                     ]}>
                         御旅帳
                     </Animated.Text>
-                    <Animated.Text className={""} style={[
+                    <Animated.Text className="" style={[
                         {fontSize: subtitleFontSize, color: colors.text}
                     ]}>
                         G O T A B I C H O
@@ -72,68 +76,21 @@ export default function TripListScreen() {
                 data={trips}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
-                contentContainerStyle={[styles.list, {paddingTop: HEADER_MAX_HEIGHT + 16}]}
+                contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 80, paddingTop: HEADER_MAX_HEIGHT + 16}}
                 scrollEventThrottle={16}
                 onScroll={Animated.event(
                     [{nativeEvent: {contentOffset: {y: scrollY}}}],
                     {useNativeDriver: false}
                 )}
                 ListEmptyComponent={
-                    <ThemedText variant="tertiary" style={styles.empty}>
+                    <ThemedText variant="tertiary" className="text-center mt-10">
                         No trips yet. Create one!
                     </ThemedText>
                 }
             />
-            <View style={styles.fabContainer}>
+            <View className="absolute bottom-5 right-5 left-5">
                 <Button title="New Trip" onPress={() => navigation.navigate('AddTrip')}/>
             </View>
         </ThemedView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {flex: 1},
-    header: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        overflow: 'hidden',
-        justifyContent: 'flex-end',
-        paddingBottom: 12,
-        paddingHorizontal: 16,
-        zIndex: 1,
-        elevation: 4,
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        shadowOffset: {width: 0, height: 2},
-        borderBottomWidth: 1,
-    },
-    list: {paddingHorizontal: 16, paddingBottom: 80},
-    card: {
-        padding: 16,
-        borderRadius: 8,
-        marginBottom: 12,
-    },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    budgetLimit: {
-        fontSize: 18,
-        fontWeight: '500'
-    },
-    progressContainer: {
-        height: 6,
-        borderRadius: 3,
-        marginTop: 12,
-        overflow: 'hidden'
-    },
-    progressBar: {
-        height: '100%',
-        borderRadius: 3
-    },
-    empty: {textAlign: 'center', marginTop: 40},
-    fabContainer: {position: 'absolute', bottom: 20, right: 20, left: 20}
-});
