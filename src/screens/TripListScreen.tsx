@@ -1,11 +1,13 @@
 import React, {useRef} from 'react';
-import {Animated, Button, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Animated, Button, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTrips} from '../hooks/useTrips';
 import {Trip} from '../types';
 import {useTheme} from '../theme';
-import {ThemedCard, ThemedText, ThemedView} from '../components';
+import {ThemedText, ThemedView} from '../components';
+import TripCard from "../containers/TripCard";
+import ActiveTripCard from "../containers/ActiveTripCard";
 
 export default function TripListScreen() {
     const {trips} = useTrips();
@@ -14,7 +16,7 @@ export default function TripListScreen() {
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
 
-    const HEADER_MAX_HEIGHT = 100 + insets.top;
+    const HEADER_MAX_HEIGHT = 110 + insets.top;
     const HEADER_MIN_HEIGHT = 80 + insets.top;
     const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
@@ -26,7 +28,7 @@ export default function TripListScreen() {
 
     const fontSize = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [42, 24],
+        outputRange: [48, 24],
         extrapolate: 'clamp',
     });
 
@@ -37,51 +39,7 @@ export default function TripListScreen() {
     });
 
     const renderItem = ({item}: { item: Trip & { total_expenses: number } }) => {
-        const budget = item.total_budget || 0;
-        const spent = item.total_expenses || 0;
-        const hasBudget = budget > 0;
-        const progress = hasBudget ? Math.min(spent / budget, 1) : 0;
-        const isOverBudget = hasBudget && spent > budget;
-
-        return (
-            <TouchableOpacity
-                onPress={() => navigation.navigate('TripHome', {tripId: item.id, title: item.name})}
-            >
-                <ThemedCard style={styles.card}>
-                    <View style={styles.cardHeader}>
-                        <ThemedText textStyle={"header"}>{item.name}</ThemedText>
-                        {hasBudget && (
-                            <ThemedText
-                                variant="secondary"
-                                style={[styles.budgetLimit, isOverBudget && {color: colors.budgetOver}]}
-                            >
-                                {spent.toLocaleString()} / {budget.toLocaleString()} {item.base_currency}
-                            </ThemedText>
-                        )}
-                    </View>
-                    <ThemedText variant="secondary">
-                        {item.start_date} - {item.end_date}
-                    </ThemedText>
-
-                    {hasBudget && (
-                        <View style={[styles.progressContainer, {backgroundColor: colors.progressBackground}]}>
-                            <View style={[
-                                styles.progressBar,
-                                {
-                                    width: `${progress * 100}%`,
-                                    backgroundColor: isOverBudget ? colors.budgetOver : colors.budgetNormal
-                                }
-                            ]}/>
-                        </View>
-                    )}
-                    {!hasBudget && spent > 0 && (
-                        <ThemedText variant="secondary">
-                            Spent: {spent.toLocaleString()} {item.base_currency}
-                        </ThemedText>
-                    )}
-                </ThemedCard>
-            </TouchableOpacity>
-        );
+        return <TripCard trip={item}/>;
     };
 
     return (
@@ -110,6 +68,7 @@ export default function TripListScreen() {
                 </View>
             </Animated.View>
             <Animated.FlatList
+                ListHeaderComponent={<ActiveTripCard trip={undefined}/>}
                 data={trips}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
