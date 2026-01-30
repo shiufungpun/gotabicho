@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Animated, Button, Dimensions, View} from 'react-native';
+import {Animated, Dimensions, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTrips} from '../hooks/useTrips';
@@ -10,10 +10,11 @@ import TripCard from "../containers/TripCard";
 import {useSharedValue} from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 import CarouselTripCard from "../containers/CarouselTripCard";
+import AddTripCard from "../containers/AddTripCard";
 
 export default function TripListScreen() {
     const [useCarousel] = useState(true) // Set to false to use FlatList instead
-    const {trips} = useTrips();
+    const {trips, loading} = useTrips();
     const progress = useSharedValue<number>(0);
     const navigation = useNavigation<any>();
     const insets = useSafeAreaInsets();
@@ -43,13 +44,73 @@ export default function TripListScreen() {
         extrapolate: 'clamp',
     });
 
-    const renderCarouselItem = ({item}: { item: Trip & { total_expenses: number } }) => {
+    const renderCarouselItem = ({item}: { item?: Trip & { total_expenses: number } }) => {
+        if (!item) {
+            return <AddTripCard/>;
+        }
         return <CarouselTripCard trip={item}/>;
     };
 
     const renderItem = ({item}: { item: Trip & { total_expenses: number } }) => {
         return <TripCard trip={item}/>;
     };
+
+    const renderList = () => {
+        console.log([null as any].concat(trips))
+        console.log(trips ? 1 : 0)
+        if (useCarousel) {
+            return (
+                <View className="flex-1 justify-center " style={{paddingTop: HEADER_MAX_HEIGHT - 25}}>
+                    <Carousel
+                        defaultIndex={trips.length > 0 ? 1 : 0}
+                        loop={false}
+                        width={windowWidth}
+                        height={0}
+                        data={[null as any].concat(trips)}
+                        scrollAnimationDuration={300}
+                        onProgressChange={(offsetProgress, absoluteProgress) => {
+                            progress.value = absoluteProgress;
+                        }}
+                        mode="parallax"
+                        modeConfig={{
+                            parallaxScrollingScale: 0.85,
+                            parallaxScrollingOffset: 50,
+                            parallaxAdjacentItemScale: 0.82,
+                        }}
+                        renderItem={renderCarouselItem}
+                    />
+                    {trips.length === 0 && (
+                        <ThemedText variant="tertiary" className="text-center mt-10">
+                            No trips yet. Create one!
+                        </ThemedText>
+                    )}
+                </View>
+            );
+        } else {
+            return (
+                <Animated.FlatList
+                    data={trips}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderItem}
+                    contentContainerStyle={{
+                        paddingHorizontal: 16,
+                        paddingBottom: 80,
+                        paddingTop: HEADER_MAX_HEIGHT + 16
+                    }}
+                    scrollEventThrottle={16}
+                    onScroll={Animated.event(
+                        [{nativeEvent: {contentOffset: {y: scrollY}}}],
+                        {useNativeDriver: false}
+                    )}
+                    ListEmptyComponent={
+                        <ThemedText variant="tertiary" className="text-center mt-10">
+                            No trips yet. Create one!
+                        </ThemedText>
+                    }
+                />
+            );
+        }
+    }
 
     return (
         <ThemedView className="flex-1">
@@ -80,56 +141,7 @@ export default function TripListScreen() {
                     </Animated.Text>
                 </View>
             </Animated.View>
-            {useCarousel ? (
-                <View className="flex-1 justify-center " style={{paddingTop: HEADER_MAX_HEIGHT - 20}}>
-                    <Carousel
-                        loop={false}
-                        width={windowWidth}
-                        height={0}
-                        data={trips}
-                        scrollAnimationDuration={300}
-                        onProgressChange={(offsetProgress, absoluteProgress) => {
-                            progress.value = absoluteProgress;
-                        }}
-                        mode="parallax"
-                        modeConfig={{
-                            parallaxScrollingScale: 0.9,
-                            parallaxScrollingOffset: 50,
-                        }}
-                        renderItem={renderCarouselItem}
-                    />
-                    {trips.length === 0 && (
-                        <ThemedText variant="tertiary" className="text-center mt-10">
-                            No trips yet. Create one!
-                        </ThemedText>
-                    )}
-                </View>
-            ) : (
-                <Animated.FlatList
-                    data={trips}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={renderItem}
-                    contentContainerStyle={{
-                        paddingHorizontal: 16,
-                        paddingBottom: 80,
-                        paddingTop: HEADER_MAX_HEIGHT + 16
-                    }}
-                    scrollEventThrottle={16}
-                    onScroll={Animated.event(
-                        [{nativeEvent: {contentOffset: {y: scrollY}}}],
-                        {useNativeDriver: false}
-                    )}
-                    ListEmptyComponent={
-                        <ThemedText variant="tertiary" className="text-center mt-10">
-                            No trips yet. Create one!
-                        </ThemedText>
-                    }
-                />
-            )}
-
-            <View className="absolute bottom-5 right-5 left-5">
-                <Button title="New Trip" onPress={() => navigation.navigate('AddTrip')}/>
-            </View>
+            {!loading && renderList()}
         </ThemedView>
     );
 }
