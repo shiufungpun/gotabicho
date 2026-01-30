@@ -46,3 +46,34 @@ export const deleteTrip = async (id: number): Promise<void> => {
     const db = await getDB();
     await db.runAsync('DELETE FROM trips WHERE id = ?', [id]);
 };
+
+export const getActiveTrip = async (): Promise<(Trip & { total_expenses: number }) | null> => {
+    const db = await getDB();
+    const today = new Date().toISOString().split('T')[0];
+
+    // First, try to get an ongoing trip (where today is between start and end date)
+    let result = await db.getFirstAsync<Trip & { total_expenses: number }>(`
+        SELECT t.*, COALESCE(SUM(r.total_amount), 0) as total_expenses 
+        FROM trips t 
+        LEFT JOIN receipts r ON t.id = r.trip_id 
+        WHERE date(t.start_date) <= date(?) AND date(t.end_date) >= date(?)
+        GROUP BY t.id 
+        ORDER BY t.start_date DESC
+        LIMIT 1
+    `, [today, today]);
+
+    // If no ongoing trip, get the most recently created trip
+    if (!result) {
+        result = await db.getFirstAsync<Trip & { total_expenses: number }>(`
+            SELECT t.*, COALESCE(SUM(r.total_amount), 0) as total_expenses 
+            FROM trips t 
+            LEFT JOIN receipts r ON t.id = r.trip_id 
+            GROUP BY t.id 
+            ORDER BY t.created_at DESC
+            LIMIT 1
+        `);
+    }
+
+    return result || null;
+};
+

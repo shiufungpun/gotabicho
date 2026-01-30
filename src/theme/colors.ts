@@ -5,7 +5,7 @@
 export const Colors = {
     light: {
         // Backgrounds
-        background: 'rgb(255,251,248)',
+        background: 'rgb(251,247,242)',
         surface: '#ffffff',
         card: '#ffffff',
 

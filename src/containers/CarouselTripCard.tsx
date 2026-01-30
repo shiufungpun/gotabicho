@@ -1,36 +1,17 @@
 import React from 'react';
-import {ActivityIndicator, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {ThemedCard, ThemedText, ThemedView} from "../components";
+import {ThemedCard, ThemedText} from "../components";
+import {Trip} from "../types";
 import {useTheme} from '../theme';
-import {useActiveTrip} from '../hooks/useActiveTrip';
 
-const ActiveTripCard: React.FC = () => {
+interface TripCardProps {
+    trip: Trip & { total_expenses: number };
+}
+
+const CarouselTripCard: React.FC<TripCardProps> = ({trip}) => {
     const navigation = useNavigation<any>();
     const {colors} = useTheme();
-    const {activeTrip: trip, loading} = useActiveTrip();
-
-    if (loading) {
-        return (
-            <ThemedView className="p-4 items-center">
-                <ActivityIndicator size="small" color={colors.primary}/>
-            </ThemedView>
-        );
-    }
-
-    if (!trip) {
-        return (
-            <ThemedView className="border-2 border-dashed border-gray-300 p-4 rounded-lg mb-3 items-center">
-                <ThemedText textStyle="header" variant="secondary" className="mb-1">
-                    No Active Trip
-                </ThemedText>
-                <ThemedText variant="tertiary" className="text-center">
-                    Create a new trip to get started
-                </ThemedText>
-            </ThemedView>
-        );
-    }
-
 
     const budget = trip.total_budget || 0;
     const spent = trip.total_expenses || 0;
@@ -40,9 +21,9 @@ const ActiveTripCard: React.FC = () => {
 
     return (
         <TouchableOpacity
-            onPress={() => navigation.navigate('TripHome', {tripId: trip.id, title: trip.name})}
+            // onPress={() => navigation.navigate('TripHome', {tripId: trip.id, title: trip.name})}
         >
-            <ThemedCard className="p-4 rounded-lg mb-3">
+            <ThemedCard className="p-4 rounded-lg h-full">
                 <View className="flex-row justify-between items-center">
                     <ThemedText textStyle={"header"}>{trip.name}</ThemedText>
                     {hasBudget && (
@@ -81,4 +62,4 @@ const ActiveTripCard: React.FC = () => {
     );
 };
 
-export default ActiveTripCard;
+export default CarouselTripCard;
