@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Animated, Dimensions, View} from 'react-native';
+import {Animated, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTrips} from '../hooks/useTrips';
@@ -7,28 +7,26 @@ import {Trip} from '../types';
 import {useTheme} from '../theme';
 import {ThemedText, ThemedView} from '../components';
 import TripCard from "../containers/TripCard";
-import {useSharedValue} from "react-native-reanimated";
-import Carousel from "react-native-reanimated-carousel";
-import CarouselTripCard from "../containers/CarouselTripCard";
-import AddTripCard from "../containers/AddTripCard";
+import TripCardCarousel from "../components/homepage/TripCardCarousel";
+
+
+export const HEADER_MAX_HEIGHT = 100;
 
 export default function TripListScreen() {
-    const [useCarousel] = useState(true) // Set to false to use FlatList instead
+    const [useCarousel, setUseCarousel] = useState(true) // Set to false to use FlatList instead
     const {trips, loading} = useTrips();
-    const progress = useSharedValue<number>(0);
     const navigation = useNavigation<any>();
     const insets = useSafeAreaInsets();
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
-    const windowWidth = Dimensions.get('window').width;
 
-    const HEADER_MAX_HEIGHT = 100 + insets.top;
+    const headerMaxHeight = HEADER_MAX_HEIGHT + insets.top;
     const HEADER_MIN_HEIGHT = 70 + insets.top;
-    const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 20;
+    const HEADER_SCROLL_DISTANCE = headerMaxHeight - HEADER_MIN_HEIGHT + 20;
 
     const headerHeight = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
+        outputRange: [headerMaxHeight, HEADER_MIN_HEIGHT],
         extrapolate: 'clamp',
     });
 
@@ -44,47 +42,15 @@ export default function TripListScreen() {
         extrapolate: 'clamp',
     });
 
-    const renderCarouselItem = ({item}: { item?: Trip & { total_expenses: number } }) => {
-        if (!item) {
-            return <AddTripCard/>;
-        }
-        return <CarouselTripCard trip={item}/>;
-    };
 
     const renderItem = ({item}: { item: Trip & { total_expenses: number } }) => {
         return <TripCard trip={item}/>;
     };
 
     const renderList = () => {
-        console.log([null as any].concat(trips))
-        console.log(trips ? 1 : 0)
         if (useCarousel) {
             return (
-                <View className="flex-1 justify-center " style={{paddingTop: HEADER_MAX_HEIGHT - 25}}>
-                    <Carousel
-                        defaultIndex={trips.length > 0 ? 1 : 0}
-                        loop={false}
-                        width={windowWidth}
-                        height={0}
-                        data={[null as any].concat(trips)}
-                        scrollAnimationDuration={300}
-                        onProgressChange={(offsetProgress, absoluteProgress) => {
-                            progress.value = absoluteProgress;
-                        }}
-                        mode="parallax"
-                        modeConfig={{
-                            parallaxScrollingScale: 0.85,
-                            parallaxScrollingOffset: 50,
-                            parallaxAdjacentItemScale: 0.82,
-                        }}
-                        renderItem={renderCarouselItem}
-                    />
-                    {trips.length === 0 && (
-                        <ThemedText variant="tertiary" className="text-center mt-10">
-                            No trips yet. Create one!
-                        </ThemedText>
-                    )}
-                </View>
+                <TripCardCarousel trips={trips}/>
             );
         } else {
             return (
@@ -95,7 +61,7 @@ export default function TripListScreen() {
                     contentContainerStyle={{
                         paddingHorizontal: 16,
                         paddingBottom: 80,
-                        paddingTop: HEADER_MAX_HEIGHT + 16
+                        paddingTop: headerMaxHeight + 16
                     }}
                     scrollEventThrottle={16}
                     onScroll={Animated.event(
