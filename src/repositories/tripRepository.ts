@@ -1,10 +1,21 @@
 import {getDB} from '../db/db';
 import {Trip} from '../types';
 
-export const getAllTrips = async (): Promise<(Trip & { total_expenses: number })[]> => {
+export const getAllTrips = async (): Promise<(Trip & {
+    total_expenses: number;
+    participant_count: number;
+    receipt_count: number
+})[]> => {
     const db = await getDB();
-    const result = await db.getAllAsync<Trip & { total_expenses: number }>(`
-    SELECT t.*, COALESCE(SUM(r.total_amount), 0) as total_expenses 
+    const result = await db.getAllAsync<Trip & {
+        total_expenses: number;
+        participant_count: number;
+        receipt_count: number
+    }>(`
+    SELECT t.*, 
+           COALESCE(SUM(r.total_amount), 0) as total_expenses,
+           COUNT(DISTINCT r.id) as receipt_count,
+           (SELECT COUNT(*) FROM participants p WHERE p.trip_id = t.id) as participant_count
     FROM trips t 
     LEFT JOIN receipts r ON t.id = r.trip_id 
     GROUP BY t.id 

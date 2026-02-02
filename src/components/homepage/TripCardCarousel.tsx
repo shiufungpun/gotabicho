@@ -6,10 +6,12 @@ import {HEADER_MAX_HEIGHT} from "../../screens/TripListScreen";
 import {Trip} from "../../types";
 import {useSharedValue} from "react-native-reanimated";
 import AddTripCard from "../../containers/AddTripCard";
-import CarouselTripCard from "../../containers/CarouselTripCard";
+import CarouselTripCardV2 from "../../containers/CarouselTripCardV2";
 
 
-const TripCardCarousel = ({trips}: { trips: (Trip & { total_expenses: number })[] }) => {
+const TripCardCarousel = ({trips}: {
+    trips: (Trip & { total_expenses: number; participant_count: number; receipt_count: number })[]
+}) => {
     const progress = useSharedValue<number>(0);
     const windowWidth = Dimensions.get('window').width;
     const ref = React.useRef<ICarouselInstance>(null);
@@ -20,11 +22,13 @@ const TripCardCarousel = ({trips}: { trips: (Trip & { total_expenses: number })[
         });
     };
 
-    const renderCarouselItem = ({item}: { item?: Trip & { total_expenses: number } }) => {
+    const renderCarouselItem = ({item}: {
+        item?: Trip & { total_expenses: number; participant_count: number; receipt_count: number }
+    }) => {
         if (!item) {
             return <AddTripCard/>;
         }
-        return <CarouselTripCard trip={item}/>;
+        return <CarouselTripCardV2 trip={item}/>;
     };
 
     return (

@@ -3,6 +3,7 @@ import * as SQLite from 'expo-sqlite';
 let db: SQLite.SQLiteDatabase | null = null;
 
 export const getDB = async () => {
+    // await SQLite.deleteDatabaseAsync('gotabicho.db')
     if (db) return db;
     db = await SQLite.openDatabaseAsync('gotabicho.db');
     return db;

@@ -4,7 +4,11 @@ import * as TripRepository from '../repositories/tripRepository';
 import {useFocusEffect} from '@react-navigation/native';
 
 export const useTrips = () => {
-    const [trips, setTrips] = useState<(Trip & { total_expenses: number })[]>([]);
+    const [trips, setTrips] = useState<(Trip & {
+        total_expenses: number;
+        participant_count: number;
+        receipt_count: number
+    })[]>([]);
     const [loading, setLoading] = useState(false);
 
     const loadTrips = useCallback(async () => {

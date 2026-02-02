@@ -4,15 +4,21 @@ import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/na
 import {ActivityIndicator, useColorScheme} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {useFonts, YujiSyuku_400Regular} from '@expo-google-fonts/yuji-syuku';
+import {HinaMincho_400Regular} from '@expo-google-fonts/hina-mincho';
 import {initDatabase} from './src/db/db';
 import AppNavigator from './src/navigation/AppNavigator';
 import {ThemedText, ThemedView} from './src/components';
+import {Iansui_400Regular} from "@expo-google-fonts/iansui";
+import {Quicksand_400Regular} from "@expo-google-fonts/quicksand";
 
 export default function App() {
     const [ready, setReady] = useState(false);
     const colorScheme = useColorScheme();
     const [fontsLoaded] = useFonts({
         YujiSyuku_400Regular,
+        HinaMincho_400Regular,
+        Iansui_400Regular,
+        Quicksand_400Regular
     });
 
     useEffect(() => {

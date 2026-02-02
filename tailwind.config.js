@@ -6,7 +6,10 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                yuji: ["YujiSyuku_400Regular", "serif"]
+                yuji: ["YujiSyuku_400Regular", "Quicksand_400Regular", "serif"],
+                hina: ["HinaMincho_400Regular", "serif"],
+                iansui: ["Iansui_400Regular", "Quicksand_400Regular", "serif"],
+                guicksand: ["Quicksand_400Regular", "sans-serif"],
             }
         },
     },

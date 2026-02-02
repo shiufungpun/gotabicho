@@ -17,6 +17,7 @@ interface ThemedTextProps extends TextProps {
 
     /**
      * Text style variant for size and font family
+     * - 'background': Very large background text
      * - 'header': Large header text (24px, bold)
      * - 'subheader': Medium header text (20px, semi-bold)
      * - 'title': Title text (18px, semi-bold)
@@ -25,7 +26,7 @@ interface ThemedTextProps extends TextProps {
      * - 'caption': Small caption text (12px, regular)
      * - 'placeholder': Placeholder text (14px, italic)
      */
-    textStyle?: 'header' | 'subheader' | 'title' | 'content' | 'body' | 'caption' | 'placeholder';
+    textStyle?: 'background' | 'header' | 'subheader' | 'title' | 'content' | 'body' | 'caption' | 'placeholder';
 }
 
 /**
@@ -33,7 +34,6 @@ interface ThemedTextProps extends TextProps {
  */
 export function ThemedText({style, variant = 'primary', textStyle = 'content', ...props}: ThemedTextProps) {
     const {colors} = useTheme();
-
     const color = React.useMemo(() => {
         switch (variant) {
             case 'secondary':
@@ -56,18 +56,20 @@ export function ThemedText({style, variant = 'primary', textStyle = 'content', .
 
     const typography = React.useMemo(() => {
         switch (textStyle) {
+            case 'background':
+                return {fontSize: 128};
             case 'header':
-                return {fontSize: 24, fontWeight: '700' as const, fontFamily: 'YujiSyuku_400Regular'};
+                return {fontSize: 36, fontWeight: '700' as const, fontFamily: 'YujiSyuku_400Regular'};
             case 'subheader':
-                return {fontSize: 20, fontWeight: '600' as const};
+                return {fontSize: 32, fontWeight: '600' as const, fontFamily: 'Iansui_400Regular'};
             case 'title':
-                return {fontSize: 18, fontWeight: '600' as const,};
+                return {fontSize: 30, fontWeight: '600' as const, fontFamily: 'YujiSyuku_400Regular'};
             case 'content':
-                return {fontSize: 16, fontWeight: '400' as const};
+                return {fontSize: 30, fontWeight: '400' as const, fontFamily: 'Iansui_400Regular'};
             case 'body':
-                return {fontSize: 14, fontWeight: '400' as const};
+                return {fontSize: 28, fontWeight: '400' as const, fontFamily: 'Iansui_400Regular'};
             case 'caption':
-                return {fontSize: 12, fontWeight: '400' as const};
+                return {fontSize: 22, fontWeight: '400' as const, fontFamily: 'Iansui_400Regular'};
             case 'placeholder':
                 return {fontSize: 14, fontWeight: '400' as const, fontStyle: 'italic' as const};
             default:

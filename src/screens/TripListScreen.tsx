@@ -13,7 +13,7 @@ import TripCardCarousel from "../components/homepage/TripCardCarousel";
 export const HEADER_MAX_HEIGHT = 100;
 
 export default function TripListScreen() {
-    const [useCarousel, setUseCarousel] = useState(true) // Set to false to use FlatList instead
+    const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
     const {trips, loading} = useTrips();
     const navigation = useNavigation<any>();
     const insets = useSafeAreaInsets();
@@ -95,12 +95,12 @@ export default function TripListScreen() {
                                }
                            ]}>
                 <View className="items-center">
-                    <Animated.Text className="font-yuji" style={[
+                    <Animated.Text className="font-hina" style={[
                         {fontSize, color: colors.text}
                     ]}>
                         御旅帳
                     </Animated.Text>
-                    <Animated.Text className="" style={[
+                    <Animated.Text style={[
                         {fontSize: subtitleFontSize, color: colors.text}
                     ]}>
                         G O T A B I C H O

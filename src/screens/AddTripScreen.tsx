@@ -41,6 +41,7 @@ export default function AddTripScreen() {
             });
             navigation.goBack();
         } catch (e) {
+            console.log(e)
             Alert.alert('Error', 'Failed to create trip');
         } finally {
             setSaving(false);
