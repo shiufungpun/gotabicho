@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, TextProps} from 'react-native';
-import {useTheme} from '../theme/useTheme';
+import {useTheme} from '../theme';
 
 interface ThemedTextProps extends TextProps {
     /**
@@ -25,8 +25,9 @@ interface ThemedTextProps extends TextProps {
      * - 'body': Body text (14px, regular)
      * - 'caption': Small caption text (12px, regular)
      * - 'placeholder': Placeholder text (14px, italic)
+     * - 'number': Numeric text (14px, monospaced)
      */
-    textStyle?: 'background' | 'header' | 'subheader' | 'title' | 'content' | 'body' | 'caption' | 'placeholder';
+    textStyle?: 'background' | 'header' | 'subheader' | 'title' | 'content' | 'body' | 'caption' | 'placeholder' | 'number';
 }
 
 /**
@@ -67,11 +68,13 @@ export function ThemedText({style, variant = 'primary', textStyle = 'content', .
             case 'content':
                 return {fontSize: 30, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'body':
-                return {fontSize: 28, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
+                return {fontSize: 18, fontWeight: '400' as const};
             case 'caption':
                 return {fontSize: 22, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'placeholder':
                 return {fontSize: 14, fontWeight: '400' as const, fontStyle: 'italic' as const};
+            case 'number':
+                return {};
             default:
                 return {fontSize: 16, fontWeight: '400' as const};
         }

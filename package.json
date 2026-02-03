@@ -11,7 +11,6 @@
   "dependencies": {
     "@expo-google-fonts/hina-mincho": "^0.4.1",
     "@expo-google-fonts/iansui": "^0.4.2",
-    "@expo-google-fonts/quicksand": "^0.4.1",
     "@expo-google-fonts/yuji-syuku": "^0.4.1",
     "@expo-google-fonts/zen-old-mincho": "^0.4.1",
     "@react-navigation/bottom-tabs": "^6.5.11",

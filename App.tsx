@@ -9,7 +9,6 @@ import {initDatabase} from './src/db/db';
 import AppNavigator from './src/navigation/AppNavigator';
 import {ThemedText, ThemedView} from './src/components';
 import {Iansui_400Regular} from "@expo-google-fonts/iansui";
-import {Quicksand_400Regular} from "@expo-google-fonts/quicksand";
 
 export default function App() {
     const [ready, setReady] = useState(false);
@@ -18,7 +17,6 @@ export default function App() {
         YujiSyuku_400Regular,
         HinaMincho_400Regular,
         Iansui_400Regular,
-        Quicksand_400Regular
     });
 
     useEffect(() => {

@@ -9,7 +9,7 @@ module.exports = {
                 yuji: ["YujiSyuku_400Regular", "Quicksand_400Regular", "serif"],
                 hina: ["HinaMincho_400Regular", "serif"],
                 iansui: ["Iansui_400Regular", "Quicksand_400Regular", "serif"],
-                guicksand: ["Quicksand_400Regular", "sans-serif"],
+                google_sans: ["GoogleSans_400Regular", "sans-serif"],
             }
         },
     },
