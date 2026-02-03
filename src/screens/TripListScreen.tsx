@@ -1,9 +1,7 @@
 import React, {useRef, useState} from 'react';
 import {Animated, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useTrips} from '../hooks/useTrips';
-import {Trip} from '../types';
+import {TripDetails, useTrips} from '../hooks/useTrips';
 import {useTheme} from '../theme';
 import {ThemedText, ThemedView} from '../components';
 import TripCard from "../containers/TripCard";
@@ -15,7 +13,6 @@ export const HEADER_MAX_HEIGHT = 100;
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
     const {trips, loading} = useTrips();
-    const navigation = useNavigation<any>();
     const insets = useSafeAreaInsets();
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
@@ -43,7 +40,7 @@ export default function TripListScreen() {
     });
 
 
-    const renderItem = ({item}: { item: Trip & { total_expenses: number } }) => {
+    const renderItem = ({item}: { item: TripDetails }) => {
         return <TripCard trip={item}/>;
     };
 

@@ -2,11 +2,13 @@ import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {ThemedCard, ThemedText} from "../components";
-import {Trip} from "../types";
 import {useTheme} from '../theme';
+import TripActionButtonPanel from "../components/trip/ActionButtonPanel";
+import {TripDetails} from "../hooks/useTrips";
+import SpentIndicator from "../components/trip/SpentIndicator";
 
 interface TripCardProps {
-    trip: Trip & { total_expenses: number; participant_count: number; receipt_count: number };
+    trip: TripDetails;
 }
 
 const TripCard: React.FC<TripCardProps> = ({trip}) => {
@@ -33,36 +35,27 @@ const TripCard: React.FC<TripCardProps> = ({trip}) => {
         <TouchableOpacity
             onPress={() => navigation.navigate('TripHome', {tripId: trip.id, title: trip.name})}
         >
-            <ThemedCard className="p-4 rounded-lg mb-3">
+            <ThemedCard className="p-5  rounded-lg mb-3">
                 <ThemedText textStyle={"subheader"}>{trip.name}</ThemedText>
-                {hasBudget && (
-                    <ThemedText
-                        variant="secondary"
-                        className="text-lg font-medium"
-                        style={isOverBudget && {color: colors.budgetOver}}
-                    >
-                        {spent.toLocaleString()} / {budget.toLocaleString()} {trip.base_currency}
-                    </ThemedText>
-                )}
                 <ThemedText variant="secondary" textStyle={"caption"}>
                     {trip.start_date} - {trip.end_date}
                 </ThemedText>
 
                 {/* Trip Info Row */}
                 <View className="flex-row items-center mt-2 gap-3">
-                    <ThemedText variant="tertiary" className="text-sm">
+                    <ThemedText variant="tertiary">
                         {duration} {duration === 1 ? 'day' : 'days'}
                     </ThemedText>
-                    <ThemedText variant="tertiary" className="text-sm">
+                    <ThemedText variant="tertiary">
                         •
                     </ThemedText>
-                    <ThemedText variant="tertiary" className="text-sm">
+                    <ThemedText variant="tertiary">
                         {trip.participant_count} {trip.participant_count === 1 ? 'person' : 'people'}
                     </ThemedText>
-                    <ThemedText variant="tertiary" className="text-sm">
+                    <ThemedText variant="tertiary">
                         •
                     </ThemedText>
-                    <ThemedText variant="tertiary" className="text-sm">
+                    <ThemedText variant="tertiary">
                         {trip.receipt_count} {trip.receipt_count === 1 ? 'receipt' : 'receipts'}
                     </ThemedText>
                 </View>
@@ -84,6 +77,9 @@ const TripCard: React.FC<TripCardProps> = ({trip}) => {
                         Spent: {spent.toLocaleString()} {trip.base_currency}
                     </ThemedText>
                 )}
+                <SpentIndicator trip={trip}/>
+                {/* Action Button */}
+                <TripActionButtonPanel trip={trip}/>
             </ThemedCard>
         </TouchableOpacity>
 

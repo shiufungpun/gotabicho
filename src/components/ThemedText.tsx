@@ -61,15 +61,15 @@ export function ThemedText({style, variant = 'primary', textStyle = 'content', .
             case 'header':
                 return {fontSize: 36, fontWeight: '700' as const, fontFamily: 'YujiSyuku_400Regular'};
             case 'subheader':
-                return {fontSize: 32, fontWeight: '600' as const, fontFamily: 'Iansui_400Regular'};
+                return {fontSize: 32, fontWeight: '600' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'title':
-                return {fontSize: 30, fontWeight: '600' as const, fontFamily: 'YujiSyuku_400Regular'};
+                return {fontSize: 30, fontWeight: '600' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'content':
-                return {fontSize: 30, fontWeight: '400' as const, fontFamily: 'Iansui_400Regular'};
+                return {fontSize: 30, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'body':
-                return {fontSize: 28, fontWeight: '400' as const, fontFamily: 'Iansui_400Regular'};
+                return {fontSize: 28, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'caption':
-                return {fontSize: 22, fontWeight: '400' as const, fontFamily: 'Iansui_400Regular'};
+                return {fontSize: 22, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'placeholder':
                 return {fontSize: 14, fontWeight: '400' as const, fontStyle: 'italic' as const};
             default:
