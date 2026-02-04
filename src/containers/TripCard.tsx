@@ -33,7 +33,7 @@ const TripCard: React.FC<TripCardProps> = ({trip}) => {
         <TouchableOpacity
             onPress={() => navigation.navigate('TripHome', {tripId: trip.id, title: trip.name})}
         >
-            <ThemedCard className="p-5 rounded-lg mb-3">
+            <ThemedCard className="pt-2 px-5 rounded-lg mb-3">
                 <ThemedText textStyle={"subheader"}>{trip.name}</ThemedText>
                 <ThemedText variant="secondary" textStyle={"number"} className={"text-lg"}>
                     {trip.start_date} - {trip.end_date} ({duration}日)

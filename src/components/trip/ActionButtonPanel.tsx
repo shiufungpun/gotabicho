@@ -13,7 +13,7 @@ const TripActionButtonPanel = ({trip}: TripActionButtonPanelProps) => {
 
     return (
         <>
-            <View className={"flex-row justify-evenly mt-2 pt-1 items-center border-t-[1px]"}
+            <View className={"flex-row justify-evenly my-2 py-2 items-center border-t-[1px]"}
                   style={{borderColor: colors.divider}}>
                 <TouchableOpacity
                 >
