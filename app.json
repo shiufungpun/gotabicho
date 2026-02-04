@@ -12,7 +12,8 @@
             "node_modules/@expo-google-fonts/yuji-syuku/400Regular/YujiSyuku_400Regular.ttf"
           ]
         }
-      ]
+      ],
+      "expo-router"
     ]
   }
 }

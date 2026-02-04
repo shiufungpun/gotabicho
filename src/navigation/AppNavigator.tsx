@@ -12,6 +12,7 @@ import AddReceiptScreen from '../screens/AddReceiptScreen';
 import ReceiptDetailScreen from '../screens/ReceiptDetailScreen';
 import ParticipantListScreen from '../screens/ParticipantListScreen';
 import SettlementScreen from '../screens/SettlementScreen';
+import {Icon, Label, NativeTabs} from 'expo-router/unstable-native-tabs';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,6 +26,21 @@ export type RootStackParamList = {
     ReceiptDetail: { receiptId: number };
     TripExpenses: { tripId: number }; // For direct access if needed, or via Tab
 };
+
+function TabLayout() {
+    return (
+        <NativeTabs>
+            <NativeTabs.Trigger name="index">
+                <Label>Home</Label>
+                <Icon sf="house.fill" drawable="custom_android_drawable"/>
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="settings">
+                <Icon sf="gear" drawable="custom_settings_drawable"/>
+                <Label>Settings</Label>
+            </NativeTabs.Trigger>
+        </NativeTabs>
+    );
+}
 
 function TripTabNavigator() {
     const route = useRoute<RouteProp<RootStackParamList, 'TripHome'>>();
