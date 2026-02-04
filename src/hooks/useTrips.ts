@@ -1,7 +1,6 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Trip} from '../types';
 import * as TripRepository from '../repositories/tripRepository';
-import {useFocusEffect} from '@react-navigation/native';
 
 export type TripDetails = Trip & {
     total_expenses: number;
@@ -25,11 +24,10 @@ export const useTrips = () => {
         }
     }, []);
 
-    useFocusEffect(
-        useCallback(() => {
-            loadTrips();
-        }, [loadTrips])
-    );
+    // Load trips only on initial mount
+    useEffect(() => {
+        loadTrips();
+    }, [loadTrips]);
 
     return {trips, loading, refresh: loadTrips};
 };
