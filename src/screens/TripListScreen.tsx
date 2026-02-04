@@ -8,9 +8,6 @@ import TripCard from "../containers/TripCard";
 import TripCardCarousel from "../components/homepage/TripCardCarousel";
 import {Icon, Label, NativeTabs} from 'expo-router/unstable-native-tabs';
 
-
-export const HEADER_MAX_HEIGHT = 100;
-
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
     const {trips, loading} = useTrips();
@@ -18,13 +15,13 @@ export default function TripListScreen() {
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
 
-    const headerMaxHeight = HEADER_MAX_HEIGHT + insets.top;
+    const HEADER_MAX_HEIGHT = 100 + insets.top;
     const HEADER_MIN_HEIGHT = 70 + insets.top;
-    const HEADER_SCROLL_DISTANCE = headerMaxHeight - HEADER_MIN_HEIGHT + 20;
+    const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT + 20;
 
     const headerHeight = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [headerMaxHeight, HEADER_MIN_HEIGHT],
+        outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
         extrapolate: 'clamp',
     });
 
@@ -59,7 +56,7 @@ export default function TripListScreen() {
                     contentContainerStyle={{
                         paddingHorizontal: 16,
                         paddingBottom: 80,
-                        paddingTop: headerMaxHeight + 16
+                        paddingTop: HEADER_MAX_HEIGHT + 16
                     }}
                     scrollEventThrottle={16}
                     onScroll={Animated.event(

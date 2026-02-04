@@ -2,7 +2,6 @@ import React from 'react';
 
 import {Dimensions, View} from 'react-native';
 import Carousel, {ICarouselInstance, Pagination} from "react-native-reanimated-carousel";
-import {HEADER_MAX_HEIGHT} from "../../screens/TripListScreen";
 import {Trip} from "../../types";
 import {useSharedValue} from "react-native-reanimated";
 import AddTripCard from "../../containers/AddTripCard";
@@ -21,7 +20,7 @@ const TripCardCarousel = ({trips}: {
             animated: true,
         });
     };
-
+    const HEADER_MAX_HEIGHT = 100;
     const renderCarouselItem = ({item}: {
         item?: Trip & { total_expenses: number; participant_count: number; receipt_count: number }
     }) => {
