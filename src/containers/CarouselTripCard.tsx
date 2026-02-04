@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useRouter} from 'expo-router';
 import {ThemedCard, ThemedText} from "../components";
 import {Trip} from "../types";
 import {useTheme} from '../theme';
@@ -13,7 +13,7 @@ interface TripCardProps {
 }
 
 const CarouselTripCard: React.FC<TripCardProps> = ({trip}) => {
-    const navigation = useNavigation<any>();
+    const router = useRouter();
     const {colors} = useTheme();
 
     const budget = trip.total_budget || 0;

@@ -3,6 +3,7 @@
     "userInterfaceStyle": "automatic",
     "name": "Gotabicho",
     "slug": "gotabicho",
+    "scheme": "gotabicho",
     "plugins": [
       [
         "expo-font",

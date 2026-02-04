@@ -3,15 +3,14 @@ import {Trip} from "../../types";
 import TripCard from "../../containers/TripCard";
 import {ThemedText} from "../ThemedText";
 import {Animated, TouchableOpacity} from "react-native";
-import {HEADER_MAX_HEIGHT} from "../../screens/TripListScreen";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import {useNavigation} from "@react-navigation/native";
+import {useRouter} from "expo-router";
 
 
 const TripList = ({trips}: {
     trips: (Trip & { total_expenses: number; participant_count: number; receipt_count: number })[]
 }) => {
-    const navigation = useNavigation<any>();
+    const router = useRouter();
     const insets = useSafeAreaInsets();
     const renderItem = ({item}: {
         item: Trip & { total_expenses: number; participant_count: number; receipt_count: number }
@@ -19,7 +18,7 @@ const TripList = ({trips}: {
         return <TripCard trip={item}/>;
     };
     const scrollY = useRef(new Animated.Value(0)).current;
-
+    const HEADER_MAX_HEIGHT = 100;
     return (
         <Animated.FlatList
             data={trips}
@@ -38,7 +37,7 @@ const TripList = ({trips}: {
             )}
             ListEmptyComponent={
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('AddTrip')}
+                    onPress={() => router.push('/add-trip')}
                 >
                     <ThemedText variant="tertiary" className="text-center mt-10">
                         No trips yet. Create one!

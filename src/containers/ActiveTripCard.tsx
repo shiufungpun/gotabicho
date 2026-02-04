@@ -40,7 +40,7 @@ const ActiveTripCard: React.FC = () => {
 
     return (
         <TouchableOpacity
-            onPress={() => navigation.navigate('TripHome', {tripId: trip.id, title: trip.name})}
+            onPress={() => router.push(`/trip/${trip.id}`)}
         >
             <ThemedCard className="p-4 rounded-lg mb-3">
                 <View className="flex-row justify-between items-center">

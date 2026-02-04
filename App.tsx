@@ -1,49 +1,8 @@
-import './global.css';
-import React, {useEffect, useState} from 'react';
-import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {ActivityIndicator, useColorScheme} from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {useFonts, YujiSyuku_400Regular} from '@expo-google-fonts/yuji-syuku';
-import {HinaMincho_400Regular} from '@expo-google-fonts/hina-mincho';
-import {initDatabase} from './src/db/db';
-import AppNavigator from './src/navigation/AppNavigator';
-import {ThemedText, ThemedView} from './src/components';
-import {Iansui_400Regular} from "@expo-google-fonts/iansui";
+// This file is no longer used with Expo Router
+// The app entry point is now controlled by package.json's "main": "expo-router/entry"
+// and the root layout is in app/_layout.tsx
 
 export default function App() {
-    const [ready, setReady] = useState(false);
-    const colorScheme = useColorScheme();
-    const [fontsLoaded] = useFonts({
-        YujiSyuku_400Regular,
-        HinaMincho_400Regular,
-        Iansui_400Regular,
-    });
-
-    useEffect(() => {
-        initDatabase()
-            .then(() => {
-                console.log('Database initialized');
-                setReady(true);
-            })
-            .catch(e => console.error('DB Init Error:', e));
-    }, []);
-
-    const navigationTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
-
-    if (!ready || !fontsLoaded) {
-        return (
-            <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator size="large"/>
-                <ThemedText>Initializing Database...</ThemedText>
-            </ThemedView>
-        );
-    }
-
-    return (
-        <SafeAreaProvider>
-            <NavigationContainer theme={navigationTheme}>
-                <AppNavigator/>
-            </NavigationContainer>
-        </SafeAreaProvider>
-    );
+    return null;
 }
+

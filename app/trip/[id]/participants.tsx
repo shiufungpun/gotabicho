@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {Alert, Button, FlatList, StyleSheet, TextInput, View} from 'react-native';
-import {useRoute} from '@react-navigation/native';
-import {useTripDetails} from '../hooks/useTripDetails';
-import {createParticipant, deleteParticipant} from '../repositories/participantRepository';
-import {useTheme} from '../theme';
-import {ThemedText, ThemedView} from '../components';
+import {useLocalSearchParams} from 'expo-router';
+import {useTripDetails} from '../../../src/hooks/useTripDetails';
+import {createParticipant, deleteParticipant} from '../../../src/repositories/participantRepository';
+import {useTheme} from '../../../src/theme';
+import {ThemedText, ThemedView} from '../../../src/components';
 
 export default function ParticipantListScreen() {
-    const route = useRoute<any>();
-    const {tripId} = route.params || {};
+    const {id} = useLocalSearchParams<{ id: string }>();
+    const tripId = parseInt(id || '0');
     const {participants, refresh} = useTripDetails(tripId);
     const {colors} = useTheme();
 
@@ -100,6 +100,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
         padding: 16, borderBottomWidth: 1
     },
-    name: {fontSize: 16, fontWeight: '500'},
-    sub: {fontSize: 12}
+    name: {fontSize: 16, fontWeight: '600'},
+    sub: {fontSize: 12, marginTop: 4}
 });

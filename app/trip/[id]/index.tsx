@@ -10,53 +10,44 @@ import Animated, {
 } from 'react-native-reanimated';
 import {PieChart} from 'react-native-gifted-charts';
 import {Ionicons} from '@expo/vector-icons';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/AppNavigator';
-import {useTripDetails} from '../hooks/useTripDetails';
-import {ReceiptWithDetails} from '../types';
-import {useTheme} from '../theme';
-import {ThemedView} from '../components';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'TripExpenses'>;
+import {useLocalSearchParams, useRouter} from 'expo-router';
+import {useTripDetails} from '../../../src/hooks/useTripDetails';
+import {ReceiptWithDetails} from '../../../src/types';
+import {useTheme} from '../../../src/theme';
+import {ThemedView} from '../../../src/components';
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
 const HEADER_MAX_HEIGHT = 300;
-const HEADER_MIN_HEIGHT = 100; // Condensed header height
+const HEADER_MIN_HEIGHT = 100;
 
-export default function TripExpensesScreen({route, navigation}: Props) {
-    const {tripId} = route.params;
+export default function TripExpensesScreen() {
+    const {id} = useLocalSearchParams<{ id: string }>();
+    const tripId = parseInt(id || '0');
+    const router = useRouter();
     const {trip, receipts, participants} = useTripDetails(tripId);
     const insets = useSafeAreaInsets();
     const scrollY = useSharedValue(0);
     const {colors} = useTheme();
 
     const myId = useMemo(() => {
-        // Find "You" - assuming name is 'You' as per requirements
         return participants.find(p => p.name === 'You')?.id;
     }, [participants]);
 
-
-    // --- Data Processing for Overview ---
-
-    // Sort and Group Receipts
     const receiptSections = useMemo(() => {
         if (!receipts) return [];
 
-        // 1. Sort by date (descending)
         const sorted = [...receipts].sort((a, b) => {
             return new Date(b.date).getTime() - new Date(a.date).getTime();
         });
 
-        // 2. Group by date
         const grouped: { title: string; data: ReceiptWithDetails[] }[] = [];
 
         sorted.forEach(receipt => {
             const dateObj = new Date(receipt.date);
-            // Verify valid date
             if (isNaN(dateObj.getTime())) return;
 
-            const dateStr = dateObj.toISOString().split('T')[0]; // "YYYY-MM-DD"
+            const dateStr = dateObj.toISOString().split('T')[0];
 
             const lastSection = grouped[grouped.length - 1];
             if (lastSection && lastSection.title === dateStr) {
@@ -81,7 +72,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
             });
         });
 
-        // Use theme colors for chart
         const chartColors = colors.chartColors;
         let colorIndex = 0;
 
@@ -100,8 +90,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
     }, [receipts, trip, colors]);
 
     const progress = budget > 0 ? Math.min(totalSpent / budget, 1) : 0;
-
-    // --- Animations ---
 
     const scrollHandler = useAnimatedScrollHandler(event => {
         scrollY.value = event.contentOffset.y;
@@ -137,8 +125,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
         return {opacity};
     });
 
-    // --- Render Items ---
-
     const renderSectionHeader = ({section}: any) => {
         const title = section.title;
         const dateObj = new Date(title);
@@ -151,10 +137,7 @@ export default function TripExpensesScreen({route, navigation}: Props) {
 
         return (
             <View className="bg-gray-50 flex-row items-center pt-2 pb-2 pl-4 z-10">
-                {/* Timeline Line Placeholder to maintain continuity/alignment */}
-                <View className="w-[40px] items-center mr-2">
-                    {/* Optional: Add a small dot or line if we want timeline to go through header */}
-                </View>
+                <View className="w-[40px] items-center mr-2"/>
                 <View className="bg-blue-100 px-3 py-1 rounded-full">
                     <Text className="text-blue-800 font-bold text-xs">{displayDate}</Text>
                 </View>
@@ -164,7 +147,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
 
     const renderReceiptItem = ({item, index, section}: any) => {
         const receiptItem = item as ReceiptWithDetails;
-        // Calculate My Share
         let myShare = 0;
         if (myId) {
             receiptItem.items.forEach(rItem => {
@@ -184,29 +166,24 @@ export default function TripExpensesScreen({route, navigation}: Props) {
 
         return (
             <View className="flex-row mx-4 mb-0">
-                {/* Visual Timeline (Left) */}
                 <View className="w-[40px] items-center mr-2">
-                    {/* Vertical Line */}
                     <View
                         className="absolute w-[2px] bg-gray-300 left-1/2 -ml-[1px]"
                         style={{
                             top: 0,
-                            bottom: isLastItem ? '50%' : -10 // Extend to next item, unless last
+                            bottom: isLastItem ? '50%' : -10
                         }}
                     />
-                    {/* Node/Dot */}
                     <View className="w-3 h-3 bg-blue-500 rounded-full mt-8 border-2 border-white z-10"/>
                 </View>
 
-                {/* Card (Right) */}
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('ReceiptDetail', {receiptId: receiptItem.id})}
+                    onPress={() => router.push(`/receipt/${receiptItem.id}`)}
                     className="flex-1 bg-white p-4 mb-3 rounded-xl shadow-sm flex-row justify-between items-center"
                 >
                     <View className="flex-1">
                         <Text className="text-gray-900 font-bold text-base">{receiptItem.store_name || 'Expense'}</Text>
                         <View className="flex-row items-center mt-1">
-                            {/* Category Label */}
                             {receiptItem.items.length > 0 ? (
                                 <Text className="text-gray-500 text-xs mr-2 px-1.5 py-0.5 bg-gray-100 rounded">
                                     {receiptItem.items[0].category}
@@ -215,7 +192,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
                                 <Text
                                     className="text-gray-500 text-xs mr-2 px-1.5 py-0.5 bg-gray-100 rounded">General</Text>
                             )}
-                            {/* Time (optional detail? or kept date?) - Date is in header now, maybe show TIME here if available, else blank */}
                         </View>
                     </View>
                     <View>
@@ -229,7 +205,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
 
     return (
         <ThemedView style={{flex: 1}}>
-            {/* Animated Header */}
             <Animated.View
                 style={[
                     styles.header,
@@ -237,11 +212,9 @@ export default function TripExpensesScreen({route, navigation}: Props) {
                     {paddingTop: insets.top, backgroundColor: colors.primary}
                 ]}
             >
-                {/* Expanded Content (Charts, etc) */}
                 <Animated.View style={[styles.headerContent, contentOpacityStyle]}>
                     <Text className="text-white text-xl font-bold mb-4 text-center">Trip Overview</Text>
                     <View className="flex-row justify-around items-center w-full px-4">
-                        {/* Pie Chart */}
                         <View className="items-center justify-center" style={{width: 140, height: 140}}>
                             {categoryPieData.length > 0 ? (
                                 <PieChart
@@ -260,7 +233,6 @@ export default function TripExpensesScreen({route, navigation}: Props) {
                             )}
                         </View>
 
-                        {/* Stats & Progress */}
                         <View className="flex-1 ml-6">
                             <Text className="text-white text-sm mb-1">Spent / Budget</Text>
                             <Text className="text-white font-bold text-2xl">
@@ -279,14 +251,12 @@ export default function TripExpensesScreen({route, navigation}: Props) {
                     </View>
                 </Animated.View>
 
-                {/* Collapsed Header Content (Simple Title) */}
                 <Animated.View style={[styles.smallHeaderContent, smallHeaderOpacityStyle, {paddingTop: insets.top}]}>
                     <Text className="text-white text-lg font-bold">Expenses</Text>
                     <Text className="text-gray-300 text-sm ml-2">Total: {totalSpent.toLocaleString()}</Text>
                 </Animated.View>
             </Animated.View>
 
-            {/* List */}
             <AnimatedSectionList
                 sections={receiptSections}
                 keyExtractor={(item: any) => item.id.toString()}
@@ -306,10 +276,9 @@ export default function TripExpensesScreen({route, navigation}: Props) {
                 }
             />
 
-            {/* FAB */}
             <TouchableOpacity
                 className="absolute bottom-8 right-6 bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-                onPress={() => navigation.navigate('AddReceipt', {tripId})}
+                onPress={() => router.push(`/add-receipt?tripId=${tripId}`)}
             >
                 <Ionicons name="add" size={30} color="white"/>
             </TouchableOpacity>
@@ -344,4 +313,3 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     }
 });
-

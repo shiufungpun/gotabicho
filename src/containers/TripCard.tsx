@@ -1,6 +1,6 @@
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useRouter} from 'expo-router';
 import {ThemedCard, ThemedText} from "../components";
 import {useTheme} from '../theme';
 import TripActionButtonPanel from "../components/trip/ActionButtonPanel";
@@ -12,7 +12,7 @@ interface TripCardProps {
 }
 
 const TripCard: React.FC<TripCardProps> = ({trip}) => {
-    const navigation = useNavigation<any>();
+    const router = useRouter();
     const {colors} = useTheme();
 
     const budget = trip.total_budget || 0;
@@ -31,7 +31,7 @@ const TripCard: React.FC<TripCardProps> = ({trip}) => {
 
     return (
         <TouchableOpacity
-            onPress={() => navigation.navigate('TripHome', {tripId: trip.id, title: trip.name})}
+            onPress={() => router.push(`/trip/${trip.id}`)}
         >
             <ThemedCard className="pt-2 px-5 rounded-lg mb-3">
                 <ThemedText textStyle={"subheader"}>{trip.name}</ThemedText>

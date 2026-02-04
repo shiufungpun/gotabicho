@@ -1,12 +1,11 @@
 import React, {useRef, useState} from 'react';
 import {Animated, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {TripDetails, useTrips} from '../hooks/useTrips';
-import {useTheme} from '../theme';
-import {ThemedText, ThemedView} from '../components';
-import TripCard from "../containers/TripCard";
-import TripCardCarousel from "../components/homepage/TripCardCarousel";
-import {Icon, Label, NativeTabs} from 'expo-router/unstable-native-tabs';
+import {TripDetails, useTrips} from '../src/hooks/useTrips';
+import {useTheme} from '../src/theme';
+import {ThemedText, ThemedView} from '../src/components';
+import TripCard from "../src/containers/TripCard";
+import TripCardCarousel from "../src/components/homepage/TripCardCarousel";
 
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
@@ -103,20 +102,6 @@ export default function TripListScreen() {
                 </View>
             </Animated.View>
             {!loading && renderList()}
-
-            {/* Tab Layout at the bottom */}
-            <View className="absolute bottom-0 left-0 right-0" style={{paddingBottom: insets.bottom}}>
-                <NativeTabs>
-                    <NativeTabs.Trigger name="index">
-                        <Label>Home</Label>
-                        <Icon sf="house.fill" drawable="custom_android_drawable"/>
-                    </NativeTabs.Trigger>
-                    <NativeTabs.Trigger name="settings">
-                        <Icon sf="gear" drawable="custom_settings_drawable"/>
-                        <Label>Settings</Label>
-                    </NativeTabs.Trigger>
-                </NativeTabs>
-            </View>
         </ThemedView>
     );
 }

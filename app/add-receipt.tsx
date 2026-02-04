@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/AppNavigator';
-import {getParticipantsByTripId} from '../repositories/participantRepository';
-import {createReceipt} from '../repositories/receiptRepository';
-import {Participant} from '../types';
+import {useLocalSearchParams, useRouter} from 'expo-router';
+import {getParticipantsByTripId} from '../src/repositories/participantRepository';
+import {createReceipt} from '../src/repositories/receiptRepository';
+import {Participant} from '../src/types';
 import {Ionicons} from '@expo/vector-icons';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'AddReceipt'>;
 
 type ItemDraft = {
     name: string;
@@ -16,16 +13,14 @@ type ItemDraft = {
     shares: { participant_id: number; isSelected: boolean }[];
 };
 
-export default function AddReceiptScreen({route, navigation}: Props) {
-    const {tripId} = route.params;
+export default function AddReceiptScreen() {
+    const {tripId} = useLocalSearchParams<{ tripId: string }>();
+    const router = useRouter();
     const [participants, setParticipants] = useState<Participant[]>([]);
 
-    // Receipt Level State
     const [storeName, setStoreName] = useState('');
     const [selectedPayerId, setSelectedPayerId] = useState<number | null>(null);
     const [date, setDate] = useState(new Date());
-
-    // Items State
     const [items, setItems] = useState<ItemDraft[]>([]);
 
     useEffect(() => {
@@ -34,9 +29,8 @@ export default function AddReceiptScreen({route, navigation}: Props) {
 
     const loadParticipants = async () => {
         try {
-            const data = await getParticipantsByTripId(tripId);
+            const data = await getParticipantsByTripId(parseInt(tripId || '0'));
             setParticipants(data);
-            // Default payer = "You"
             const you = data.find(p => p.name === 'You');
             if (you) setSelectedPayerId(you.id);
             else if (data.length > 0) setSelectedPayerId(data[0].id);
@@ -46,7 +40,6 @@ export default function AddReceiptScreen({route, navigation}: Props) {
     };
 
     const addItem = () => {
-        // Default all participants selected for split
         const defaultShares = participants.map(p => ({
             participant_id: p.id,
             isSelected: true
@@ -99,15 +92,15 @@ export default function AddReceiptScreen({route, navigation}: Props) {
                 amount: amount,
                 participantShares: selectedShares.map(s => ({
                     participant_id: s.participant_id,
-                    amount: splitAmount // Even split for now
+                    amount: splitAmount
                 }))
             };
         });
 
         const receiptData = {
-            trip_id: tripId,
+            trip_id: parseInt(tripId || '0'),
             total_amount: totalAmount,
-            currency: 'JPY', // Hardcoded for simplified version
+            currency: 'JPY',
             paid_by_participant_id: selectedPayerId,
             date: date.toISOString(),
             store_name: storeName
@@ -115,7 +108,7 @@ export default function AddReceiptScreen({route, navigation}: Props) {
 
         try {
             await createReceipt(receiptData, processedItems);
-            navigation.goBack();
+            router.back();
         } catch (e) {
             console.error(e);
             alert("Error creating receipt");
@@ -125,8 +118,6 @@ export default function AddReceiptScreen({route, navigation}: Props) {
     return (
         <View className="flex-1 bg-gray-50">
             <ScrollView className="flex-1 p-4">
-
-                {/* Receipt Info */}
                 <View className="bg-white p-4 rounded-xl mb-4 shadow-sm">
                     <Text className="text-gray-500 mb-1">Store / Title</Text>
                     <TextInput
@@ -153,7 +144,6 @@ export default function AddReceiptScreen({route, navigation}: Props) {
                     </ScrollView>
                 </View>
 
-                {/* Items */}
                 <Text className="text-lg font-bold mb-2 ml-1 text-gray-700">Items</Text>
                 {items.map((item, idx) => (
                     <View key={idx} className="bg-white p-4 rounded-xl mb-4 shadow-sm border border-gray-100">
@@ -222,4 +212,3 @@ export default function AddReceiptScreen({route, navigation}: Props) {
         </View>
     );
 }
-

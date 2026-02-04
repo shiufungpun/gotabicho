@@ -1,15 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/AppNavigator';
-import {getReceiptById} from '../repositories/receiptRepository';
-import {getParticipantsByTripId} from '../repositories/participantRepository';
-import {Participant, ReceiptWithDetails} from '../types';
+import {useLocalSearchParams} from 'expo-router';
+import {getReceiptById} from '../../src/repositories/receiptRepository';
+import {getParticipantsByTripId} from '../../src/repositories/participantRepository';
+import {Participant, ReceiptWithDetails} from '../../src/types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'ReceiptDetail'>;
-
-export default function ReceiptDetailScreen({route}: Props) {
-    const {receiptId} = route.params;
+export default function ReceiptDetailScreen() {
+    const {id} = useLocalSearchParams<{ id: string }>();
+    const receiptId = parseInt(id || '0');
     const [receipt, setReceipt] = useState<ReceiptWithDetails | null>(null);
     const [participants, setParticipants] = useState<Participant[]>([]);
 
@@ -78,4 +76,3 @@ export default function ReceiptDetailScreen({route}: Props) {
         </ScrollView>
     );
 }
-

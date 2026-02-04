@@ -1,13 +1,13 @@
 import React from 'react';
 import {FlatList, StyleSheet, Text} from 'react-native';
-import {useRoute} from '@react-navigation/native';
-import {useTripDetails} from '../hooks/useTripDetails';
-import {useTheme} from '../theme';
-import {ThemedCard, ThemedText, ThemedView} from '../components';
+import {useLocalSearchParams} from 'expo-router';
+import {useTripDetails} from '../../../src/hooks/useTripDetails';
+import {useTheme} from '../../../src/theme';
+import {ThemedCard, ThemedText, ThemedView} from '../../../src/components';
 
 export default function SettlementScreen() {
-    const route = useRoute<any>();
-    const {tripId} = route.params || {};
+    const {id} = useLocalSearchParams<{ id: string }>();
+    const tripId = parseInt(id || '0');
     const {settlements} = useTripDetails(tripId);
     const {colors} = useTheme();
 

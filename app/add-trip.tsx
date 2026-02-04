@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import {Alert, Button, StyleSheet, TextInput} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {createTrip} from '../repositories/tripRepository';
-import {useTheme} from '../theme';
-import {ThemedText, ThemedView} from '../components';
+import {useRouter} from 'expo-router';
+import {createTrip} from '../src/repositories/tripRepository';
+import {useTheme} from '../src/theme';
+import {ThemedText, ThemedView} from '../src/components';
 
 export default function AddTripScreen() {
     const [name, setName] = useState('');
     const [budget, setBudget] = useState('');
     const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
     const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
-    const navigation = useNavigation();
+    const router = useRouter();
     const [saving, setSaving] = useState(false);
     const {colors} = useTheme();
 
@@ -39,7 +39,7 @@ export default function AddTripScreen() {
                 end_date: endDate,
                 base_currency: 'JPY'
             });
-            navigation.goBack();
+            router.back();
         } catch (e) {
             console.log(e)
             Alert.alert('Error', 'Failed to create trip');
