@@ -6,6 +6,7 @@ import {useTheme} from '../theme';
 import {ThemedText, ThemedView} from '../components';
 import TripCard from "../containers/TripCard";
 import TripCardCarousel from "../components/homepage/TripCardCarousel";
+import {Icon, Label, NativeTabs} from 'expo-router/unstable-native-tabs';
 
 
 export const HEADER_MAX_HEIGHT = 100;
@@ -105,6 +106,20 @@ export default function TripListScreen() {
                 </View>
             </Animated.View>
             {!loading && renderList()}
+
+            {/* Tab Layout at the bottom */}
+            <View className="absolute bottom-0 left-0 right-0" style={{paddingBottom: insets.bottom}}>
+                <NativeTabs>
+                    <NativeTabs.Trigger name="index">
+                        <Label>Home</Label>
+                        <Icon sf="house.fill" drawable="custom_android_drawable"/>
+                    </NativeTabs.Trigger>
+                    <NativeTabs.Trigger name="settings">
+                        <Icon sf="gear" drawable="custom_settings_drawable"/>
+                        <Label>Settings</Label>
+                    </NativeTabs.Trigger>
+                </NativeTabs>
+            </View>
         </ThemedView>
     );
 }
