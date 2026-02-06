@@ -1,12 +1,11 @@
 import React, {useRef, useState} from 'react';
-import {Alert, Animated, View} from 'react-native';
+import {Animated, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TripDetails, useTrips} from '../src/hooks/useTrips';
 import {useTheme} from '../src/theme';
 import {ThemedText, ThemedView} from '../src/components';
 import TripCard from "../src/containers/TripCard";
 import TripCardCarousel from "../src/components/homepage/TripCardCarousel";
-import {Stack} from "expo-router";
 
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
@@ -76,7 +75,6 @@ export default function TripListScreen() {
 
     return (
         <>
-
             <ThemedView className="flex-1">
                 <Animated.View
                     className="absolute top-0 left-0 right-0 overflow-hidden justify-end pb-3 px-4 z-10 border-b"
@@ -108,16 +106,6 @@ export default function TripListScreen() {
                 </Animated.View>
                 {!loading && renderList()}
             </ThemedView>
-            <Stack.Toolbar placement="right">
-                <Stack.Toolbar.Button
-                    icon={isFavorite ? 'star.fill' : 'star'}
-                    onPress={() => setIsFavorite(!isFavorite)}
-                />
-                <Stack.Toolbar.Button icon="square.and.arrow.up" onPress={() => Alert.alert('Share')}/>
-            </Stack.Toolbar>
-            <Stack.Toolbar placement="left">
-                <Stack.Toolbar.Button icon="sidebar.left" onPress={() => Alert.alert('Sidebar')}/>
-            </Stack.Toolbar>
         </>
     );
 }
