@@ -1,11 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {Animated, View} from 'react-native';
+import {Alert, Animated, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TripDetails, useTrips} from '../src/hooks/useTrips';
 import {useTheme} from '../src/theme';
 import {ThemedText, ThemedView} from '../src/components';
 import TripCard from "../src/containers/TripCard";
 import TripCardCarousel from "../src/components/homepage/TripCardCarousel";
+import {Stack} from "expo-router";
 
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
@@ -13,6 +14,7 @@ export default function TripListScreen() {
     const insets = useSafeAreaInsets();
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
+    const [isFavorite, setIsFavorite] = useState(false);
 
     const HEADER_MAX_HEIGHT = 100 + insets.top;
     const HEADER_MIN_HEIGHT = 70 + insets.top;
@@ -73,35 +75,49 @@ export default function TripListScreen() {
     }
 
     return (
-        <ThemedView className="flex-1">
-            <Animated.View className="absolute top-0 left-0 right-0 overflow-hidden justify-end pb-3 px-4 z-10 border-b"
-                           style={[
-                               {
-                                   height: headerHeight,
-                                   paddingTop: insets.top,
-                                   backgroundColor: colors.surface,
-                                   borderBottomColor: colors.border,
-                                   shadowColor: colors.shadow,
-                                   elevation: 4,
-                                   shadowOpacity: 0.1,
-                                   shadowRadius: 4,
-                                   shadowOffset: {width: 0, height: 2},
-                               }
-                           ]}>
-                <View className="items-center">
-                    <Animated.Text className="font-hina" style={[
-                        {fontSize, color: colors.text}
+        <>
+
+            <ThemedView className="flex-1">
+                <Animated.View
+                    className="absolute top-0 left-0 right-0 overflow-hidden justify-end pb-3 px-4 z-10 border-b"
+                    style={[
+                        {
+                            height: headerHeight,
+                            paddingTop: insets.top,
+                            backgroundColor: colors.surface,
+                            borderBottomColor: colors.border,
+                            shadowColor: colors.shadow,
+                            elevation: 4,
+                            shadowOpacity: 0.1,
+                            shadowRadius: 4,
+                            shadowOffset: {width: 0, height: 2},
+                        }
                     ]}>
-                        御旅帳
-                    </Animated.Text>
-                    <Animated.Text style={[
-                        {fontSize: subtitleFontSize, color: colors.text}
-                    ]}>
-                        G O T A B I C H O
-                    </Animated.Text>
-                </View>
-            </Animated.View>
-            {!loading && renderList()}
-        </ThemedView>
+                    <View className="items-center">
+                        <Animated.Text className="font-hina" style={[
+                            {fontSize, color: colors.text}
+                        ]}>
+                            御旅帳
+                        </Animated.Text>
+                        <Animated.Text style={[
+                            {fontSize: subtitleFontSize, color: colors.text}
+                        ]}>
+                            G O T A B I C H O
+                        </Animated.Text>
+                    </View>
+                </Animated.View>
+                {!loading && renderList()}
+            </ThemedView>
+            <Stack.Toolbar placement="right">
+                <Stack.Toolbar.Button
+                    icon={isFavorite ? 'star.fill' : 'star'}
+                    onPress={() => setIsFavorite(!isFavorite)}
+                />
+                <Stack.Toolbar.Button icon="square.and.arrow.up" onPress={() => Alert.alert('Share')}/>
+            </Stack.Toolbar>
+            <Stack.Toolbar placement="left">
+                <Stack.Toolbar.Button icon="sidebar.left" onPress={() => Alert.alert('Sidebar')}/>
+            </Stack.Toolbar>
+        </>
     );
 }
