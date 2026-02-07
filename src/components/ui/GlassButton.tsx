@@ -1,11 +1,12 @@
 import React from 'react';
 import {GlassContainer, GlassView} from "expo-glass-effect";
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 
 interface GlassButtonProps {
     icon: React.ReactNode;
     onPress: () => void;
     disabled?: boolean;
+    isAbsolute?: boolean;
     top?: string | number;
     left?: string | number;
 }
@@ -14,11 +15,16 @@ export const GlassButton = ({
                                 icon,
                                 onPress,
                                 disabled = false,
+                                isAbsolute = false,
                                 top = "85%",
                                 left = "75%",
                             }: GlassButtonProps) => {
+    let additionalStyles: ViewStyle = {};
+    if (isAbsolute) {
+        additionalStyles = {position: 'absolute', top: top as any, left: left as any};
+    }
     return (
-        <GlassContainer spacing={10} style={[styles.glassContainerStyle, {top: top as any, left: left as any}]}>
+        <GlassContainer spacing={10} style={[styles.glassContainerStyle, additionalStyles]}>
             <TouchableOpacity onPress={onPress} disabled={disabled}>
                 <GlassView style={styles.glassButton} isInteractive>
                     {icon}
@@ -31,7 +37,6 @@ export const GlassButton = ({
 
 const styles = StyleSheet.create({
     glassContainerStyle: {
-        position: 'absolute',
         width: 250,
         height: 100,
         flexDirection: 'row',

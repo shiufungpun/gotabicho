@@ -3,7 +3,6 @@ import {Alert, KeyboardAvoidingView, Platform, Switch, TextInput, TouchableOpaci
 import {useRouter} from 'expo-router';
 import {createTrip} from '../src/repositories/tripRepository';
 import {useTheme} from '../src/theme';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {GlassButton, ThemedCard, ThemedText} from "../src/components";
 import {CheckIcon, XIcon} from "lucide-react-native";
 import Slider from "@react-native-community/slider";
@@ -21,7 +20,6 @@ export default function AddTripScreen() {
     const router = useRouter();
     const [saving, setSaving] = useState(false);
     const {colors} = useTheme();
-    const insets = useSafeAreaInsets();
 
     const handleSave = async () => {
         if (!name.trim()) {
@@ -67,27 +65,31 @@ export default function AddTripScreen() {
             style={{backgroundColor: `${colors.background}66`}}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-            {/*<View className="flex-1">*/}
-            {/* Glass Action Buttons */}
-            <GlassButton
-                icon={
-                    <XIcon size={30} color={colors.textSecondary}/>
-                }
-                onPress={() => {
-                    router.back();
-                }}
-                top={"1%"}
-                left={"5%"}
-            />
-            <GlassButton
-                icon={
-                    <CheckIcon size={30} color={colors.textSecondary}/>
-                }
-                onPress={handleSave}
-                top={"1%"}
-                left={"80%"}
-            />
-
+            <View className="flex-row bg-amber-700">
+                {/* Glass Action Buttons */}
+                <GlassButton
+                    icon={
+                        <XIcon size={30} color={colors.textSecondary}/>
+                    }
+                    onPress={() => {
+                        router.back();
+                    }}
+                />
+                <GlassButton
+                    icon={
+                        <CheckIcon size={30} color={colors.textSecondary}/>
+                    }
+                    onPress={handleSave}
+                    disabled={saving}
+                />
+                <GlassButton
+                    icon={
+                        <CheckIcon size={30} color={colors.textSecondary}/>
+                    }
+                    onPress={handleSave}
+                    disabled={saving}
+                />
+            </View>
             <View className={"mx-5 mt-32"}>
                 <ThemedCard className="p-6 rounded-2xl max-w-[500px] w-full self-center" elevated>
                     {/* Trip Name */}
