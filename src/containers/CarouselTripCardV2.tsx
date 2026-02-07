@@ -2,12 +2,12 @@ import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import {useRouter} from 'expo-router';
 import {ThemedCard, ThemedText} from "../components";
-import {Trip} from "../types";
 import {useTheme} from '../theme';
-import BudgetCard from "./BudgetCard";
+import SpentIndicator from "../components/trip/SpentIndicator";
+import {TripDetails} from "../hooks/useTrips";
 
 interface TripCardProps {
-    trip: Trip & { total_expenses: number; participant_count: number; receipt_count: number };
+    trip: TripDetails;
 }
 
 const CarouselTripCardV2: React.FC<TripCardProps> = ({trip}) => {
@@ -35,7 +35,7 @@ const CarouselTripCardV2: React.FC<TripCardProps> = ({trip}) => {
                     總支出：{trip.total_expenses} {trip.base_currency}
                 </ThemedText>
 
-                <BudgetCard spent={spent} budget={budget} currency={trip.base_currency}/>
+                <SpentIndicator trip={trip}/>
                 {!hasBudget && spent > 0 && (
                     <ThemedText variant="secondary">
                         Spent: {spent.toLocaleString()} {trip.base_currency}
