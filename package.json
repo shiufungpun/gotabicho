@@ -4,8 +4,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -13,8 +13,10 @@
     "@expo-google-fonts/iansui": "^0.4.2",
     "@expo-google-fonts/yuji-syuku": "^0.4.1",
     "@expo-google-fonts/zen-old-mincho": "^0.4.1",
+    "@react-native-community/slider": "5.1.1",
     "buffer": "^6.0.3",
     "expo": "^55.0.0-preview.9",
+    "expo-blur": "~55.0.4",
     "expo-constants": "~55.0.3",
     "expo-font": "~55.0.3",
     "expo-glass-effect": "~55.0.4",
@@ -29,6 +31,7 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.1",
+    "react-native-date-picker": "^5.0.13",
     "react-native-gifted-charts": "^1.4.70",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-reanimated": "~4.2.1",
