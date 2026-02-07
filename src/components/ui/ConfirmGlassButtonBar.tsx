@@ -18,7 +18,7 @@ const ConfirmGlassButtonBar = ({onConfirm, disabled, title}: ConfirmGlassButtonB
     const router = useRouter();
 
     return (
-        <View className="flex-row justify-between p-3 my-2">
+        <View className="flex-row justify-between p-3 m-2 ">
             {/* Glass Action Buttons */}
             <GlassButton
                 icon={
