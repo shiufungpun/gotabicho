@@ -66,10 +66,10 @@ export default function AddTripScreen() {
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
             <ConfirmGlassButtonBar onConfirm={handleSave} disabled={saving}/>
-            <View className={"mx-5 my-3"}>
-                <ThemedCard className="p-6 max-w-[500px] w-full self-center" elevated>
+            <View className={"mx-5"}>
+                <ThemedCard>
                     {/* Trip Name */}
-                    <ThemedText variant="primary" textStyle="content" className="mb-2 mt-4">
+                    <ThemedText variant="primary" textStyle="content" className="mb-2">
                         旅程名稱
                     </ThemedText>
                     <TextInput

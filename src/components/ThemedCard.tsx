@@ -30,8 +30,10 @@ export function ThemedCard({style, elevated = true, ...props}: ThemedCardProps) 
 
     return (
         <View
+            className={"rounded-2xl p-5"}
             style={[cardStyle, style]}
-            {...props}
-        />
+        >
+            {props.children}
+        </View>
     );
 }

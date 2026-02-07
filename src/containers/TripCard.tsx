@@ -33,7 +33,7 @@ const TripCard: React.FC<TripCardProps> = ({trip}) => {
         <TouchableOpacity
             onPress={() => router.push(`/trip/${trip.id}`)}
         >
-            <ThemedCard className="pt-2 px-5 rounded-lg mb-3">
+            <ThemedCard>
                 <ThemedText textStyle={"subheader"}>{trip.name}</ThemedText>
                 <ThemedText variant="secondary" textStyle={"number"} className={"text-lg"}>
                     {trip.start_date} - {trip.end_date} ({duration}日)

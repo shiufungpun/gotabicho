@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
         zIndex: 1000, // Ensure it appears above other content
     },
     glassButton: {
-        width: 60,
-        height: 60,
+        width: 45,
+        height: 45,
         borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
