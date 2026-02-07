@@ -39,7 +39,7 @@ export default function RootLayout() {
         <Stack>
             <Stack.Screen name="index" options={{headerShown: false}}/>
             <Stack.Screen name="add-trip" options={{
-                presentation: "formSheet", headerShown: false
+                presentation: "formSheet", headerShown: false,
             }}/>
             <Stack.Screen
                 name="trip/[id]"

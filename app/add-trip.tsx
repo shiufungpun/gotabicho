@@ -14,9 +14,8 @@ import {createTrip} from '../src/repositories/tripRepository';
 import {useTheme} from '../src/theme';
 import {GlassButton, ThemedCard, ThemedText} from '../src/components';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {GlassContainer} from 'expo-glass-effect';
-import {Check, X} from 'lucide-react-native';
 import Slider from '@react-native-community/slider';
+import {CheckIcon, XIcon} from "lucide-react-native";
 
 export default function AddTripScreen() {
     const [name, setName] = useState('');
@@ -72,48 +71,37 @@ export default function AddTripScreen() {
     return (
         <View className="flex-1" style={{backgroundColor: `${colors.background}66`}}>
             {/* Glass Action Buttons */}
-            <GlassContainer
-                spacing={10}
-                style={{
-                    position: 'absolute',
-                    left: 20,
-                    right: 20,
-                    top: insets.top + 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    zIndex: 10,
-                    height: 60,
+            <GlassButton
+                icon={
+                    <XIcon size={30} color={colors.textSecondary}/>
+                }
+                onPress={() => {
+                    router.back();
                 }}
-            >
-                <GlassButton
-                    icon={<X size={24} color={colors.text}/>}
-                    onPress={() => router.back()}
-                    size={50}
-                />
-                <View className="flex-1"/>
-                <GlassButton
-                    style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                    icon={<Check size={24} color={colors.primary}/>}
-                    onPress={handleSave}
-                    disabled={saving}
-                    size={50}
-                />
-            </GlassContainer>
+                top={"1%"}
+                left={"5%"}
+            />
+            <GlassButton
+                icon={
+                    <CheckIcon size={30} color={colors.textSecondary}/>
+                }
+                onPress={() => {
+                }}
+                top={"1%"}
+                left={"80%"}
+            />
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1"
+                className="flex-1 "
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
                 <ScrollView
                     contentContainerStyle={{
                         flexGrow: 1,
-                        justifyContent: 'center',
+                        // justifyContent: 'center',
                         padding: 20,
-                        paddingTop: 100,
+                        paddingTop: 120,
                     }}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
@@ -220,40 +208,40 @@ export default function AddTripScreen() {
             </KeyboardAvoidingView>
 
             {/*Date Pickers*/}
-            <DatePicker
-                modal
-                open={showStartPicker}
-                date={startDate}
-                mode="date"
-                onConfirm={(date) => {
-                    setShowStartPicker(false);
-                    setStartDate(date);
-                }}
-                onCancel={() => {
-                    setShowStartPicker(false);
-                }}
-                title="選擇開始日期"
-                confirmText="確認"
-                cancelText="取消"
-            />
+            {/*<DatePicker*/}
+            {/*    modal*/}
+            {/*    open={showStartPicker}*/}
+            {/*    date={startDate}*/}
+            {/*    mode="date"*/}
+            {/*    onConfirm={(date) => {*/}
+            {/*        setShowStartPicker(false);*/}
+            {/*        setStartDate(date);*/}
+            {/*    }}*/}
+            {/*    onCancel={() => {*/}
+            {/*        setShowStartPicker(false);*/}
+            {/*    }}*/}
+            {/*    title="選擇開始日期"*/}
+            {/*    confirmText="確認"*/}
+            {/*    cancelText="取消"*/}
+            {/*/>*/}
 
-            <DatePicker
-                modal
-                open={showEndPicker}
-                date={endDate}
-                mode="date"
-                minimumDate={startDate}
-                onConfirm={(date) => {
-                    setShowEndPicker(false);
-                    setEndDate(date);
-                }}
-                onCancel={() => {
-                    setShowEndPicker(false);
-                }}
-                title="選擇結束日期"
-                confirmText="確認"
-                cancelText="取消"
-            />
+            {/*<DatePicker*/}
+            {/*    modal*/}
+            {/*    open={showEndPicker}*/}
+            {/*    date={endDate}*/}
+            {/*    mode="date"*/}
+            {/*    minimumDate={startDate}*/}
+            {/*    onConfirm={(date) => {*/}
+            {/*        setShowEndPicker(false);*/}
+            {/*        setEndDate(date);*/}
+            {/*    }}*/}
+            {/*    onCancel={() => {*/}
+            {/*        setShowEndPicker(false);*/}
+            {/*    }}*/}
+            {/*    title="選擇結束日期"*/}
+            {/*    confirmText="確認"*/}
+            {/*    cancelText="取消"*/}
+            {/*/>*/}
         </View>
     );
 }
