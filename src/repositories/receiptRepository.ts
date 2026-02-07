@@ -1,100 +1,152 @@
 import {getDB} from '../db/db';
-import {Receipt, ReceiptItem, ReceiptItemShare, ReceiptWithDetails} from '../types';
+import {participants, receiptItems, receiptItemShares, receipts} from '../db/schema';
+import {Receipt, ReceiptItemShare, ReceiptWithDetails} from '../types';
+import {asc, desc, eq, inArray} from 'drizzle-orm';
 
 export const getReceiptsByTripId = async (tripId: number): Promise<ReceiptWithDetails[]> => {
     const db = await getDB();
 
-    // 1. Get Receipts
-    const receipts = await db.getAllAsync<Receipt & { payer_name: string }>(`
-    SELECT r.*, p.name as payer_name 
-    FROM receipts r
-    LEFT JOIN participants p ON r.paid_by_participant_id = p.id
-    WHERE r.trip_id = ? 
-    ORDER BY r.date DESC, r.created_at DESC
-  `, [tripId]);
+    // 1. Get Receipts with payer name
+    const receiptsData = await db
+        .select({
+            id: receipts.id,
+            trip_id: receipts.trip_id,
+            total_amount: receipts.total_amount,
+            currency: receipts.currency,
+            paid_by_participant_id: receipts.paid_by_participant_id,
+            date: receipts.date,
+            store_name: receipts.store_name,
+            memo: receipts.memo,
+            created_at: receipts.created_at,
+            updated_at: receipts.updated_at,
+            payer_name: participants.name,
+        })
+        .from(receipts)
+        .leftJoin(participants, eq(receipts.paid_by_participant_id, participants.id))
+        .where(eq(receipts.trip_id, tripId))
+        .orderBy(desc(receipts.date), desc(receipts.created_at));
 
-    if (receipts.length === 0) return [];
+    if (receiptsData.length === 0) return [];
 
     // 2. Get All Items for these receipts
-    const receiptIds = receipts.map(r => r.id);
+    const receiptIds = receiptsData.map(r => r.id);
     if (receiptIds.length === 0) return [];
 
-    const placeHolders = receiptIds.map(() => '?').join(',');
-    const items = await db.getAllAsync<ReceiptItem>(`
-        SELECT * FROM receipt_items 
-        WHERE receipt_id IN (${placeHolders})
-        ORDER BY order_index ASC
-    `, receiptIds);
+    const items = await db
+        .select()
+        .from(receiptItems)
+        .where(inArray(receiptItems.receipt_id, receiptIds))
+        .orderBy(asc(receiptItems.order_index));
 
     // 3. Get All Shares for these items
     const itemIds = items.map(i => i.id);
     let shares: ReceiptItemShare[] = [];
     if (itemIds.length > 0) {
-        const itemPlaceHolders = itemIds.map(() => '?').join(',');
-        shares = await db.getAllAsync<ReceiptItemShare>(`
-            SELECT * FROM receipt_item_shares
-            WHERE receipt_item_id IN (${itemPlaceHolders})
-        `, itemIds);
+        shares = await db
+            .select()
+            .from(receiptItemShares)
+            .where(inArray(receiptItemShares.receipt_item_id, itemIds));
     }
 
     // 4. Assemble
-    return receipts.map(r => {
-        const myItems = items.filter(i => i.receipt_id === r.id);
-        const myItemsWithShares = myItems.map(item => ({
-            ...item,
-            shares: shares.filter(s => s.receipt_item_id === item.id)
-        }));
-
-        return {
-            ...r,
-            payer_name: r.payer_name,
-            items: myItemsWithShares
-        };
-    });
+    return receiptsData.map(r => ({
+        id: r.id,
+        trip_id: r.trip_id,
+        total_amount: r.total_amount,
+        currency: r.currency ?? 'JPY',
+        paid_by_participant_id: r.paid_by_participant_id,
+        date: r.date ?? '',
+        store_name: r.store_name ?? '',
+        memo: r.memo ?? undefined,
+        created_at: r.created_at ?? Date.now(),
+        updated_at: r.updated_at ?? Date.now(),
+        payer_name: (r.payer_name as string) ?? '',
+        items: items
+            .filter(i => i.receipt_id === r.id)
+            .map(item => ({
+                id: item.id,
+                receipt_id: item.receipt_id,
+                name: item.name,
+                category: (item.category ?? '') as string,
+                amount: item.amount,
+                memo: item.memo ?? undefined,
+                order_index: item.order_index ?? 0,
+                created_at: item.created_at ?? Date.now(),
+                updated_at: item.updated_at ?? Date.now(),
+                shares: shares.filter(s => s.receipt_item_id === item.id)
+            }))
+    })) as ReceiptWithDetails[];
 };
 
 export const getReceiptById = async (receiptId: number): Promise<ReceiptWithDetails | null> => {
     const db = await getDB();
 
-    // 1. Get Receipt
-    const receipt = await db.getFirstAsync<Receipt & { payer_name: string }>(`
-    SELECT r.*, p.name as payer_name 
-    FROM receipts r
-    LEFT JOIN participants p ON r.paid_by_participant_id = p.id
-    WHERE r.id = ?
-  `, [receiptId]);
+    // 1. Get Receipt with payer name
+    const receiptData = await db
+        .select({
+            id: receipts.id,
+            trip_id: receipts.trip_id,
+            total_amount: receipts.total_amount,
+            currency: receipts.currency,
+            paid_by_participant_id: receipts.paid_by_participant_id,
+            date: receipts.date,
+            store_name: receipts.store_name,
+            memo: receipts.memo,
+            created_at: receipts.created_at,
+            updated_at: receipts.updated_at,
+            payer_name: participants.name,
+        })
+        .from(receipts)
+        .leftJoin(participants, eq(receipts.paid_by_participant_id, participants.id))
+        .where(eq(receipts.id, receiptId))
+        .limit(1);
 
-    if (!receipt) return null;
+    if (receiptData.length === 0) return null;
+    const receipt = receiptData[0];
 
     // 2. Get Items
-    const items = await db.getAllAsync<ReceiptItem>(`
-        SELECT * FROM receipt_items 
-        WHERE receipt_id = ?
-        ORDER BY order_index ASC
-    `, [receiptId]);
+    const items = await db
+        .select()
+        .from(receiptItems)
+        .where(eq(receiptItems.receipt_id, receiptId))
+        .orderBy(asc(receiptItems.order_index));
 
     // 3. Get Shares
     const itemIds = items.map(i => i.id);
     let shares: ReceiptItemShare[] = [];
     if (itemIds.length > 0) {
-        const itemPlaceHolders = itemIds.map(() => '?').join(',');
-        shares = await db.getAllAsync<ReceiptItemShare>(`
-            SELECT * FROM receipt_item_shares
-            WHERE receipt_item_id IN (${itemPlaceHolders})
-        `, itemIds);
+        shares = await db
+            .select()
+            .from(receiptItemShares)
+            .where(inArray(receiptItemShares.receipt_item_id, itemIds));
     }
 
     // 4. Assemble
-    const myItemsWithShares = items.map(item => ({
-        ...item,
-        shares: shares.filter(s => s.receipt_item_id === item.id)
-    }));
-
     return {
-        ...receipt,
-        payer_name: receipt.payer_name,
-        items: myItemsWithShares
-    };
+        id: receipt.id,
+        trip_id: receipt.trip_id,
+        total_amount: receipt.total_amount,
+        currency: receipt.currency ?? 'JPY',
+        paid_by_participant_id: receipt.paid_by_participant_id,
+        date: receipt.date ?? '',
+        store_name: receipt.store_name ?? '',
+        memo: receipt.memo ?? undefined,
+        created_at: receipt.created_at ?? Date.now(),
+        updated_at: receipt.updated_at ?? Date.now(),
+        payer_name: (receipt.payer_name as string) ?? '',
+        items: items.map(item => ({
+            id: item.id,
+            receipt_id: item.receipt_id,
+            name: item.name,
+            category: (item.category ?? '') as string,
+            amount: item.amount,
+            memo: item.memo ?? undefined,
+            order_index: item.order_index ?? 0,
+            created_at: item.created_at ?? Date.now(),
+            updated_at: item.updated_at ?? Date.now(),
+            shares: shares.filter(s => s.receipt_item_id === item.id)
+        }))
+    } as ReceiptWithDetails;
 };
 
 export const createReceipt = async (
@@ -111,31 +163,46 @@ export const createReceipt = async (
     const now = Date.now();
 
     try {
-        await db.withTransactionAsync(async () => {
+        await db.transaction(async (tx) => {
             // 1. Insert Receipt
-            const rResult = await db.runAsync(
-                `INSERT INTO receipts (trip_id, total_amount, currency, paid_by_participant_id, date, store_name, memo, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [receipt.trip_id, receipt.total_amount, receipt.currency, receipt.paid_by_participant_id, receipt.date, receipt.store_name, receipt.memo || null, now, now]
-            );
-            const receiptId = rResult.lastInsertRowId;
+            const rResult = await tx.insert(receipts).values({
+                trip_id: receipt.trip_id,
+                total_amount: receipt.total_amount,
+                currency: receipt.currency,
+                paid_by_participant_id: receipt.paid_by_participant_id,
+                date: receipt.date,
+                store_name: receipt.store_name,
+                memo: receipt.memo || null,
+                created_at: now,
+                updated_at: now,
+            }).returning({id: receipts.id});
+
+            const receiptId = rResult[0].id;
 
             // 2. Insert Items
             for (let i = 0; i < items.length; i++) {
                 const item = items[i];
-                const iResult = await db.runAsync(
-                    `INSERT INTO receipt_items (receipt_id, name, category, amount, memo, order_index, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [receiptId, item.name, item.category, item.amount, item.memo || null, i, now, now]
-                );
-                const itemId = iResult.lastInsertRowId;
+                const iResult = await tx.insert(receiptItems).values({
+                    receipt_id: receiptId,
+                    name: item.name,
+                    category: item.category,
+                    amount: item.amount,
+                    memo: item.memo || null,
+                    order_index: i,
+                    created_at: now,
+                    updated_at: now,
+                }).returning({id: receiptItems.id});
+
+                const itemId = iResult[0].id;
 
                 // 3. Insert Shares
-                for (const share of item.participantShares) {
-                    await db.runAsync(
-                        `INSERT INTO receipt_item_shares (receipt_item_id, participant_id, share_amount)
-             VALUES (?, ?, ?)`,
-                        [itemId, share.participant_id, share.amount]
+                if (item.participantShares.length > 0) {
+                    await tx.insert(receiptItemShares).values(
+                        item.participantShares.map(share => ({
+                            receipt_item_id: itemId,
+                            participant_id: share.participant_id,
+                            share_amount: share.amount,
+                        }))
                     );
                 }
             }
@@ -148,6 +215,6 @@ export const createReceipt = async (
 
 export const deleteReceipt = async (id: number): Promise<void> => {
     const db = await getDB();
-    await db.runAsync('DELETE FROM receipts WHERE id = ?', [id]);
+    await db.delete(receipts).where(eq(receipts.id, id));
 };
 

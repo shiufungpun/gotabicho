@@ -1,18 +1,30 @@
 import * as SQLite from 'expo-sqlite';
+import {drizzle} from 'drizzle-orm/expo-sqlite';
+import * as schema from './schema';
 
-let db: SQLite.SQLiteDatabase | null = null;
+let db: ReturnType<typeof drizzle> | null = null;
+let sqliteDb: SQLite.SQLiteDatabase | null = null;
 
 export const getDB = async () => {
     // await SQLite.deleteDatabaseAsync('gotabicho.db')
     if (db) return db;
-    db = await SQLite.openDatabaseAsync('gotabicho.db');
+
+    sqliteDb = await SQLite.openDatabaseAsync('gotabicho.db');
+    db = drizzle(sqliteDb, {schema});
+
     return db;
 };
 
-export const initDatabase = async () => {
-    const db = await getDB();
+export const getSQLiteDB = async () => {
+    if (sqliteDb) return sqliteDb;
+    await getDB();
+    return sqliteDb!;
+};
 
-    await db.execAsync(`
+export const initDatabase = async () => {
+    const sqliteDb = await getSQLiteDB();
+
+    await sqliteDb.execAsync(`
     PRAGMA foreign_keys = ON;
 
     CREATE TABLE IF NOT EXISTS trips (

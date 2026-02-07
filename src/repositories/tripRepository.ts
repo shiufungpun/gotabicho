@@ -1,5 +1,7 @@
 import {getDB} from '../db/db';
+import {participants, receipts, trips} from '../db/schema';
 import {Trip} from '../types';
+import {desc, eq, sql} from 'drizzle-orm';
 
 export const getAllTrips = async (): Promise<(Trip & {
     total_expenses: number;
@@ -7,27 +9,30 @@ export const getAllTrips = async (): Promise<(Trip & {
     receipt_count: number
 })[]> => {
     const db = await getDB();
-    const result = await db.getAllAsync<Trip & {
-        total_expenses: number;
-        participant_count: number;
-        receipt_count: number
-    }>(`
-    SELECT t.*, 
-           COALESCE(SUM(r.total_amount), 0) as total_expenses,
-           COUNT(DISTINCT r.id) as receipt_count,
-           (SELECT COUNT(*) FROM participants p WHERE p.trip_id = t.id) as participant_count
-    FROM trips t 
-    LEFT JOIN receipts r ON t.id = r.trip_id 
-    GROUP BY t.id 
-    ORDER BY t.created_at DESC
-  `);
-    return result;
+    return await db
+        .select({
+            id: trips.id,
+            name: trips.name,
+            start_date: trips.start_date,
+            end_date: trips.end_date,
+            base_currency: trips.base_currency,
+            total_budget: trips.total_budget,
+            created_at: trips.created_at,
+            updated_at: trips.updated_at,
+            total_expenses: sql<number>`COALESCE(SUM(${receipts.total_amount}), 0)`.as('total_expenses'),
+            receipt_count: sql<number>`COUNT(DISTINCT ${receipts.id})`.as('receipt_count'),
+            participant_count: sql<number>`(SELECT COUNT(*) FROM ${participants} WHERE ${participants.trip_id} = ${trips.id})`.as('participant_count'),
+        })
+        .from(trips)
+        .leftJoin(receipts, eq(trips.id, receipts.trip_id))
+        .groupBy(trips.id)
+        .orderBy(desc(trips.created_at));
 };
 
 export const getTripById = async (id: number): Promise<Trip | null> => {
     const db = await getDB();
-    const result = await db.getFirstAsync<Trip>('SELECT * FROM trips WHERE id = ?', [id]);
-    return result;
+    const result = await db.select().from(trips).where(eq(trips.id, id)).limit(1);
+    return (result[0] as Trip) || null;
 };
 
 export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated_at'>): Promise<number> => {
@@ -35,18 +40,27 @@ export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated
     const now = Date.now();
 
     let tripId = 0;
-    await db.withTransactionAsync(async () => {
-        const result = await db.runAsync(
-            'INSERT INTO trips (name, start_date, end_date, base_currency, total_budget, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [trip.name, trip.start_date, trip.end_date, trip.base_currency, trip.total_budget ?? null, now, now]
-        );
-        tripId = result.lastInsertRowId;
+    await db.transaction(async (tx) => {
+        const result = await tx.insert(trips).values({
+            name: trip.name,
+            start_date: trip.start_date,
+            end_date: trip.end_date,
+            base_currency: trip.base_currency,
+            total_budget: trip.total_budget ?? null,
+            created_at: now,
+            updated_at: now,
+        }).returning({id: trips.id});
+
+        tripId = result[0].id;
 
         // Create default "You" participant
-        await db.runAsync(
-            'INSERT INTO participants (trip_id, name, budget_total, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
-            [tripId, 'You', null, now, now]
-        );
+        await tx.insert(participants).values({
+            trip_id: tripId,
+            name: 'You',
+            budget_total: null,
+            created_at: now,
+            updated_at: now,
+        });
     });
 
     return tripId;
@@ -55,7 +69,7 @@ export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated
 
 export const deleteTrip = async (id: number): Promise<void> => {
     const db = await getDB();
-    await db.runAsync('DELETE FROM trips WHERE id = ?', [id]);
+    await db.delete(trips).where(eq(trips.id, id));
 };
 
 export const getActiveTrip = async (): Promise<(Trip & { total_expenses: number }) | null> => {
@@ -63,28 +77,48 @@ export const getActiveTrip = async (): Promise<(Trip & { total_expenses: number 
     const today = new Date().toISOString().split('T')[0];
 
     // First, try to get an ongoing trip (where today is between start and end date)
-    let result = await db.getFirstAsync<Trip & { total_expenses: number }>(`
-        SELECT t.*, COALESCE(SUM(r.total_amount), 0) as total_expenses 
-        FROM trips t 
-        LEFT JOIN receipts r ON t.id = r.trip_id 
-        WHERE date(t.start_date) <= date(?) AND date(t.end_date) >= date(?)
-        GROUP BY t.id 
-        ORDER BY t.start_date DESC
-        LIMIT 1
-    `, [today, today]);
+    let result = await db
+        .select({
+            id: trips.id,
+            name: trips.name,
+            start_date: trips.start_date,
+            end_date: trips.end_date,
+            base_currency: trips.base_currency,
+            total_budget: trips.total_budget,
+            created_at: trips.created_at,
+            updated_at: trips.updated_at,
+            total_expenses: sql<number>`COALESCE(SUM(${receipts.total_amount}), 0)`.as('total_expenses'),
+        })
+        .from(trips)
+        .leftJoin(receipts, eq(trips.id, receipts.trip_id))
+        .where(
+            sql`date(${trips.start_date}) <= date(${today}) AND date(${trips.end_date}) >= date(${today})`
+        )
+        .groupBy(trips.id)
+        .orderBy(desc(trips.start_date))
+        .limit(1);
 
     // If no ongoing trip, get the most recently created trip
-    if (!result) {
-        result = await db.getFirstAsync<Trip & { total_expenses: number }>(`
-            SELECT t.*, COALESCE(SUM(r.total_amount), 0) as total_expenses 
-            FROM trips t 
-            LEFT JOIN receipts r ON t.id = r.trip_id 
-            GROUP BY t.id 
-            ORDER BY t.created_at DESC
-            LIMIT 1
-        `);
+    if (result.length === 0) {
+        result = await db
+            .select({
+                id: trips.id,
+                name: trips.name,
+                start_date: trips.start_date,
+                end_date: trips.end_date,
+                base_currency: trips.base_currency,
+                total_budget: trips.total_budget,
+                created_at: trips.created_at,
+                updated_at: trips.updated_at,
+                total_expenses: sql<number>`COALESCE(SUM(${receipts.total_amount}), 0)`.as('total_expenses'),
+            })
+            .from(trips)
+            .leftJoin(receipts, eq(trips.id, receipts.trip_id))
+            .groupBy(trips.id)
+            .orderBy(desc(trips.created_at))
+            .limit(1);
     }
 
-    return result || null;
+    return (result[0] as (Trip & { total_expenses: number })) || null;
 };
 
