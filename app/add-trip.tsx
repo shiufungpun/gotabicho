@@ -3,10 +3,10 @@ import {Alert, KeyboardAvoidingView, Platform, Switch, TextInput, TouchableOpaci
 import {useRouter} from 'expo-router';
 import {createTrip} from '../src/repositories/tripRepository';
 import {useTheme} from '../src/theme';
-import {GlassButton, ThemedCard, ThemedText} from "../src/components";
-import {CheckIcon, XIcon} from "lucide-react-native";
+import {ThemedCard, ThemedText} from "../src/components";
 import Slider from "@react-native-community/slider";
 import DatePicker from "react-native-date-picker";
+import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
 
 export default function AddTripScreen() {
     const [name, setName] = useState('');
@@ -65,32 +65,8 @@ export default function AddTripScreen() {
             style={{backgroundColor: `${colors.background}66`}}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-            <View className="flex-row bg-amber-700">
-                {/* Glass Action Buttons */}
-                <GlassButton
-                    icon={
-                        <XIcon size={30} color={colors.textSecondary}/>
-                    }
-                    onPress={() => {
-                        router.back();
-                    }}
-                />
-                <GlassButton
-                    icon={
-                        <CheckIcon size={30} color={colors.textSecondary}/>
-                    }
-                    onPress={handleSave}
-                    disabled={saving}
-                />
-                <GlassButton
-                    icon={
-                        <CheckIcon size={30} color={colors.textSecondary}/>
-                    }
-                    onPress={handleSave}
-                    disabled={saving}
-                />
-            </View>
-            <View className={"mx-5 mt-32"}>
+            <ConfirmGlassButtonBar onConfirm={handleSave} disabled={saving}/>
+            <View className={"mx-5 my-3"}>
                 <ThemedCard className="p-6 rounded-2xl max-w-[500px] w-full self-center" elevated>
                     {/* Trip Name */}
                     <ThemedText variant="primary" textStyle="content" className="mb-2 mt-4">

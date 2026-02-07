@@ -37,8 +37,6 @@ export const GlassButton = ({
 
 const styles = StyleSheet.create({
     glassContainerStyle: {
-        width: 250,
-        height: 100,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 5,
