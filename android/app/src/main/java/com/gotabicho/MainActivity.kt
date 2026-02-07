@@ -1,4 +1,4 @@
-package com.mizutamine.gotabicho
+package com.gotabicho
 
 import android.os.Build
 import android.os.Bundle

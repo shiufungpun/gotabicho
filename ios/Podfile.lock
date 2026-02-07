@@ -1658,7 +1658,7 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-date-picker (5.0.13):
+  - react-native-date-picker (5.0.12):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2880,7 +2880,7 @@ SPEC CHECKSUMS:
   React-logger: cca37d84f71231cd2e6b9f1a7e8a3e721e5ec944
   React-Mapbuffer: a6fc74cc27085555ac5839b2f792c19dc918d8bb
   React-microtasksnativemodule: 0f26742ab54a7d6cd59efb2299956dc9e60ab335
-  react-native-date-picker: 72dddb0a4b6019b11af8bf0ceefe636685921a79
+  react-native-date-picker: 6caa72f23a695814d3fa843872ec995c5035dfb5
   react-native-safe-area-context: 37e680fc4cace3c0030ee46e8987d24f5d3bdab2
   react-native-slider: f954578344106f0a732a4358ce3a3e11015eb6e1
   react-native-webview: 3e303e80cadb5f17118c8c1502aa398e9287e415
@@ -2920,7 +2920,7 @@ SPEC CHECKSUMS:
   ReactNativeDependencies: 26896a25322ca5bd033232bf348cd85aa825a521
   RNGestureHandler: 5494787ce29288a8941fa825663f2b1fa0a5aaf1
   RNReanimated: 86e5991396f1aa514db90d6c79d4c3e37a37bb10
-  RNScreens: 03a87569e6febf47b08a8c061ee953ea47b9f653
+  RNScreens: 4b093829e5233191d2510d72a1291c33931c2003
   RNSVG: bb9dc09f078cafaf09683a67dd5fde641e3e33cb
   RNWorklets: 0e736f568c3c61cb3326cdcda767c4daee56a8a9
   SDWebImage: 1bb6a1b84b6fe87b972a102bdc77dd589df33477
@@ -2929,6 +2929,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   Yoga: 35d573dff66536d48493acb65a519482f8219fe8
 
-PODFILE CHECKSUM: 3467509d57e85e9d9b00d7f758d1c492130d798a
+PODFILE CHECKSUM: 376b54a6836a344638b71e672e3858b5aa612487
 
 COCOAPODS: 1.16.2
