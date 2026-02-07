@@ -1,122 +1,260 @@
 import React, {useState} from 'react';
-import {Alert, StyleSheet, TextInput} from 'react-native';
+import {
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Switch,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {useRouter} from 'expo-router';
-import {Button} from '../src/components/ui/button';
 import {createTrip} from '../src/repositories/tripRepository';
 import {useTheme} from '../src/theme';
-import {ThemedText, ThemedView} from '../src/components';
+import {GlassButton, ThemedCard, ThemedText} from '../src/components';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {GlassContainer} from 'expo-glass-effect';
+import {Check, X} from 'lucide-react-native';
+import Slider from '@react-native-community/slider';
 
 export default function AddTripScreen() {
     const [name, setName] = useState('');
-    const [budget, setBudget] = useState('');
-    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-    const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+    const [hasBudget, setHasBudget] = useState(false);
+    const [budgetValue, setBudgetValue] = useState(100000);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [showStartPicker, setShowStartPicker] = useState(false);
+    const [showEndPicker, setShowEndPicker] = useState(false);
+
     const router = useRouter();
     const [saving, setSaving] = useState(false);
     const {colors} = useTheme();
+    const insets = useSafeAreaInsets();
 
     const handleSave = async () => {
-        if (!name) {
-            Alert.alert('Error', 'Please enter a trip name');
+        if (!name.trim()) {
+            Alert.alert('錯誤', '請輸入旅程名稱');
             return;
         }
 
-        let budgetValue: number | null = null;
-        if (budget) {
-            const parsed = parseFloat(budget);
-            if (isNaN(parsed) || parsed < 0) {
-                Alert.alert('Error', 'Please enter a valid budget amount');
-                return;
-            }
-            budgetValue = parsed;
+        if (endDate < startDate) {
+            Alert.alert('錯誤', '結束日期不能早於開始日期');
+            return;
         }
 
         setSaving(true);
         try {
             await createTrip({
-                name,
-                total_budget: budgetValue,
-                start_date: startDate,
-                end_date: endDate,
+                name: name.trim(),
+                total_budget: hasBudget ? budgetValue : null,
+                start_date: startDate.toISOString().split('T')[0],
+                end_date: endDate.toISOString().split('T')[0],
                 base_currency: 'JPY'
             });
             router.back();
         } catch (e) {
-            console.log(e)
-            Alert.alert('Error', 'Failed to create trip');
+            console.log(e);
+            Alert.alert('錯誤', '建立旅程失敗');
         } finally {
             setSaving(false);
         }
     };
 
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString('zh-TW', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
     return (
-        <ThemedView variant="background" className={"p-16 h-full"}>
-            <ThemedText variant={"primary"} textStyle={"content"}>旅程名稱</ThemedText>
-            <TextInput
-                style={[styles.input, {
-                    borderColor: colors.border,
-                    color: colors.text,
-                    backgroundColor: colors.surface
-                }]}
-                value={name}
-                onChangeText={setName}
-                placeholder="e.g. Hokkaido Skiing"
-                placeholderTextColor={colors.textTertiary}
+        <View className="flex-1" style={{backgroundColor: `${colors.background}66`}}>
+            {/* Glass Action Buttons */}
+            <GlassContainer
+                spacing={10}
+                style={{
+                    position: 'absolute',
+                    left: 20,
+                    right: 20,
+                    top: insets.top + 10,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    zIndex: 10,
+                    height: 60,
+                }}
+            >
+                <GlassButton
+                    icon={<X size={24} color={colors.text}/>}
+                    onPress={() => router.back()}
+                    size={50}
+                />
+                <View className="flex-1"/>
+                <GlassButton
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                    icon={<Check size={24} color={colors.primary}/>}
+                    onPress={handleSave}
+                    disabled={saving}
+                    size={50}
+                />
+            </GlassContainer>
+
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                className="flex-1"
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        justifyContent: 'center',
+                        padding: 20,
+                        paddingTop: 100,
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <ThemedCard className="p-6 rounded-2xl max-w-[500px] w-full self-center" elevated>
+                        {/* Trip Name */}
+                        <ThemedText variant="primary" textStyle="content" className="mb-2 mt-4">
+                            旅程名稱
+                        </ThemedText>
+                        <TextInput
+                            className="border rounded-xl p-4 text-lg"
+                            style={{
+                                borderColor: colors.border,
+                                color: colors.text,
+                                backgroundColor: colors.surface,
+                                fontFamily: 'HinaMincho_400Regular',
+                            }}
+                            value={name}
+                            onChangeText={setName}
+                            placeholder="例：北海道滑雪之旅"
+                            placeholderTextColor={colors.textTertiary}
+                        />
+
+                        {/* Budget Toggle */}
+                        <View className="flex-row justify-between items-center mt-4 mb-2">
+                            <ThemedText variant="primary" textStyle="content">
+                                設定預算
+                            </ThemedText>
+                            <Switch
+                                value={hasBudget}
+                                onValueChange={setHasBudget}
+                                trackColor={{false: colors.border, true: colors.primary}}
+                                thumbColor={hasBudget ? colors.primary : colors.textTertiary}
+                            />
+                        </View>
+
+                        {/* Budget Slider */}
+                        {hasBudget && (
+                            <View className="mt-2 mb-2">
+                                <ThemedText
+                                    variant="primary"
+                                    textStyle="caption"
+                                    className="text-center text-[28px] font-semibold mb-2"
+                                >
+                                    ¥{budgetValue.toLocaleString('ja-JP')}
+                                </ThemedText>
+                                <Slider
+                                    style={{width: '100%', height: 40}}
+                                    minimumValue={10000}
+                                    maximumValue={1000000}
+                                    step={10000}
+                                    value={budgetValue}
+                                    onValueChange={setBudgetValue}
+                                    minimumTrackTintColor={colors.primary}
+                                    maximumTrackTintColor={colors.border}
+                                    thumbTintColor={colors.primary}
+                                />
+                                <View className="flex-row justify-between px-1">
+                                    <ThemedText variant="tertiary" textStyle="caption">
+                                        ¥10,000
+                                    </ThemedText>
+                                    <ThemedText variant="tertiary" textStyle="caption">
+                                        ¥1,000,000
+                                    </ThemedText>
+                                </View>
+                            </View>
+                        )}
+
+                        {/* Start Date */}
+                        <ThemedText variant="primary" textStyle="content" className="mb-2 mt-4">
+                            開始日期
+                        </ThemedText>
+                        <TouchableOpacity
+                            className="border rounded-xl p-4 items-center"
+                            style={{
+                                borderColor: colors.border,
+                                backgroundColor: colors.surface
+                            }}
+                            onPress={() => setShowStartPicker(true)}
+                        >
+                            <ThemedText variant="primary" textStyle="body">
+                                {formatDate(startDate)}
+                            </ThemedText>
+                        </TouchableOpacity>
+
+                        {/* End Date */}
+                        <ThemedText variant="primary" textStyle="content" className="mb-2 mt-4">
+                            結束日期
+                        </ThemedText>
+                        <TouchableOpacity
+                            className="border rounded-xl p-4 items-center"
+                            style={{
+                                borderColor: colors.border,
+                                backgroundColor: colors.surface
+                            }}
+                            onPress={() => setShowEndPicker(true)}
+                        >
+                            <ThemedText variant="primary" textStyle="body">
+                                {formatDate(endDate)}
+                            </ThemedText>
+                        </TouchableOpacity>
+                    </ThemedCard>
+                </ScrollView>
+            </KeyboardAvoidingView>
+
+            {/*Date Pickers*/}
+            <DatePicker
+                modal
+                open={showStartPicker}
+                date={startDate}
+                mode="date"
+                onConfirm={(date) => {
+                    setShowStartPicker(false);
+                    setStartDate(date);
+                }}
+                onCancel={() => {
+                    setShowStartPicker(false);
+                }}
+                title="選擇開始日期"
+                confirmText="確認"
+                cancelText="取消"
             />
 
-            <ThemedText variant={"primary"} textStyle={"content"}>預算</ThemedText>
-            <TextInput
-                style={[styles.input, {
-                    borderColor: colors.border,
-                    color: colors.text,
-                    backgroundColor: colors.surface
-                }]}
-                value={budget}
-                onChangeText={setBudget}
-                placeholder="e.g. 100000"
-                placeholderTextColor={colors.textTertiary}
-                keyboardType="numeric"
+            <DatePicker
+                modal
+                open={showEndPicker}
+                date={endDate}
+                mode="date"
+                minimumDate={startDate}
+                onConfirm={(date) => {
+                    setShowEndPicker(false);
+                    setEndDate(date);
+                }}
+                onCancel={() => {
+                    setShowEndPicker(false);
+                }}
+                title="選擇結束日期"
+                confirmText="確認"
+                cancelText="取消"
             />
-
-            <ThemedText style={styles.label}>Start Date (YYYY-MM-DD)</ThemedText>
-            <TextInput
-                style={[styles.input, {
-                    borderColor: colors.border,
-                    color: colors.text,
-                    backgroundColor: colors.surface
-                }]}
-                value={startDate}
-                onChangeText={setStartDate}
-                placeholder="2026-01-25"
-                placeholderTextColor={colors.textTertiary}
-            />
-
-            <ThemedText style={styles.label}>End Date (YYYY-MM-DD)</ThemedText>
-            <TextInput
-                style={[styles.input, {
-                    borderColor: colors.border,
-                    color: colors.text,
-                    backgroundColor: colors.surface
-                }]}
-                value={endDate}
-                onChangeText={setEndDate}
-                placeholder="2026-01-30"
-                placeholderTextColor={colors.textTertiary}
-            />
-
-            <Button title={saving ? "Saving..." : "Create Trip"} onPress={handleSave} disabled={saving}/>
-        </ThemedView>
+        </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {flex: 1, padding: 20},
-    label: {fontSize: 16, marginBottom: 8, fontWeight: '500'},
-    input: {
-        borderWidth: 1,
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 20,
-        fontSize: 16
-    }
-});

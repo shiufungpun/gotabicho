@@ -28,7 +28,13 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>gotabicho</string>
-				<string>com.billypun8.gotabicho</string>
+				<string>com.mizutamine.gotabicho</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>exp+gotabicho</string>
 			</array>
 		</dict>
 	</array>
