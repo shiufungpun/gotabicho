@@ -6,6 +6,7 @@ import {useTheme} from '../src/theme';
 import {ThemedText, ThemedView} from '../src/components';
 import TripCard from "../src/containers/TripCard";
 import TripCardCarousel from "../src/components/homepage/TripCardCarousel";
+import AddTripButton from "../src/components/homepage/AddTripButton";
 
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
@@ -106,6 +107,7 @@ export default function TripListScreen() {
                 </Animated.View>
                 {!loading && renderList()}
             </ThemedView>
+            <AddTripButton/>
         </>
     );
 }

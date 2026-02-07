@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {Alert, Button, StyleSheet, TextInput} from 'react-native';
+import {Alert, StyleSheet, TextInput} from 'react-native';
 import {useRouter} from 'expo-router';
+import {Button} from '../src/components/ui/button';
 import {createTrip} from '../src/repositories/tripRepository';
 import {useTheme} from '../src/theme';
 import {ThemedText, ThemedView} from '../src/components';
@@ -49,8 +50,8 @@ export default function AddTripScreen() {
     };
 
     return (
-        <ThemedView variant="surface" style={styles.container}>
-            <ThemedText style={styles.label}>Trip Name</ThemedText>
+        <ThemedView variant="background" className={"p-16 h-full"}>
+            <ThemedText variant={"primary"} textStyle={"content"}>旅程名稱</ThemedText>
             <TextInput
                 style={[styles.input, {
                     borderColor: colors.border,
@@ -63,7 +64,7 @@ export default function AddTripScreen() {
                 placeholderTextColor={colors.textTertiary}
             />
 
-            <ThemedText style={styles.label}>Total Budget (Optional)</ThemedText>
+            <ThemedText variant={"primary"} textStyle={"content"}>預算</ThemedText>
             <TextInput
                 style={[styles.input, {
                     borderColor: colors.border,

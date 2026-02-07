@@ -66,7 +66,7 @@ export function ThemedText({style, variant = 'primary', textStyle = 'content', .
             case 'title':
                 return {fontSize: 30, fontWeight: '600' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'content':
-                return {fontSize: 30, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
+                return {fontSize: 24, fontWeight: '400' as const, fontFamily: 'HinaMincho_400Regular'};
             case 'body':
                 return {fontSize: 18, fontWeight: '400' as const};
             case 'caption':
