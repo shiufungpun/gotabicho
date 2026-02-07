@@ -13,8 +13,10 @@
     "@expo-google-fonts/iansui": "^0.4.2",
     "@expo-google-fonts/yuji-syuku": "^0.4.1",
     "@expo-google-fonts/zen-old-mincho": "^0.4.1",
+    "@libsql/client": "^0.17.0",
     "@react-native-community/slider": "5.1.1",
     "buffer": "^6.0.3",
+    "dotenv": "^17.2.4",
     "drizzle-orm": "^0.45.1",
     "expo": "^55.0.0-preview.9",
     "expo-blur": "~55.0.4",
@@ -50,7 +52,9 @@
     "@babel/core": "^7.20.0",
     "@types/react": "~19.2.2",
     "babel-preset-expo": "~55.0.0",
+    "drizzle-kit": "^0.31.8",
     "tailwindcss": "^3.4.19",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.2"
   },
   "private": true

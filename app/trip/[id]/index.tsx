@@ -8,20 +8,19 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated';
-import {PieChart} from 'react-native-gifted-charts';
-import {Ionicons} from '@expo/vector-icons';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useTripDetails} from '../../../src/hooks/useTripDetails';
 import {ReceiptWithDetails} from '../../../src/types';
 import {useTheme} from '../../../src/theme';
-import {ThemedView} from '../../../src/components';
+import {ThemedText, ThemedView} from '../../../src/components';
+import {tripCardContent} from "../../../src/containers/TripCard";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
-const HEADER_MAX_HEIGHT = 300;
+const HEADER_MAX_HEIGHT = 250;
 const HEADER_MIN_HEIGHT = 100;
 
-export default function TripExpensesScreen() {
+export default function TripDetailsScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
     const tripId = parseInt(id || '0');
     const router = useRouter();
@@ -29,6 +28,7 @@ export default function TripExpensesScreen() {
     const insets = useSafeAreaInsets();
     const scrollY = useSharedValue(0);
     const {colors} = useTheme();
+
 
     const myId = useMemo(() => {
         return participants.find(p => p.name === 'You')?.id;
@@ -59,6 +59,7 @@ export default function TripExpensesScreen() {
 
         return grouped;
     }, [receipts]);
+
 
     const {totalSpent, budget, categoryPieData} = useMemo(() => {
         let spent = 0;
@@ -136,7 +137,7 @@ export default function TripExpensesScreen() {
         const displayDate = year === todayYear ? `${month} ${day}` : `${month} ${day}, ${year}`;
 
         return (
-            <View className="bg-gray-50 flex-row items-center pt-2 pb-2 pl-4 z-10">
+            <View className="flex-row items-center pt-2 pb-2 pl-4 z-10">
                 <View className="w-[40px] items-center mr-2"/>
                 <View className="bg-blue-100 px-3 py-1 rounded-full">
                     <Text className="text-blue-800 font-bold text-xs">{displayDate}</Text>
@@ -174,7 +175,7 @@ export default function TripExpensesScreen() {
                             bottom: isLastItem ? '50%' : -10
                         }}
                     />
-                    <View className="w-3 h-3 bg-blue-500 rounded-full mt-8 border-2 border-white z-10"/>
+                    <View className="w-3 h-3 bg-blue-100 rounded-full mt-8 border-2 border-white z-10"/>
                 </View>
 
                 <TouchableOpacity
@@ -203,52 +204,61 @@ export default function TripExpensesScreen() {
         );
     };
 
+    if (!trip) {
+        return (
+            <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <ThemedText variant={"warning"}>Trip not found</ThemedText>
+            </ThemedView>
+        );
+    }
+
     return (
         <ThemedView style={{flex: 1}}>
             <Animated.View
                 style={[
-                    styles.header,
                     headerAnimatedStyle,
-                    {paddingTop: insets.top, backgroundColor: colors.primary}
+                    {paddingTop: insets.top, backgroundColor: colors.card}
                 ]}
+                className={"m-5 rounded-3xl overflow-hidden"}
             >
-                <Animated.View style={[styles.headerContent, contentOpacityStyle]}>
-                    <Text className="text-white text-xl font-bold mb-4 text-center">Trip Overview</Text>
-                    <View className="flex-row justify-around items-center w-full px-4">
-                        <View className="items-center justify-center" style={{width: 140, height: 140}}>
-                            {categoryPieData.length > 0 ? (
-                                <PieChart
-                                    data={categoryPieData}
-                                    donut
-                                    radius={70}
-                                    innerRadius={50}
-                                    backgroundColor="transparent"
-                                    centerLabelComponent={() => <View/>}
-                                />
-                            ) : (
-                                <View
-                                    className="h-[120px] w-[120px] rounded-full border-4 border-gray-300 justify-center items-center">
-                                    <Text className="text-gray-300 text-xs">No Data</Text>
-                                </View>
-                            )}
-                        </View>
+                <Animated.View style={[contentOpacityStyle]} className={"p-5"}>
+                    {tripCardContent(trip)}
+                    {/*<Text className="text-white text-xl font-bold mb-4 text-center">Trip Overview</Text>*/}
+                    {/*<View className="flex-row justify-around items-center w-full px-4">*/}
+                    {/*    <View className="items-center justify-center" style={{width: 140, height: 140}}>*/}
+                    {/*        {categoryPieData.length > 0 ? (*/}
+                    {/*            <PieChart*/}
+                    {/*                data={categoryPieData}*/}
+                    {/*                donut*/}
+                    {/*                radius={70}*/}
+                    {/*                innerRadius={50}*/}
+                    {/*                backgroundColor="transparent"*/}
+                    {/*                centerLabelComponent={() => <View/>}*/}
+                    {/*            />*/}
+                    {/*        ) : (*/}
+                    {/*            <View*/}
+                    {/*                className="h-[120px] w-[120px] rounded-full border-4 border-gray-300 justify-center items-center">*/}
+                    {/*                <Text className="text-gray-300 text-xs">No Data</Text>*/}
+                    {/*            </View>*/}
+                    {/*        )}*/}
+                    {/*    </View>*/}
 
-                        <View className="flex-1 ml-6">
-                            <Text className="text-white text-sm mb-1">Spent / Budget</Text>
-                            <Text className="text-white font-bold text-2xl">
-                                {Math.round(progress * 100)}%
-                            </Text>
-                            <View className="h-2 bg-gray-700 rounded-full mt-2 overflow-hidden">
-                                <View
-                                    style={{width: `${Math.min(progress * 100, 100)}%`}}
-                                    className="h-full bg-blue-400"
-                                />
-                            </View>
-                            <Text className="text-gray-300 text-xs mt-2">
-                                Total: {trip?.base_currency} {totalSpent.toLocaleString()}
-                            </Text>
-                        </View>
-                    </View>
+                    {/*    <View className="flex-1 ml-6">*/}
+                    {/*        <Text className="text-white text-sm mb-1">Spent / Budget</Text>*/}
+                    {/*        <Text className="text-white font-bold text-2xl">*/}
+                    {/*            {Math.round(progress * 100)}%*/}
+                    {/*        </Text>*/}
+                    {/*        <View className="h-2 bg-gray-700 rounded-full mt-2 overflow-hidden">*/}
+                    {/*            <View*/}
+                    {/*                style={{width: `${Math.min(progress * 100, 100)}%`}}*/}
+                    {/*                className="h-full bg-blue-400"*/}
+                    {/*            />*/}
+                    {/*        </View>*/}
+                    {/*        <Text className="text-gray-300 text-xs mt-2">*/}
+                    {/*            Total: {trip?.base_currency} {totalSpent.toLocaleString()}*/}
+                    {/*        </Text>*/}
+                    {/*    </View>*/}
+                    {/*</View>*/}
                 </Animated.View>
 
                 <Animated.View style={[styles.smallHeaderContent, smallHeaderOpacityStyle, {paddingTop: insets.top}]}>
@@ -264,7 +274,6 @@ export default function TripExpensesScreen() {
                 renderSectionHeader={renderSectionHeader}
                 stickySectionHeadersEnabled={true}
                 contentContainerStyle={{
-                    paddingTop: HEADER_MAX_HEIGHT + 20,
                     paddingBottom: 100
                 }}
                 onScroll={scrollHandler}
@@ -275,33 +284,11 @@ export default function TripExpensesScreen() {
                     </View>
                 }
             />
-
-            <TouchableOpacity
-                className="absolute bottom-8 right-6 bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-                onPress={() => router.push(`/add-receipt?tripId=${tripId}`)}
-            >
-                <Ionicons name="add" size={30} color="white"/>
-            </TouchableOpacity>
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    header: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 10,
-        overflow: 'hidden',
-        borderBottomLeftRadius: 24,
-        borderBottomRightRadius: 24,
-    },
-    headerContent: {
-        flex: 1,
-        alignItems: 'center',
-        paddingTop: 10,
-    },
     smallHeaderContent: {
         position: 'absolute',
         top: 0,
@@ -313,3 +300,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     }
 });
+
+{/*<TouchableOpacity*/
+}
+{/*    className="absolute bottom-8 right-6 bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg"*/
+}
+{/*    onPress={() => router.push(`/add-receipt?tripId=${tripId}`)}*/
+}
+{/*>*/
+}
+{/*    <Ionicons name="add" size={30} color="white"/>*/
+}
+{/*</TouchableOpacity>*/
+}

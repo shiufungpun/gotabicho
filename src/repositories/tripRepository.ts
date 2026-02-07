@@ -2,37 +2,37 @@ import {getDB} from '../db/db';
 import {participants, receipts, trips} from '../db/schema';
 import {Trip} from '../types';
 import {desc, eq, sql} from 'drizzle-orm';
+import {TripDetails} from "../hooks/useTrips";
 
-export const getAllTrips = async (): Promise<(Trip & {
-    total_expenses: number;
-    participant_count: number;
-    receipt_count: number
-})[]> => {
+const selectTripWithStats = {
+    id: trips.id,
+    name: trips.name,
+    start_date: trips.start_date,
+    end_date: trips.end_date,
+    base_currency: trips.base_currency,
+    total_budget: trips.total_budget,
+    created_at: trips.created_at,
+    updated_at: trips.updated_at,
+    total_expenses: sql<number>`COALESCE(SUM(${receipts.total_amount}), 0)`.as('total_expenses'),
+    receipt_count: sql<number>`COUNT(DISTINCT ${receipts.id})`.as('receipt_count'),
+    participant_count: sql<number>`(SELECT COUNT(*) FROM ${participants} WHERE ${participants.trip_id} = ${trips.id})`.as('participant_count'),
+}
+
+
+export const getAllTrips = async (): Promise<TripDetails[]> => {
     const db = await getDB();
     return await db
-        .select({
-            id: trips.id,
-            name: trips.name,
-            start_date: trips.start_date,
-            end_date: trips.end_date,
-            base_currency: trips.base_currency,
-            total_budget: trips.total_budget,
-            created_at: trips.created_at,
-            updated_at: trips.updated_at,
-            total_expenses: sql<number>`COALESCE(SUM(${receipts.total_amount}), 0)`.as('total_expenses'),
-            receipt_count: sql<number>`COUNT(DISTINCT ${receipts.id})`.as('receipt_count'),
-            participant_count: sql<number>`(SELECT COUNT(*) FROM ${participants} WHERE ${participants.trip_id} = ${trips.id})`.as('participant_count'),
-        })
+        .select(selectTripWithStats)
         .from(trips)
         .leftJoin(receipts, eq(trips.id, receipts.trip_id))
         .groupBy(trips.id)
         .orderBy(desc(trips.created_at));
 };
 
-export const getTripById = async (id: number): Promise<Trip | null> => {
+export const getTripById = async (id: number): Promise<TripDetails | null> => {
     const db = await getDB();
-    const result = await db.select().from(trips).where(eq(trips.id, id)).limit(1);
-    return (result[0] as Trip) || null;
+    const result = await db.select(selectTripWithStats).from(trips).where(eq(trips.id, id)).limit(1);
+    return (result[0] as TripDetails) || null;
 };
 
 export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated_at'>): Promise<number> => {
