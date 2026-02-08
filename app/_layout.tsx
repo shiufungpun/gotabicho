@@ -38,10 +38,14 @@ export default function RootLayout() {
     }
 
     return (
-        <Stack>
+        <Stack screenOptions={{
+            headerShown: false, headerStyle: {
+                // backgroundColor: colors.background
+            },
+        }}>
             <Stack.Screen name="index" options={{headerShown: false}}/>
             <Stack.Screen name="add-trip" options={{
-                presentation: "formSheet", headerShown: false,
+                presentation: "formSheet"
             }}/>
             <Stack.Screen
                 name="trip/[id]"
@@ -59,12 +63,14 @@ export default function RootLayout() {
                 name="add-receipt"
                 options={{
                     presentation: 'modal',
-                    title: 'Add Receipt'
                 }}
             />
             <Stack.Screen
                 name="receipt/[id]"
-                options={{title: 'Receipt Details'}}
+                options={{
+                    title: 'Receipt Details',
+                    headerShown: true,
+                }}
             />
         </Stack>
     );

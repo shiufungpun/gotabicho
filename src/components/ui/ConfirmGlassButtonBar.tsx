@@ -22,7 +22,7 @@ const ConfirmGlassButtonBar = ({onConfirm, disabled, title}: ConfirmGlassButtonB
             {/* Glass Action Buttons */}
             <GlassButton
                 icon={
-                    <XIcon size={30} color={colors.textSecondary}/>
+                    <XIcon size={30} color={colors.text}/>
                 }
                 onPress={() => {
                     router.back();
@@ -32,7 +32,7 @@ const ConfirmGlassButtonBar = ({onConfirm, disabled, title}: ConfirmGlassButtonB
                 <ThemedText textStyle={"content"}>{title}</ThemedText>}
             <GlassButton
                 icon={
-                    <CheckIcon size={30} color={colors.textSecondary}/>
+                    <CheckIcon size={30} color={colors.text}/>
                 }
                 onPress={onConfirm}
                 disabled={disabled}

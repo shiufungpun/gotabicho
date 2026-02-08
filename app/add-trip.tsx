@@ -69,7 +69,7 @@ export default function AddTripScreen() {
             <View className={"mx-5"}>
                 <ThemedCard>
                     {/* Trip Name */}
-                    <ThemedText variant="primary" textStyle="content" className="mb-2">
+                    <ThemedText variant="prrimary" textStyle="content" className="mb-2">
                         旅程名稱
                     </ThemedText>
                     <TextInput
