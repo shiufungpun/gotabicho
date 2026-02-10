@@ -31,6 +31,7 @@ const TripCard: React.FC<TripCardProps> = ({trip}) => {
     return (
         <TouchableOpacity
             onPress={() => router.push(`/trip/${trip.id}`)}
+            className={"mb-4"}
         >
             <ThemedCard>
                 {tripCardContent(trip)}

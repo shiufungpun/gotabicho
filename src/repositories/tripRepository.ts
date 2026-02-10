@@ -3,6 +3,7 @@ import {participants, receipts, trips} from '../db/schema';
 import {Trip} from '../types';
 import {desc, eq, sql} from 'drizzle-orm';
 import {TripDetails} from "../hooks/useTrips";
+import {notifyTripChange} from '../services/dataEventEmitter';
 
 const selectTripWithStats = {
     id: trips.id,
@@ -63,6 +64,7 @@ export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated
         });
     });
 
+    notifyTripChange();
     return tripId;
 };
 
@@ -70,6 +72,7 @@ export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated
 export const deleteTrip = async (id: number): Promise<void> => {
     const db = await getDB();
     await db.delete(trips).where(eq(trips.id, id));
+    notifyTripChange();
 };
 
 export const getActiveTrip = async (): Promise<(Trip & { total_expenses: number }) | null> => {

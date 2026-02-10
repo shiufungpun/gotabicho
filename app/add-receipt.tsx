@@ -120,7 +120,9 @@ export default function AddReceiptScreen() {
         <>
             <ConfirmGlassButtonBar onConfirm={function (): void {
                 throw new Error("Function not implemented.");
-            }} disabled={false}/>
+            }} disabled={false} onCancel={function (): void {
+                router.back();
+            }}/>
             <View className="flex-1 bg-gray-50">
                 <ScrollView className="flex-1 p-4">
                     <View className="bg-white p-4 rounded-xl mb-4 shadow-sm">

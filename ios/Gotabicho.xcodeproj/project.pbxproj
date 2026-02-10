@@ -8,29 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		244DAE03424B428D96BF389E /* YujiSyuku_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFFCDD1B5F3541B2AB397656 /* YujiSyuku_400Regular.ttf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		46E50D62CB9406EE3236F3E0 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4D74FBC47AF30B4AD0E341 /* ExpoModulesProvider.swift */; };
-		714976A478876E9927DA8AFA /* libPods-Gotabicho.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C29DE9368F7277283EDE0B7 /* libPods-Gotabicho.a */; };
-		AEA310FC20626C0E109D46A5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0A48102AE315F16CD4370715 /* PrivacyInfo.xcprivacy */; };
+		578BFDE66EA442519F2C258A /* YujiSyuku_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C32268B91D14E01A7E22FE6 /* YujiSyuku_400Regular.ttf */; };
+		82C53A9C0AC6FEDD8F935577 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AC7A759D8C817CE43944AA /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C75F17EDD4CA4A4ABF16F4FA /* ZenOldMincho_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 672AD58ECFAA4D89A2CB7103 /* ZenOldMincho_400Regular.ttf */; };
+		C83DB3BA17F73A534B308F31 /* libPods-Gotabicho.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C199C1D2AA71467A43E091 /* libPods-Gotabicho.a */; };
+		D5303D10B41F40DBB483255D /* ZenOldMincho_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F90A599B61B46BBA377C6A6 /* ZenOldMincho_400Regular.ttf */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F4AB21720E7487DBD0B4E528 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1053D949E307C20758D568E8 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0A48102AE315F16CD4370715 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Gotabicho/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1053D949E307C20758D568E8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Gotabicho/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Gotabicho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gotabicho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Gotabicho/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Gotabicho/Info.plist; sourceTree = "<group>"; };
-		1C29DE9368F7277283EDE0B7 /* libPods-Gotabicho.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Gotabicho.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4E4D74FBC47AF30B4AD0E341 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Gotabicho/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		672AD58ECFAA4D89A2CB7103 /* ZenOldMincho_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ZenOldMincho_400Regular.ttf; path = "../node_modules/@expo-google-fonts/zen-old-mincho/400Regular/ZenOldMincho_400Regular.ttf"; sourceTree = "<group>"; };
-		6A630B8283B597E817BB2326 /* Pods-Gotabicho.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gotabicho.debug.xcconfig"; path = "Target Support Files/Pods-Gotabicho/Pods-Gotabicho.debug.xcconfig"; sourceTree = "<group>"; };
-		9A43B4938F9BE7C028DEC266 /* Pods-Gotabicho.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gotabicho.release.xcconfig"; path = "Target Support Files/Pods-Gotabicho/Pods-Gotabicho.release.xcconfig"; sourceTree = "<group>"; };
+		37C199C1D2AA71467A43E091 /* libPods-Gotabicho.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Gotabicho.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C32268B91D14E01A7E22FE6 /* YujiSyuku_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = YujiSyuku_400Regular.ttf; path = "../node_modules/@expo-google-fonts/yuji-syuku/400Regular/YujiSyuku_400Regular.ttf"; sourceTree = "<group>"; };
+		8F90A599B61B46BBA377C6A6 /* ZenOldMincho_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ZenOldMincho_400Regular.ttf; path = "../node_modules/@expo-google-fonts/zen-old-mincho/400Regular/ZenOldMincho_400Regular.ttf"; sourceTree = "<group>"; };
+		958D1FD2031A54AE500AF7A1 /* Pods-Gotabicho.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gotabicho.debug.xcconfig"; path = "Target Support Files/Pods-Gotabicho/Pods-Gotabicho.debug.xcconfig"; sourceTree = "<group>"; };
+		A2AC7A759D8C817CE43944AA /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Gotabicho/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Gotabicho/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B382082D073FD7C8DEE6EBFD /* Pods-Gotabicho.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gotabicho.release.xcconfig"; path = "Target Support Files/Pods-Gotabicho/Pods-Gotabicho.release.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CFFCDD1B5F3541B2AB397656 /* YujiSyuku_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = YujiSyuku_400Regular.ttf; path = "../node_modules/@expo-google-fonts/yuji-syuku/400Regular/YujiSyuku_400Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Gotabicho/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Gotabicho-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Gotabicho-Bridging-Header.h"; path = "Gotabicho/Gotabicho-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -41,13 +41,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				714976A478876E9927DA8AFA /* libPods-Gotabicho.a in Frameworks */,
+				C83DB3BA17F73A534B308F31 /* libPods-Gotabicho.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		109C73E9D8C1D3A6E7BAA80B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				958D1FD2031A54AE500AF7A1 /* Pods-Gotabicho.debug.xcconfig */,
+				B382082D073FD7C8DEE6EBFD /* Pods-Gotabicho.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* Gotabicho */ = {
 			isa = PBXGroup;
 			children = (
@@ -57,7 +67,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				0A48102AE315F16CD4370715 /* PrivacyInfo.xcprivacy */,
+				1053D949E307C20758D568E8 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Gotabicho;
 			sourceTree = "<group>";
@@ -66,27 +76,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1C29DE9368F7277283EDE0B7 /* libPods-Gotabicho.a */,
+				37C199C1D2AA71467A43E091 /* libPods-Gotabicho.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		3F9F1DB593659586FA989C9B /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				F708C9B2F97A9BA35E791272 /* Gotabicho */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		6F8C3F52A759151E37135EE9 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				6A630B8283B597E817BB2326 /* Pods-Gotabicho.debug.xcconfig */,
-				9A43B4938F9BE7C028DEC266 /* Pods-Gotabicho.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -103,9 +95,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				CF943B02B2424D38BC7C82BF /* Resources */,
-				6F8C3F52A759151E37135EE9 /* Pods */,
-				3F9F1DB593659586FA989C9B /* ExpoModulesProviders */,
+				EB4AD28F096D4D07A8B81EAD /* Resources */,
+				109C73E9D8C1D3A6E7BAA80B /* Pods */,
+				E2D3A387CF03B05CD1149E8C /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -120,6 +112,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8F48510C23A348E5DECBD4D4 /* Gotabicho */ = {
+			isa = PBXGroup;
+			children = (
+				A2AC7A759D8C817CE43944AA /* ExpoModulesProvider.swift */,
+			);
+			name = Gotabicho;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,22 +129,22 @@
 			path = Gotabicho/Supporting;
 			sourceTree = "<group>";
 		};
-		CF943B02B2424D38BC7C82BF /* Resources */ = {
+		E2D3A387CF03B05CD1149E8C /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				672AD58ECFAA4D89A2CB7103 /* ZenOldMincho_400Regular.ttf */,
-				CFFCDD1B5F3541B2AB397656 /* YujiSyuku_400Regular.ttf */,
+				8F48510C23A348E5DECBD4D4 /* Gotabicho */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		EB4AD28F096D4D07A8B81EAD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8F90A599B61B46BBA377C6A6 /* ZenOldMincho_400Regular.ttf */,
+				3C32268B91D14E01A7E22FE6 /* YujiSyuku_400Regular.ttf */,
 			);
 			name = Resources;
 			path = "";
-			sourceTree = "<group>";
-		};
-		F708C9B2F97A9BA35E791272 /* Gotabicho */ = {
-			isa = PBXGroup;
-			children = (
-				4E4D74FBC47AF30B4AD0E341 /* ExpoModulesProvider.swift */,
-			);
-			name = Gotabicho;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -155,13 +155,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Gotabicho" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				93EC018228FFFFECF2FA56E7 /* [Expo] Configure project */,
+				C63975D3E83893848BCC8183 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				AB958DCB8E90A291105BEE2A /* [CP] Embed Pods Frameworks */,
+				5D733AAE275BC3890A1E3E8A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -211,9 +211,9 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				C75F17EDD4CA4A4ABF16F4FA /* ZenOldMincho_400Regular.ttf in Resources */,
-				244DAE03424B428D96BF389E /* YujiSyuku_400Regular.ttf in Resources */,
-				AEA310FC20626C0E109D46A5 /* PrivacyInfo.xcprivacy in Resources */,
+				D5303D10B41F40DBB483255D /* ZenOldMincho_400Regular.ttf in Resources */,
+				578BFDE66EA442519F2C258A /* YujiSyuku_400Regular.ttf in Resources */,
+				F4AB21720E7487DBD0B4E528 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +259,28 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		5D733AAE275BC3890A1E3E8A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Gotabicho/Pods-Gotabicho-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Gotabicho/Pods-Gotabicho-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -293,7 +315,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Gotabicho/Pods-Gotabicho-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		93EC018228FFFFECF2FA56E7 /* [Expo] Configure project */ = {
+		C63975D3E83893848BCC8183 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -317,28 +339,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Gotabicho/expo-configure-project.sh\"\n";
 		};
-		AB958DCB8E90A291105BEE2A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Gotabicho/Pods-Gotabicho-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Gotabicho/Pods-Gotabicho-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -347,7 +347,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				46E50D62CB9406EE3236F3E0 /* ExpoModulesProvider.swift in Sources */,
+				82C53A9C0AC6FEDD8F935577 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +356,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6A630B8283B597E817BB2326 /* Pods-Gotabicho.debug.xcconfig */;
+			baseConfigurationReference = 958D1FD2031A54AE500AF7A1 /* Pods-Gotabicho.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -392,7 +392,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9A43B4938F9BE7C028DEC266 /* Pods-Gotabicho.release.xcconfig */;
+			baseConfigurationReference = B382082D073FD7C8DEE6EBFD /* Pods-Gotabicho.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

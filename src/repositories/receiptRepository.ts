@@ -2,6 +2,7 @@ import {getDB} from '../db/db';
 import {participants, receiptItems, receiptItemShares, receipts} from '../db/schema';
 import {Receipt, ReceiptItemShare, ReceiptWithDetails} from '../types';
 import {asc, desc, eq, inArray} from 'drizzle-orm';
+import {notifyReceiptChange} from '../services/dataEventEmitter';
 
 export const getReceiptsByTripId = async (tripId: number): Promise<ReceiptWithDetails[]> => {
     const db = await getDB();
@@ -211,10 +212,13 @@ export const createReceipt = async (
         console.error("Failed to create receipt", e);
         throw e;
     }
+
+    notifyReceiptChange();
 };
 
 export const deleteReceipt = async (id: number): Promise<void> => {
     const db = await getDB();
     await db.delete(receipts).where(eq(receipts.id, id));
+    notifyReceiptChange();
 };
 

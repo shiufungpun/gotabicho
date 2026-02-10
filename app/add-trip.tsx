@@ -41,7 +41,7 @@ export default function AddTripScreen() {
                 end_date: endDate.toISOString().split('T')[0],
                 base_currency: 'JPY'
             });
-            router.navigate("trips/" + result);
+            router.navigate("trip/" + result);
         } catch (e) {
             console.log(e);
             Alert.alert('錯誤', '建立旅程失敗');
@@ -69,7 +69,7 @@ export default function AddTripScreen() {
             <View className={"mx-5"}>
                 <ThemedCard>
                     {/* Trip Name */}
-                    <ThemedText variant="prrimary" textStyle="content" className="mb-2">
+                    <ThemedText variant="primary" textStyle="content" className="mb-2">
                         旅程名稱
                     </ThemedText>
                     <TextInput

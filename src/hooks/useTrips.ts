@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Trip} from '../types';
 import * as TripRepository from '../repositories/tripRepository';
+import {dataChangeEmitter} from '../services/dataEventEmitter';
 
 export type TripDetails = Trip & {
     total_expenses: number;
@@ -24,9 +25,20 @@ export const useTrips = () => {
         }
     }, []);
 
-    // Load trips only on initial mount
+    // Load trips on initial mount
     useEffect(() => {
         loadTrips();
+    }, [loadTrips]);
+
+    // Subscribe to data changes (trips or receipts)
+    useEffect(() => {
+        const unsubscribe = dataChangeEmitter.subscribe(() => {
+            loadTrips();
+        });
+
+        return () => {
+            unsubscribe();
+        };
     }, [loadTrips]);
 
     return {trips, loading, refresh: loadTrips};

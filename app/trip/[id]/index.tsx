@@ -14,6 +14,7 @@ import {ReceiptWithDetails} from '../../../src/types';
 import {useTheme} from '../../../src/theme';
 import {ThemedText, ThemedView} from '../../../src/components';
 import {tripCardContent} from "../../../src/containers/TripCard";
+import {GlassView} from "expo-glass-effect";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
@@ -137,11 +138,13 @@ export default function TripDetailsScreen() {
         const displayDate = year === todayYear ? `${month} ${day}` : `${month} ${day}, ${year}`;
 
         return (
-            <View className="flex-row items-center pt-2 pb-2 pl-4 z-10">
+            <View className="flex-row items-center py-2 pl-4 z-10">
                 <View className="w-[40px] items-center mr-2"/>
-                <View className="bg-blue-100 px-3 py-1 rounded-full">
+                {/*<View className="bg-blue-100 px-3 py-1 rounded-full">*/}
+                <GlassView style={styles.dateGlass} isInteractive>
                     <Text className="text-blue-800 font-bold text-xs">{displayDate}</Text>
-                </View>
+                </GlassView>
+                {/*</View>*/}
             </View>
         );
     };
@@ -223,42 +226,6 @@ export default function TripDetailsScreen() {
             >
                 <Animated.View style={[contentOpacityStyle]} className={"p-5"}>
                     {tripCardContent(trip)}
-                    {/*<Text className="text-white text-xl font-bold mb-4 text-center">Trip Overview</Text>*/}
-                    {/*<View className="flex-row justify-around items-center w-full px-4">*/}
-                    {/*    <View className="items-center justify-center" style={{width: 140, height: 140}}>*/}
-                    {/*        {categoryPieData.length > 0 ? (*/}
-                    {/*            <PieChart*/}
-                    {/*                data={categoryPieData}*/}
-                    {/*                donut*/}
-                    {/*                radius={70}*/}
-                    {/*                innerRadius={50}*/}
-                    {/*                backgroundColor="transparent"*/}
-                    {/*                centerLabelComponent={() => <View/>}*/}
-                    {/*            />*/}
-                    {/*        ) : (*/}
-                    {/*            <View*/}
-                    {/*                className="h-[120px] w-[120px] rounded-full border-4 border-gray-300 justify-center items-center">*/}
-                    {/*                <Text className="text-gray-300 text-xs">No Data</Text>*/}
-                    {/*            </View>*/}
-                    {/*        )}*/}
-                    {/*    </View>*/}
-
-                    {/*    <View className="flex-1 ml-6">*/}
-                    {/*        <Text className="text-white text-sm mb-1">Spent / Budget</Text>*/}
-                    {/*        <Text className="text-white font-bold text-2xl">*/}
-                    {/*            {Math.round(progress * 100)}%*/}
-                    {/*        </Text>*/}
-                    {/*        <View className="h-2 bg-gray-700 rounded-full mt-2 overflow-hidden">*/}
-                    {/*            <View*/}
-                    {/*                style={{width: `${Math.min(progress * 100, 100)}%`}}*/}
-                    {/*                className="h-full bg-blue-400"*/}
-                    {/*            />*/}
-                    {/*        </View>*/}
-                    {/*        <Text className="text-gray-300 text-xs mt-2">*/}
-                    {/*            Total: {trip?.base_currency} {totalSpent.toLocaleString()}*/}
-                    {/*        </Text>*/}
-                    {/*    </View>*/}
-                    {/*</View>*/}
                 </Animated.View>
 
                 <Animated.View style={[styles.smallHeaderContent, smallHeaderOpacityStyle, {paddingTop: insets.top}]}>
@@ -298,18 +265,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    dateGlass: {
+        width: 50,
+        height: 25,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
-
-{/*<TouchableOpacity*/
-}
-{/*    className="absolute bottom-8 right-6 bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg"*/
-}
-{/*    onPress={() => router.push(`/add-receipt?tripId=${tripId}`)}*/
-}
-{/*>*/
-}
-{/*    <Ionicons name="add" size={30} color="white"/>*/
-}
-{/*</TouchableOpacity>*/
-}
