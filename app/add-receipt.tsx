@@ -119,7 +119,7 @@ export default function AddReceiptScreen() {
     return (
         <>
             <ConfirmGlassButtonBar onConfirm={function (): void {
-                throw new Error("Function not implemented.");
+                handleSubmit();
             }} disabled={false} onCancel={function (): void {
                 router.back();
             }}/>

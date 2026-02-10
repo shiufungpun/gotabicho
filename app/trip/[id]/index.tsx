@@ -220,7 +220,7 @@ export default function TripDetailsScreen() {
             <Animated.View
                 style={[
                     headerAnimatedStyle,
-                    {paddingTop: insets.top, backgroundColor: colors.card}
+                    {backgroundColor: colors.card}
                 ]}
                 className={"m-5 rounded-3xl overflow-hidden"}
             >
