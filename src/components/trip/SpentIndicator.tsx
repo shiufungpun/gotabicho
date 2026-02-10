@@ -1,14 +1,15 @@
 import React from 'react';
 import {useTheme} from "../../theme";
 import {TripDetails} from "../../hooks/useTrips";
-import {View} from "react-native";
+import {View, ViewProps} from "react-native";
 import {ThemedText} from "../ThemedText";
 import {BookmarkIcon, ReceiptJapaneseYenIcon, UsersIcon} from "lucide-react-native";
 
-type SpentIndicatorProps = {
+interface SpentIndicatorProps extends ViewProps {
     trip: TripDetails
 }
-const SpentIndicator = ({trip}: SpentIndicatorProps) => {
+
+const SpentIndicator = ({trip, ...props}: SpentIndicatorProps) => {
     const {colors} = useTheme();
     const budget = trip.total_budget || 0;
     const spent = trip.total_expenses || 0;
@@ -36,7 +37,7 @@ const SpentIndicator = ({trip}: SpentIndicatorProps) => {
         );
     };
     return (
-        <View className={"flex-col gap-1 my-2"}>
+        <View className={"flex-col gap-1 my-2 w-full"} {...props}>
             <View className={"flex-row justify-end items-baseline gap-3"}>
                 <ThemedText textStyle={"number"} className={"text-2xl"}>{trip.base_currency} </ThemedText>
                 <ThemedText textStyle={"number"} className={"text-5xl"}>{spent.toLocaleString()}</ThemedText>

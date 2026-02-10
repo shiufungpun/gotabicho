@@ -1,13 +1,14 @@
 import {useCallback, useState} from 'react';
-import {ParticipantStats, ReceiptWithDetails, Settlement, Trip} from '../types';
+import {ParticipantStats, ReceiptWithDetails, Settlement} from '../types';
 import * as TripRepository from '../repositories/tripRepository';
 import * as ParticipantRepository from '../repositories/participantRepository';
 import * as ReceiptRepository from '../repositories/receiptRepository';
 import {calculateParticipantStats, calculateSettlements} from '../services/settlementService';
 import {useFocusEffect} from '@react-navigation/native';
+import {TripDetails} from "./useTrips";
 
 export const useTripDetails = (tripId: number) => {
-    const [trip, setTrip] = useState<Trip | null>(null);
+    const [trip, setTrip] = useState<TripDetails | null>(null);
     const [participants, setParticipants] = useState<ParticipantStats[]>([]);
     const [receipts, setReceipts] = useState<ReceiptWithDetails[]>([]);
     const [settlements, setSettlements] = useState<Settlement[]>([]);

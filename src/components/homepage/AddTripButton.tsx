@@ -14,7 +14,7 @@ const AddTripButton = () => {
                 router.navigate(`/add-trip`)
             }}>
                 <GlassView style={styles.glassButton} isInteractive>
-                    <PlusIcon size={30} color={colors.textSecondary}/>
+                    <PlusIcon size={30} color={colors.text}/>
                 </GlassView>
             </TouchableOpacity>
         </GlassContainer>
@@ -27,8 +27,8 @@ export default AddTripButton;
 const styles = StyleSheet.create({
     glassContainerStyle: {
         position: 'absolute',
-        top: "85%",
-        left: "75%",
+        top: "88%",
+        left: "80%",
         width: 250,
         height: 100,
         flexDirection: 'row',

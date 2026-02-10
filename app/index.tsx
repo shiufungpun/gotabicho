@@ -49,6 +49,7 @@ export default function TripListScreen() {
                 <TripCardCarousel trips={trips}/>
             );
         } else {
+            console.log(trips)
             return (
                 <Animated.FlatList
                     data={trips}

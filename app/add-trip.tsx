@@ -5,8 +5,8 @@ import {createTrip} from '../src/repositories/tripRepository';
 import {useTheme} from '../src/theme';
 import {ThemedCard, ThemedText} from "../src/components";
 import Slider from "@react-native-community/slider";
-import DatePicker from "react-native-date-picker";
 import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
+import DatePicker from "react-native-date-picker";
 
 export default function AddTripScreen() {
     const [name, setName] = useState('');
@@ -34,14 +34,14 @@ export default function AddTripScreen() {
 
         setSaving(true);
         try {
-            await createTrip({
+            const result = await createTrip({
                 name: name.trim(),
                 total_budget: hasBudget ? budgetValue : null,
                 start_date: startDate.toISOString().split('T')[0],
                 end_date: endDate.toISOString().split('T')[0],
                 base_currency: 'JPY'
             });
-            router.back();
+            router.navigate("trips/" + result);
         } catch (e) {
             console.log(e);
             Alert.alert('錯誤', '建立旅程失敗');
@@ -66,10 +66,10 @@ export default function AddTripScreen() {
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
             <ConfirmGlassButtonBar onConfirm={handleSave} disabled={saving}/>
-            <View className={"mx-5 my-3"}>
-                <ThemedCard className="p-6 rounded-2xl max-w-[500px] w-full self-center" elevated>
+            <View className={"mx-5"}>
+                <ThemedCard>
                     {/* Trip Name */}
-                    <ThemedText variant="primary" textStyle="content" className="mb-2 mt-4">
+                    <ThemedText variant="prrimary" textStyle="content" className="mb-2">
                         旅程名稱
                     </ThemedText>
                     <TextInput
@@ -165,6 +165,7 @@ export default function AddTripScreen() {
                 </ThemedCard>
             </View>
             {/*/!*Date Pickers*\/}*/}
+
             <DatePicker
                 modal
                 open={showStartPicker}

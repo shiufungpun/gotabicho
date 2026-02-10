@@ -5,6 +5,7 @@ import {getParticipantsByTripId} from '../src/repositories/participantRepository
 import {createReceipt} from '../src/repositories/receiptRepository';
 import {Participant} from '../src/types';
 import {Ionicons} from '@expo/vector-icons';
+import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
 
 type ItemDraft = {
     name: string;
@@ -116,99 +117,104 @@ export default function AddReceiptScreen() {
     };
 
     return (
-        <View className="flex-1 bg-gray-50">
-            <ScrollView className="flex-1 p-4">
-                <View className="bg-white p-4 rounded-xl mb-4 shadow-sm">
-                    <Text className="text-gray-500 mb-1">Store / Title</Text>
-                    <TextInput
-                        className="bg-gray-100 p-2 rounded text-lg mb-4"
-                        placeholder="e.g. 7-Eleven"
-                        value={storeName}
-                        onChangeText={setStoreName}
-                    />
+        <>
+            <ConfirmGlassButtonBar onConfirm={function (): void {
+                throw new Error("Function not implemented.");
+            }} disabled={false}/>
+            <View className="flex-1 bg-gray-50">
+                <ScrollView className="flex-1 p-4">
+                    <View className="bg-white p-4 rounded-xl mb-4 shadow-sm">
+                        <Text className="text-gray-500 mb-1">Store / Title</Text>
+                        <TextInput
+                            className="bg-gray-100 p-2 rounded text-lg mb-4"
+                            placeholder="e.g. 7-Eleven"
+                            value={storeName}
+                            onChangeText={setStoreName}
+                        />
 
-                    <Text className="text-gray-500 mb-1">Paid By</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                        {participants.map(p => (
-                            <TouchableOpacity
-                                key={p.id}
-                                onPress={() => setSelectedPayerId(p.id)}
-                                className={`px-4 py-2 rounded-full mr-2 border ${selectedPayerId === p.id ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'}`}
-                            >
-                                <Text
-                                    className={selectedPayerId === p.id ? 'text-blue-700 font-bold' : 'text-gray-600'}>
-                                    {p.name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-
-                <Text className="text-lg font-bold mb-2 ml-1 text-gray-700">Items</Text>
-                {items.map((item, idx) => (
-                    <View key={idx} className="bg-white p-4 rounded-xl mb-4 shadow-sm border border-gray-100">
-                        <View className="flex-row justify-between mb-2">
-                            <TextInput
-                                className="flex-1 bg-gray-50 p-2 rounded mr-2"
-                                placeholder="Item Name"
-                                value={item.name}
-                                onChangeText={t => updateItem(idx, 'name', t)}
-                            />
-                            <TextInput
-                                className="w-24 bg-gray-50 p-2 rounded text-right"
-                                placeholder="Amount"
-                                keyboardType="numeric"
-                                value={item.amount}
-                                onChangeText={t => updateItem(idx, 'amount', t)}
-                            />
-                        </View>
-
-                        <View className="flex-row mb-2">
-                            {['Food', 'Play', 'Transport', 'Hotel'].map(cat => (
+                        <Text className="text-gray-500 mb-1">Paid By</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                            {participants.map(p => (
                                 <TouchableOpacity
-                                    key={cat}
-                                    onPress={() => updateItem(idx, 'category', cat)}
-                                    className={`px-3 py-1 rounded-full mr-2 ${item.category === cat ? 'bg-orange-100' : 'bg-gray-100'}`}
+                                    key={p.id}
+                                    onPress={() => setSelectedPayerId(p.id)}
+                                    className={`px-4 py-2 rounded-full mr-2 border ${selectedPayerId === p.id ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'}`}
                                 >
                                     <Text
-                                        className={`text-xs ${item.category === cat ? 'text-orange-700' : 'text-gray-500'}`}>{cat}</Text>
+                                        className={selectedPayerId === p.id ? 'text-blue-700 font-bold' : 'text-gray-600'}>
+                                        {p.name}
+                                    </Text>
                                 </TouchableOpacity>
                             ))}
-                        </View>
+                        </ScrollView>
+                    </View>
 
-                        <Text className="text-xs text-gray-400 mb-2">Split with:</Text>
-                        <View className="flex-row flex-wrap">
-                            {item.shares.map(s => {
-                                const p = participants.find(part => part.id === s.participant_id);
-                                return (
+                    <Text className="text-lg font-bold mb-2 ml-1 text-gray-700">Items</Text>
+                    {items.map((item, idx) => (
+                        <View key={idx} className="bg-white p-4 rounded-xl mb-4 shadow-sm border border-gray-100">
+                            <View className="flex-row justify-between mb-2">
+                                <TextInput
+                                    className="flex-1 bg-gray-50 p-2 rounded mr-2"
+                                    placeholder="Item Name"
+                                    value={item.name}
+                                    onChangeText={t => updateItem(idx, 'name', t)}
+                                />
+                                <TextInput
+                                    className="w-24 bg-gray-50 p-2 rounded text-right"
+                                    placeholder="Amount"
+                                    keyboardType="numeric"
+                                    value={item.amount}
+                                    onChangeText={t => updateItem(idx, 'amount', t)}
+                                />
+                            </View>
+
+                            <View className="flex-row mb-2">
+                                {['Food', 'Play', 'Transport', 'Hotel'].map(cat => (
                                     <TouchableOpacity
-                                        key={s.participant_id}
-                                        onPress={() => toggleShare(idx, s.participant_id)}
-                                        className={`mr-2 mb-2 px-2 py-1 rounded border ${s.isSelected ? 'bg-green-100 border-green-500' : 'bg-white border-gray-300'}`}
+                                        key={cat}
+                                        onPress={() => updateItem(idx, 'category', cat)}
+                                        className={`px-3 py-1 rounded-full mr-2 ${item.category === cat ? 'bg-orange-100' : 'bg-gray-100'}`}
                                     >
                                         <Text
-                                            className={`text-xs ${s.isSelected ? 'text-green-800' : 'text-gray-400'}`}>{p?.name}</Text>
+                                            className={`text-xs ${item.category === cat ? 'text-orange-700' : 'text-gray-500'}`}>{cat}</Text>
                                     </TouchableOpacity>
-                                );
-                            })}
+                                ))}
+                            </View>
+
+                            <Text className="text-xs text-gray-400 mb-2">Split with:</Text>
+                            <View className="flex-row flex-wrap">
+                                {item.shares.map(s => {
+                                    const p = participants.find(part => part.id === s.participant_id);
+                                    return (
+                                        <TouchableOpacity
+                                            key={s.participant_id}
+                                            onPress={() => toggleShare(idx, s.participant_id)}
+                                            className={`mr-2 mb-2 px-2 py-1 rounded border ${s.isSelected ? 'bg-green-100 border-green-500' : 'bg-white border-gray-300'}`}
+                                        >
+                                            <Text
+                                                className={`text-xs ${s.isSelected ? 'text-green-800' : 'text-gray-400'}`}>{p?.name}</Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </View>
                         </View>
-                    </View>
-                ))}
+                    ))}
 
-                <TouchableOpacity onPress={addItem}
-                                  className="flex-row justify-center items-center p-4 border-2 border-dashed border-gray-300 rounded-xl mb-8">
-                    <Ionicons name="add-circle-outline" size={24} color="#9CA3AF"/>
-                    <Text className="text-gray-400 font-bold ml-2">Add Item</Text>
+                    <TouchableOpacity onPress={addItem}
+                                      className="flex-row justify-center items-center p-4 border-2 border-dashed border-gray-300 rounded-xl mb-8">
+                        <Ionicons name="add-circle-outline" size={24} color="#9CA3AF"/>
+                        <Text className="text-gray-400 font-bold ml-2">Add Item</Text>
+                    </TouchableOpacity>
+
+                </ScrollView>
+
+                <TouchableOpacity
+                    className="bg-blue-600 m-4 p-4 rounded-xl items-center shadow-lg safe-bottom"
+                    onPress={handleSubmit}
+                >
+                    <Text className="text-white font-bold text-lg">Save Receipt</Text>
                 </TouchableOpacity>
-
-            </ScrollView>
-
-            <TouchableOpacity
-                className="bg-blue-600 m-4 p-4 rounded-xl items-center shadow-lg safe-bottom"
-                onPress={handleSubmit}
-            >
-                <Text className="text-white font-bold text-lg">Save Receipt</Text>
-            </TouchableOpacity>
-        </View>
+            </View>
+        </>
     );
 }

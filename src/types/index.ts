@@ -1,12 +1,12 @@
 export interface Trip {
     id: number;
     name: string;
-    start_date: string;
-    end_date: string;
-    base_currency: string;
+    start_date: string | null;
+    end_date: string | null;
+    base_currency: string | null;
     total_budget?: number | null;
-    created_at: number;
-    updated_at: number;
+    created_at: number | null;
+    updated_at: number | null;
 }
 
 export interface Participant {
@@ -14,33 +14,33 @@ export interface Participant {
     trip_id: number;
     name: string;
     budget_total: number | null;
-    created_at: number;
-    updated_at: number;
+    created_at: number | null;
+    updated_at: number | null;
 }
 
 export interface Receipt {
     id: number;
     trip_id: number;
     total_amount: number;
-    currency: string;
+    currency: string | null;
     paid_by_participant_id: number;
-    date: string; // ISO string
-    store_name: string;
-    memo?: string;
-    created_at: number;
-    updated_at: number;
+    date: string | null;
+    store_name: string | null;
+    memo?: string | null;
+    created_at: number | null;
+    updated_at: number | null;
 }
 
 export interface ReceiptItem {
     id: number;
     receipt_id: number;
     name: string;
-    category: string;
+    category: string | null;
     amount: number;
-    memo?: string;
-    order_index: number;
-    created_at: number;
-    updated_at: number;
+    memo?: string | null;
+    order_index: number | null;
+    created_at: number | null;
+    updated_at: number | null;
 }
 
 export interface ReceiptItemShare {
