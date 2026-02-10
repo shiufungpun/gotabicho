@@ -23,13 +23,11 @@
         }
       ],
       "expo-router",
-      "expo-image",
       "expo-sqlite"
     ],
     "ios": {
       "bundleIdentifier": "com.mizutamine.gotabicho",
       "buildNumber": "1",
-      "deploymentTarget": "12.0",
       "supportsTablet": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": false
@@ -38,10 +36,6 @@
     "android": {
       "package": "com.mizutamine.gotabicho",
       "versionCode": 1,
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
       "permissions": [
         "INTERNET",
         "READ_EXTERNAL_STORAGE",
