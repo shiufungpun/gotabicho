@@ -65,7 +65,7 @@ export default function AddTripScreen() {
             style={{backgroundColor: `${colors.background}66`}}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-            <ConfirmGlassButtonBar onConfirm={handleSave} disabled={saving}/>
+            <ConfirmGlassButtonBar onConfirm={handleSave} disabled={saving} onCancel={router.back}/>
             <View className={"mx-5"}>
                 <ThemedCard>
                     {/* Trip Name */}
