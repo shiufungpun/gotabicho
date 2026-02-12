@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, ViewProps} from 'react-native';
-import {useTheme} from '../theme/useTheme';
+import {useThemeContext} from '../providers';
 
 interface ThemedViewProps extends ViewProps {
     /**
@@ -18,7 +18,7 @@ interface ThemedViewProps extends ViewProps {
  * A View component that automatically adapts its background color based on the current theme
  */
 export function ThemedView({style, variant = 'background', ...props}: ThemedViewProps) {
-    const {colors} = useTheme();
+    const {colors} = useThemeContext();
 
     const backgroundColor = React.useMemo(() => {
         switch (variant) {

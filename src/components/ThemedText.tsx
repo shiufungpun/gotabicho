@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, TextProps} from 'react-native';
-import {useTheme} from '../theme';
+import {useThemeContext} from '../providers';
 
 interface ThemedTextProps extends TextProps {
     /**
@@ -34,7 +34,7 @@ interface ThemedTextProps extends TextProps {
  * A Text component that automatically adapts its color based on the current theme
  */
 export function ThemedText({style, variant = 'primary', textStyle = 'content', ...props}: ThemedTextProps) {
-    const {colors} = useTheme();
+    const {colors} = useThemeContext();
     const color = React.useMemo(() => {
         switch (variant) {
             case 'secondary':

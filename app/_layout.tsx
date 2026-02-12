@@ -1,41 +1,14 @@
 import '../global.css';
-import {useEffect, useState} from 'react';
-import {ActivityIndicator, useColorScheme} from 'react-native';
 import {useFonts, YujiSyuku_400Regular} from '@expo-google-fonts/yuji-syuku';
 import {HinaMincho_400Regular} from '@expo-google-fonts/hina-mincho';
 import {Iansui_400Regular} from '@expo-google-fonts/iansui';
-import {initDatabase} from '../src/db/db';
 import {ThemedText, ThemedView} from '../src/components';
 import {Stack} from "expo-router";
-import {useTheme} from "../src/theme";
+import {AppProvider, useDatabaseContext, useThemeContext} from "../src/providers";
 
-export default function RootLayout() {
-    const [ready, setReady] = useState(false);
-    const colorScheme = useColorScheme();
-    const {colors} = useTheme()
-    const [fontsLoaded] = useFonts({
-        YujiSyuku_400Regular,
-        HinaMincho_400Regular,
-        Iansui_400Regular,
-    });
 
-    useEffect(() => {
-        initDatabase()
-            .then(() => {
-                console.log('Database initialized');
-                setReady(true);
-            })
-            .catch(e => console.error('DB Init Error:', e));
-    }, []);
-
-    if (!ready || !fontsLoaded) {
-        return (
-            <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator size="large"/>
-                <ThemedText>Initializing Database...</ThemedText>
-            </ThemedView>
-        );
-    }
+function StackNavigator() {
+    const {colors} = useThemeContext();
 
     return (
         <Stack screenOptions={{
@@ -75,3 +48,31 @@ export default function RootLayout() {
         </Stack>
     );
 }
+
+function AppContent() {
+    const {isReady} = useDatabaseContext();
+    const [fontsLoaded] = useFonts({
+        YujiSyuku_400Regular,
+        HinaMincho_400Regular,
+        Iansui_400Regular,
+    });
+
+    if (!isReady || !fontsLoaded) {
+        return (
+            <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <ThemedText>Initializing Database...</ThemedText>
+            </ThemedView>
+        );
+    }
+
+    return <StackNavigator/>;
+}
+
+export default function RootLayout() {
+    return (
+        <AppProvider>
+            <AppContent/>
+        </AppProvider>
+    );
+}
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, ViewProps} from 'react-native';
-import {useTheme} from '../theme/useTheme';
+import {useThemeContext} from '../providers';
 
 interface ThemedCardProps extends ViewProps {
     /**
@@ -13,7 +13,7 @@ interface ThemedCardProps extends ViewProps {
  * A card component with themed background and optional elevation
  */
 export function ThemedCard({style, elevated = true, ...props}: ThemedCardProps) {
-    const {colors, colorScheme} = useTheme();
+    const {colors, colorScheme} = useThemeContext();
 
     const cardStyle = React.useMemo(() => {
         return {
