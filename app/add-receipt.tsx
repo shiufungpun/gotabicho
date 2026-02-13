@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {getParticipantsByTripId} from '../src/repositories/participantRepository';
 import {createReceipt} from '../src/repositories/receiptRepository';
 import {Participant} from '../src/types';
 import {Ionicons} from '@expo/vector-icons';
 import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
+import {deleteFile} from '../src/helpers/fileHelpers';
 
 type ItemDraft = {
     name: string;
@@ -15,7 +16,12 @@ type ItemDraft = {
 };
 
 export default function AddReceiptScreen() {
-    const {tripId} = useLocalSearchParams<{ tripId: string }>();
+    const {tripId, sharedImagePath, sharedText, sharedUrl} = useLocalSearchParams<{
+        tripId: string;
+        sharedImagePath?: string;
+        sharedText?: string;
+        sharedUrl?: string;
+    }>();
     const router = useRouter();
     const [participants, setParticipants] = useState<Participant[]>([]);
 
@@ -23,9 +29,25 @@ export default function AddReceiptScreen() {
     const [selectedPayerId, setSelectedPayerId] = useState<number | null>(null);
     const [date, setDate] = useState(new Date());
     const [items, setItems] = useState<ItemDraft[]>([]);
+    const [receiptImagePath, setReceiptImagePath] = useState<string | undefined>(sharedImagePath);
 
     useEffect(() => {
         loadParticipants();
+
+        // Pre-fill form with shared content
+        if (sharedText) {
+            console.log('[AddReceipt] Pre-filling with shared text:', sharedText);
+            setStoreName(sharedText);
+        }
+        if (sharedUrl) {
+            console.log('[AddReceipt] Pre-filling with shared URL:', sharedUrl);
+            if (!sharedText) {
+                setStoreName(sharedUrl);
+            }
+        }
+        if (sharedImagePath) {
+            console.log('[AddReceipt] Received shared image:', sharedImagePath);
+        }
     }, []);
 
     const loadParticipants = async () => {
@@ -104,7 +126,8 @@ export default function AddReceiptScreen() {
             currency: 'JPY',
             paid_by_participant_id: selectedPayerId,
             date: date.toISOString(),
-            store_name: storeName
+            store_name: storeName,
+            image_path: receiptImagePath || null,
         };
 
         try {
@@ -125,6 +148,51 @@ export default function AddReceiptScreen() {
             }}/>
             <View className="flex-1 bg-gray-50">
                 <ScrollView className="flex-1 p-4">
+                    {/* Shared Image Preview */}
+                    {receiptImagePath && (
+                        <View className="bg-white p-4 rounded-xl mb-4 shadow-sm">
+                            <View className="flex-row justify-between items-center mb-2">
+                                <Text className="text-gray-500 font-semibold">Receipt Image</Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        Alert.alert(
+                                            'Remove Image',
+                                            'Are you sure you want to remove this image?',
+                                            [
+                                                {text: 'Cancel', style: 'cancel'},
+                                                {
+                                                    text: 'Remove',
+                                                    style: 'destructive',
+                                                    onPress: async () => {
+                                                        if (receiptImagePath) {
+                                                            try {
+                                                                await deleteFile(receiptImagePath);
+                                                            } catch (error) {
+                                                                console.error('Error deleting file:', error);
+                                                            }
+                                                        }
+                                                        setReceiptImagePath(undefined);
+                                                    }
+                                                }
+                                            ]
+                                        );
+                                    }}
+                                    className="p-2"
+                                >
+                                    <Ionicons name="trash-outline" size={20} color="#EF4444"/>
+                                </TouchableOpacity>
+                            </View>
+                            <Image
+                                source={{uri: receiptImagePath}}
+                                className="w-full h-64 rounded-lg"
+                                resizeMode="contain"
+                            />
+                            <Text className="text-xs text-gray-400 mt-2 text-center">
+                                Shared from another app
+                            </Text>
+                        </View>
+                    )}
+
                     <View className="bg-white p-4 rounded-xl mb-4 shadow-sm">
                         <Text className="text-gray-500 mb-1">Store / Title</Text>
                         <TextInput

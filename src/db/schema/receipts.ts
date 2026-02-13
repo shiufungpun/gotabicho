@@ -15,6 +15,7 @@ export const receipts = sqliteTable('receipts', {
     date: text('date'),
     store_name: text('store_name'),
     memo: text('memo'),
+    image_path: text('image_path'), // Path to receipt image (from share intent or camera)
     created_at: integer('created_at'),
     updated_at: integer('updated_at'),
 });

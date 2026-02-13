@@ -57,6 +57,7 @@ export const initDatabase = async () => {
       date TEXT,
       store_name TEXT,
       memo TEXT,
+      image_path TEXT,
       created_at INTEGER,
       updated_at INTEGER,
       FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,

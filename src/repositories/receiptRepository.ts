@@ -174,6 +174,7 @@ export const createReceipt = async (
                 date: receipt.date,
                 store_name: receipt.store_name,
                 memo: receipt.memo || null,
+                image_path: receipt.image_path || null,
                 created_at: now,
                 updated_at: now,
             }).returning({id: receipts.id});

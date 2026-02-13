@@ -27,6 +27,7 @@ export interface Receipt {
     date: string | null;
     store_name: string | null;
     memo?: string | null;
+    image_path?: string | null;
     created_at: number | null;
     updated_at: number | null;
 }

@@ -1,5 +1,6 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {initDatabase} from '../db/db';
+import {migrateReceiptsImagePath} from '../db/migrations';
 
 interface DatabaseContextValue {
     isReady: boolean;
@@ -25,6 +26,11 @@ export function DatabaseProvider({children}: DatabaseProviderProps) {
         initDatabase()
             .then(() => {
                 console.log('Database initialized');
+                // Run migrations for existing databases
+                return migrateReceiptsImagePath();
+            })
+            .then(() => {
+                console.log('Database migrations completed');
                 setIsReady(true);
             })
             .catch((e) => {
