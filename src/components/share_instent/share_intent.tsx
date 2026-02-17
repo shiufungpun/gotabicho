@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, Alert, StyleSheet, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useShareIntentHandler} from '../../hooks/useShareIntent';
@@ -11,13 +11,17 @@ export function ShareIntentHandler() {
     const router = useRouter();
     const {shareData, clearShareData, hasShareIntent} = useShareIntentHandler();
     const [isProcessing, setIsProcessing] = useState(false);
+    const processingRef = useRef(false);
 
     useEffect(() => {
-        // Only process if we have actual share data
-        if (shareData && hasShareIntent) {
+        // Only process if we have actual share data and not already processing
+        if (shareData && hasShareIntent && !processingRef.current) {
             console.log('[ShareIntentHandler] Processing share intent:', shareData);
 
             const handleShareIntent = async () => {
+                // Set processing flag immediately to prevent concurrent processing
+                processingRef.current = true;
+
                 try {
                     setIsProcessing(true);
 
@@ -73,6 +77,7 @@ export function ShareIntentHandler() {
                         );
                         clearShareData();
                         setIsProcessing(false);
+                        processingRef.current = false;
                         return;
                     }
 
@@ -109,11 +114,13 @@ export function ShareIntentHandler() {
                     // Clear share data after processing
                     clearShareData();
                     setIsProcessing(false);
+                    processingRef.current = false;
                 } catch (error) {
                     console.error('[ShareIntentHandler] Error processing share intent:', error);
                     Alert.alert('Error', 'Failed to process shared content');
                     clearShareData();
                     setIsProcessing(false);
+                    processingRef.current = false;
                 }
             };
 

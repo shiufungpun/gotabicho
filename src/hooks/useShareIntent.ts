@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useShareIntent} from 'expo-share-intent';
 
 export interface ShareIntentFile {
@@ -22,14 +22,30 @@ export interface ShareIntentData {
 export function useShareIntentHandler() {
     const {hasShareIntent, shareIntent, resetShareIntent, error} = useShareIntent({
         debug: true,
-        resetOnBackground: false,
+        resetOnBackground: true,
     });
 
     const [shareData, setShareData] = useState<ShareIntentData | null>(null);
+    const lastProcessedRef = useRef<string | null>(null);
 
     useEffect(() => {
         if (hasShareIntent && shareIntent) {
+            // Create a unique ID for this share intent to prevent duplicate processing
+            const shareId = JSON.stringify({
+                files: shareIntent.files?.map(f => f.path),
+                text: shareIntent.text,
+                webUrl: shareIntent.webUrl,
+                timestamp: shareIntent.files?.[0]?.path || shareIntent.text || shareIntent.webUrl
+            });
+
+            // Skip if we've already processed this exact share intent
+            if (lastProcessedRef.current === shareId) {
+                console.log('[ShareIntent] Skipping duplicate share intent');
+                return;
+            }
+
             console.log('[ShareIntent] Received share intent:', shareIntent);
+            lastProcessedRef.current = shareId;
 
             const files: ShareIntentFile[] = [];
 
@@ -61,6 +77,7 @@ export function useShareIntentHandler() {
     const clearShareData = () => {
         setShareData(null);
         resetShareIntent();
+        lastProcessedRef.current = null;
     };
 
     return {
