@@ -28,6 +28,37 @@ async function fetchWithTimeout(url: string, timeoutMs: number = 5000): Promise<
 }
 
 /**
+ * Decode HTML entities to readable text
+ */
+function decodeHtmlEntities(text: string): string {
+    // Decode numeric entities (&#x51fd; and &#9999;)
+    let decoded = text.replace(/&#x([0-9A-Fa-f]+);/g, (_, hex) => {
+        return String.fromCharCode(parseInt(hex, 16));
+    });
+
+    decoded = decoded.replace(/&#(\d+);/g, (_, dec) => {
+        return String.fromCharCode(parseInt(dec, 10));
+    });
+
+    // Decode common HTML entities
+    const entities: Record<string, string> = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+        '&apos;': "'",
+        '&nbsp;': ' ',
+    };
+
+    Object.entries(entities).forEach(([entity, char]) => {
+        decoded = decoded.replace(new RegExp(entity, 'g'), char);
+    });
+
+    return decoded.trim();
+}
+
+/**
  * Extract meta tags from HTML
  */
 function extractMetaTags(html: string): Record<string, string> {
@@ -36,27 +67,27 @@ function extractMetaTags(html: string): Record<string, string> {
     // Extract title
     const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
     if (titleMatch) {
-        meta.title = titleMatch[1].trim();
+        meta.title = decodeHtmlEntities(titleMatch[1]);
     }
 
     // Extract Open Graph tags
     const ogRegex = /<meta\s+(?:property|name)=["']og:([^"']+)["']\s+content=["']([^"']+)["']/gi;
     let match;
     while ((match = ogRegex.exec(html)) !== null) {
-        meta[`og:${match[1]}`] = match[2];
+        meta[`og:${match[1]}`] = decodeHtmlEntities(match[2]);
     }
 
     // Extract Twitter tags
     const twitterRegex = /<meta\s+(?:property|name)=["']twitter:([^"']+)["']\s+content=["']([^"']+)["']/gi;
     while ((match = twitterRegex.exec(html)) !== null) {
-        meta[`twitter:${match[1]}`] = match[2];
+        meta[`twitter:${match[1]}`] = decodeHtmlEntities(match[2]);
     }
 
     // Extract description meta tag
     const descRegex = /<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i;
     const descMatch = html.match(descRegex);
     if (descMatch) {
-        meta.description = descMatch[1];
+        meta.description = decodeHtmlEntities(descMatch[1]);
     }
 
     return meta;
