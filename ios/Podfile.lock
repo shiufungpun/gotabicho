@@ -1,4 +1,26 @@
 PODS:
+  - AppleLLM (0.12.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - BVLinearGradient (2.8.3):
     - React-Core
   - EXConstants (18.0.13):
@@ -1557,7 +1579,7 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-date-picker (5.0.13):
+  - react-native-date-picker (5.0.12):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2338,6 +2360,7 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
+  - "AppleLLM (from `../node_modules/@react-native-ai/apple`)"
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
@@ -2450,6 +2473,8 @@ SPEC REPOS:
     - SDWebImageWebPCoder
 
 EXTERNAL SOURCES:
+  AppleLLM:
+    :path: "../node_modules/@react-native-ai/apple"
   BVLinearGradient:
     :path: "../node_modules/react-native-linear-gradient"
   EXConstants:
@@ -2651,6 +2676,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  AppleLLM: 341c77649c3be1cb967d54e6debd354fe166f56a
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
   EXJSONUtils: 1d3e4590438c3ee593684186007028a14b3686cd
@@ -2712,7 +2738,7 @@ SPEC CHECKSUMS:
   React-logger: 50fdb9a8236da90c0b1072da5c32ee03aeb5bf28
   React-Mapbuffer: 9050ee10c19f4f7fca8963d0211b2854d624973e
   React-microtasksnativemodule: f775db9e991c6f3b8ccbc02bfcde22770f96e23b
-  react-native-date-picker: 72dddb0a4b6019b11af8bf0ceefe636685921a79
+  react-native-date-picker: 6caa72f23a695814d3fa843872ec995c5035dfb5
   react-native-safe-area-context: 37e680fc4cace3c0030ee46e8987d24f5d3bdab2
   react-native-slider: 8c562583722c396a3682f451f0b6e68e351ec3b9
   react-native-webview: b29007f4723bca10872028067b07abacfa1cb35a

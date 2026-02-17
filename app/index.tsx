@@ -1,6 +1,7 @@
 import React, {useRef, useState} from 'react';
-import {Animated, View} from 'react-native';
+import {Animated, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useRouter} from 'expo-router';
 import {TripDetails, useTrips} from '../src/hooks/useTrips';
 import {useTheme} from '../src/theme';
 import {ThemedText, ThemedView} from '../src/components';
@@ -15,6 +16,7 @@ export default function TripListScreen() {
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
     const [isFavorite, setIsFavorite] = useState(false);
+    const router = useRouter();
 
     const HEADER_MAX_HEIGHT = 100 + insets.top;
     const HEADER_MIN_HEIGHT = 70 + insets.top;
@@ -105,6 +107,20 @@ export default function TripListScreen() {
                             G O T A B I C H O
                         </Animated.Text>
                     </View>
+                    <TouchableOpacity
+                        onPress={() => router.push('/ai-test')}
+                        style={{
+                            position: 'absolute',
+                            right: 16,
+                            bottom: 12,
+                            backgroundColor: colors.text,
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 6,
+                        }}
+                    >
+                        <ThemedText style={{color: '#fff', fontSize: 12}}>AI Test</ThemedText>
+                    </TouchableOpacity>
                 </Animated.View>
                 {!loading && renderList()}
             </ThemedView>
