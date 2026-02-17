@@ -55,6 +55,12 @@ function AppContent() {
                     }}
                 />
                 <Stack.Screen
+                    name="add-bookmark"
+                    options={{
+                        presentation: 'modal',
+                    }}
+                />
+                <Stack.Screen
                     name="receipt/[id]"
                     options={{
                         title: 'Receipt Details',

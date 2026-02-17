@@ -77,4 +77,45 @@ export interface ReceiptWithDetails extends Receipt {
     })[];
 }
 
+// Bookmark types
+export interface Bookmark {
+    id: number;
+    title: string;
+    description: string | null;
+    url: string;
+    source: string | null;
+    visited: number;
+    created_at: number | null;
+    updated_at: number | null;
+}
 
+export enum BookmarkSource {
+    Instagram = 'instagram',
+    Threads = 'threads',
+    Other = 'other',
+}
+
+export interface ExtractedBookmarkData {
+    title: string;
+    description: string | null;
+    url: string;
+    source: BookmarkSource;
+    imageUrl: string | null;
+}
+
+/**
+ * Detect bookmark source from URL
+ */
+export function detectBookmarkSource(url: string): BookmarkSource {
+    const urlLower = url.toLowerCase();
+
+    if (urlLower.includes('instagram.com')) {
+        return BookmarkSource.Instagram;
+    }
+
+    if (urlLower.includes('threads.net')) {
+        return BookmarkSource.Threads;
+    }
+
+    return BookmarkSource.Other;
+}
