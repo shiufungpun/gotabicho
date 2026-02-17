@@ -1,4 +1,4 @@
-import {getSQLiteDB} from '../db/db';
+import {getSQLiteDB} from './db';
 
 /**
  * Add image_path column to receipts table if it doesn't exist
@@ -24,3 +24,110 @@ export async function migrateReceiptsImagePath(): Promise<void> {
         // Don't throw - allow app to continue
     }
 }
+
+/**
+ * Create bookmarks table if it doesn't exist
+ * This is a migration helper for existing databases
+ */
+export async function migrateBookmarksTable(): Promise<void> {
+    try {
+        const db = await getSQLiteDB();
+
+        // Check if table exists
+        const tables = await db.getAllAsync(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='bookmarks'"
+        );
+
+        if (tables.length === 0) {
+            console.log('[Migration] Creating bookmarks table');
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS bookmarks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL,
+                    description TEXT,
+                    url TEXT NOT NULL,
+                    source TEXT,
+                    visited INTEGER DEFAULT 0,
+                    created_at INTEGER,
+                    updated_at INTEGER
+                )
+            `);
+            console.log('[Migration] Successfully created bookmarks table');
+        } else {
+            console.log('[Migration] bookmarks table already exists');
+
+            // Check if old schema has trip_id column
+            const tableInfo = await db.getAllAsync('PRAGMA table_info(bookmarks)');
+            const hasTripId = tableInfo.some((col: any) => col.name === 'trip_id');
+
+            if (hasTripId) {
+                console.log('[Migration] Migrating bookmarks table from one-to-many to many-to-many relationship');
+
+                // Create new bookmarks table without trip_id
+                await db.execAsync(`
+                    CREATE TABLE bookmarks_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        title TEXT NOT NULL,
+                        description TEXT,
+                        url TEXT NOT NULL,
+                        source TEXT,
+                        visited INTEGER DEFAULT 0,
+                        created_at INTEGER,
+                        updated_at INTEGER
+                    );
+                    
+                    -- Copy data without trip_id
+                    INSERT INTO bookmarks_new (id, title, description, url, source, visited, created_at, updated_at)
+                    SELECT id, title, description, url, source, visited, created_at, updated_at
+                    FROM bookmarks;
+                    
+                    -- Store old trip associations for junction table
+                    CREATE TEMP TABLE temp_trip_bookmarks AS
+                    SELECT trip_id, id as bookmark_id, created_at
+                    FROM bookmarks;
+                    
+                    -- Drop old table and rename new one
+                    DROP TABLE bookmarks;
+                    ALTER TABLE bookmarks_new RENAME TO bookmarks;
+                `);
+                console.log('[Migration] Successfully migrated bookmarks table structure');
+            }
+        }
+
+        // Create trip_bookmarks junction table
+        const junctionTables = await db.getAllAsync(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='trip_bookmarks'"
+        );
+
+        if (junctionTables.length === 0) {
+            console.log('[Migration] Creating trip_bookmarks junction table');
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS trip_bookmarks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    trip_id INTEGER NOT NULL,
+                    bookmark_id INTEGER NOT NULL,
+                    created_at INTEGER,
+                    FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+                    FOREIGN KEY (bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE
+                );
+                
+                -- Migrate old associations if they exist
+                INSERT OR IGNORE INTO trip_bookmarks (trip_id, bookmark_id, created_at)
+                SELECT trip_id, bookmark_id, created_at
+                FROM temp_trip_bookmarks
+                WHERE EXISTS (SELECT 1 FROM sqlite_temp_master WHERE type='table' AND name='temp_trip_bookmarks');
+                
+                -- Clean up temp table if it exists
+                DROP TABLE IF EXISTS temp_trip_bookmarks;
+            `);
+            console.log('[Migration] Successfully created trip_bookmarks junction table');
+        } else {
+            console.log('[Migration] trip_bookmarks table already exists');
+        }
+    } catch (error) {
+        console.error('[Migration] Error creating bookmarks tables:', error);
+        // Don't throw - allow app to continue
+    }
+}
+
+

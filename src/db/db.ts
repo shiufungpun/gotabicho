@@ -85,5 +85,25 @@ export const initDatabase = async () => {
       FOREIGN KEY (receipt_item_id) REFERENCES receipt_items(id) ON DELETE CASCADE,
       FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS bookmarks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      url TEXT NOT NULL,
+      source TEXT,
+      visited INTEGER DEFAULT 0,
+      created_at INTEGER,
+      updated_at INTEGER
+    );
+
+    CREATE TABLE IF NOT EXISTS trip_bookmarks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trip_id INTEGER NOT NULL,
+      bookmark_id INTEGER NOT NULL,
+      created_at INTEGER,
+      FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+      FOREIGN KEY (bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE
+    );
   `);
 };
