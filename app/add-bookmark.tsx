@@ -108,7 +108,7 @@ export default function AddBookmarkScreen() {
             </ThemedView>
         );
     }
-
+    
     return (
         <ThemedView className="flex-1">
             {/* Header */}

@@ -87,7 +87,7 @@ function extractMetaTags(html: string): Record<string, string> {
     const descRegex = /<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i;
     const descMatch = html.match(descRegex);
     if (descMatch) {
-        meta.description = decodeHtmlEntities(descMatch[1]);
+        meta.content = decodeHtmlEntities(descMatch[1]);
     }
 
     return meta;
@@ -117,12 +117,15 @@ export async function extractMetadata(
         // Try to get image
         const imageUrl = meta['og:image'] || meta['twitter:image'] || null;
 
+        const content = meta.content;
+
         return {
             title,
             description,
             url,
             source,
             imageUrl,
+            content
         };
     } catch (error) {
         console.error('[BaseHandler] Failed to extract metadata:', error);
@@ -134,6 +137,7 @@ export async function extractMetadata(
             url,
             source,
             imageUrl: null,
+            content: null,
         };
     }
 }
@@ -148,6 +152,7 @@ export function createFallbackData(url: string, source: BookmarkSource): Extract
         url,
         source,
         imageUrl: null,
+        content: null,
     };
 }
 

@@ -101,6 +101,7 @@ export interface ExtractedBookmarkData {
     url: string;
     source: BookmarkSource;
     imageUrl: string | null;
+    content: string | null;
 }
 
 /**
