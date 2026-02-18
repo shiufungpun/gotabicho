@@ -31,7 +31,6 @@ export default function AITestScreen() {
             const result = await generateText({
                 prompt: input,
                 model: apple(),
-                maxTokens: 200,
             });
 
             setResponse(result.text || 'No response received');

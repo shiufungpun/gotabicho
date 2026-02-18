@@ -52,6 +52,7 @@ export function ShareIntentHandler() {
                                         url: bookmarkData.url,
                                         source: bookmarkData.source,
                                         imageUrl: bookmarkData.imageUrl || '',
+                                        content: bookmarkData.content,
                                     },
                                 });
 
