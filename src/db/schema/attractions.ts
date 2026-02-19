@@ -7,7 +7,7 @@ export const attractions = sqliteTable('attractions', {
         .notNull()
         .references(() => bookmarks.id, {onDelete: 'cascade'}),
     title: text('title').notNull(),
-    type: text('type').notNull(), // 'sight', 'shopping', or 'play'
+    type: text('type').notNull(), // 'sight', 'shopping', 'restaurant', 'hotel' or 'play'
     country: text('country'),
     location: text('location'),
     address: text('address'),
