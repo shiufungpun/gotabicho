@@ -1,6 +1,6 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {initDatabase} from '../db/db';
-import {migrateBookmarksTable, migrateReceiptsImagePath} from '../db/migrations';
+import {migrateAttractionsTable, migrateBookmarksTable, migrateReceiptsImagePath} from '../db/migrations';
 
 interface DatabaseContextValue {
     isReady: boolean;
@@ -31,6 +31,9 @@ export function DatabaseProvider({children}: DatabaseProviderProps) {
             })
             .then(() => {
                 return migrateBookmarksTable();
+            })
+            .then(() => {
+                return migrateAttractionsTable();
             })
             .then(() => {
                 console.log('Database migrations completed');

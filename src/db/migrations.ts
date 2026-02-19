@@ -130,4 +130,73 @@ export async function migrateBookmarksTable(): Promise<void> {
     }
 }
 
+/**
+ * Create attractions and attraction_tags tables if they don't exist
+ * This is a migration helper for existing databases
+ */
+export async function migrateAttractionsTable(): Promise<void> {
+    try {
+        const db = await getSQLiteDB();
+
+        // Check if attractions table exists
+        const tables = await db.getAllAsync(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='attractions'"
+        );
+
+        if (tables.length === 0) {
+            console.log('[Migration] Creating attractions table');
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS attractions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    bookmark_id INTEGER NOT NULL,
+                    title TEXT NOT NULL,
+                    type TEXT NOT NULL,
+                    location TEXT,
+                    address TEXT,
+                    notes TEXT,
+                    visited INTEGER DEFAULT 0,
+                    created_at INTEGER,
+                    updated_at INTEGER,
+                    FOREIGN KEY (bookmark_id) REFERENCES bookmarks(id) ON DELETE CASCADE
+                );
+                
+                -- Create indexes for better query performance
+                CREATE INDEX IF NOT EXISTS attractions_bookmark_id_idx ON attractions(bookmark_id);
+                CREATE INDEX IF NOT EXISTS attractions_type_idx ON attractions(type);
+            `);
+            console.log('[Migration] Successfully created attractions table');
+        } else {
+            console.log('[Migration] attractions table already exists');
+        }
+
+        // Check if attraction_tags table exists
+        const tagTables = await db.getAllAsync(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='attraction_tags'"
+        );
+
+        if (tagTables.length === 0) {
+            console.log('[Migration] Creating attraction_tags table');
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS attraction_tags (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    attraction_id INTEGER NOT NULL,
+                    tag TEXT NOT NULL,
+                    created_at INTEGER,
+                    FOREIGN KEY (attraction_id) REFERENCES attractions(id) ON DELETE CASCADE
+                );
+                
+                -- Create indexes for better query performance
+                CREATE INDEX IF NOT EXISTS attraction_tags_attraction_id_idx ON attraction_tags(attraction_id);
+                CREATE INDEX IF NOT EXISTS attraction_tags_tag_idx ON attraction_tags(tag);
+            `);
+            console.log('[Migration] Successfully created attraction_tags table');
+        } else {
+            console.log('[Migration] attraction_tags table already exists');
+        }
+    } catch (error) {
+        console.error('[Migration] Error creating attractions tables:', error);
+        // Don't throw - allow app to continue
+    }
+}
+
 
