@@ -9,6 +9,7 @@ import {generateText} from 'ai';
 import {apple} from '@react-native-ai/apple';
 import {bookmarkPrompt} from '../src/prompts/bookmark';
 import {useShareIntentHandler} from '../src/hooks/useShareIntent';
+import {parseAiJsonResponse} from "../utils/parseAiResponse";
 
 export default function AddBookmarkScreen() {
     const router = useRouter();
@@ -108,7 +109,7 @@ export default function AddBookmarkScreen() {
 
             // Try to parse the JSON response
             try {
-                const parsed = JSON.parse(result.text);
+                const parsed = parseAiJsonResponse(result.text);
                 setExtractedData(parsed);
                 console.log('[Bookmark] Parsed data:', parsed);
             } catch (parseError) {
