@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, BackHandler, Image, Platform, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {getParticipantsByTripId} from '../src/repositories/participantRepository';
 import {createReceipt} from '../src/repositories/receiptRepository';
@@ -92,6 +92,32 @@ export default function AddReceiptScreen() {
         }
     };
 
+    const handleCancel = () => {
+        // If we came from a share intent, close the app to return to the sharing app
+        if (sharedImagePath || sharedText || sharedUrl) {
+            console.log('[AddReceipt] Cancel from share intent, closing app');
+            // Clean up the shared image if it exists
+            if (receiptImagePath) {
+                deleteFile(receiptImagePath).catch(error =>
+                    console.error('Error cleaning up shared image:', error)
+                );
+            }
+
+            // Close the app to return to the sharing app (Instagram/Safari)
+            if (Platform.OS === 'android') {
+                // On Android, exit the app to return to the sharing app
+                BackHandler.exitApp();
+            } else {
+                // On iOS, we can't programmatically close the app due to App Store guidelines
+                // Navigate to home screen and the user can manually switch back
+                router.replace('/');
+            }
+        } else {
+            // Regular back navigation if not from share intent
+            router.back();
+        }
+    };
+
     const handleSubmit = async () => {
         if (!storeName || !selectedPayerId || items.length === 0) {
             alert("Please fill in store name and add at least one item.");
@@ -141,11 +167,11 @@ export default function AddReceiptScreen() {
 
     return (
         <>
-            <ConfirmGlassButtonBar onConfirm={function (): void {
-                handleSubmit();
-            }} disabled={false} onCancel={function (): void {
-                router.back();
-            }}/>
+            <ConfirmGlassButtonBar
+                onConfirm={handleSubmit}
+                onCancel={handleCancel}
+                disabled={false}
+            />
             <View className="flex-1 bg-gray-50">
                 <ScrollView className="flex-1 p-4">
                     {/* Shared Image Preview */}

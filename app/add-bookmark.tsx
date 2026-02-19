@@ -3,6 +3,7 @@ import {
     ActivityIndicator,
     Alert,
     AppState,
+    BackHandler,
     Image,
     Platform,
     ScrollView,
@@ -11,7 +12,6 @@ import {
     View,
 } from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
-import * as Linking from 'expo-linking';
 import {Ionicons} from '@expo/vector-icons';
 import {ThemedText, ThemedView} from '../src/components';
 import {getAllTrips} from '../src/repositories/tripRepository';
@@ -94,20 +94,16 @@ export default function AddBookmarkScreen() {
         console.log('[Bookmark] Cancel button pressed, clearing share data');
         clearShareData();
 
-        // Return to the source app by closing the current app
-        // This simulates pressing the back button to return to the sharing app
-        if (Platform.OS === 'ios') {
-            // On iOS, we can't programmatically close the app, but we can navigate back
-            // which will return control to the sharing app
-            Linking.openURL('app-settings:');
-        } else if (Platform.OS === 'android') {
-            // On Android, we can use BackHandler to simulate back press
-            // which will return to the sharing app
-            require('react-native').BackHandler.exitApp();
+        // Close the app to return to the sharing app (Instagram/Safari)
+        if (Platform.OS === 'android') {
+            // On Android, exit the app to return to the sharing app
+            BackHandler.exitApp();
+        } else {
+            // On iOS, we can't programmatically close the app due to App Store guidelines
+            // Instead, navigate to home screen and the user can manually switch back
+            // The share extension will automatically dismiss when they switch apps
+            router.replace('/');
         }
-
-        // Fallback: just go back in navigation
-        router.back();
     };
 
     const handleSave = () => {
