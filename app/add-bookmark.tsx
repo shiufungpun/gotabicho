@@ -1,15 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, AppState, Image, ScrollView, Text, TouchableOpacity, View,} from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    AppState,
+    Image,
+    Platform,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
+import * as Linking from 'expo-linking';
 import {Ionicons} from '@expo/vector-icons';
 import {ThemedText, ThemedView} from '../src/components';
 import {getAllTrips} from '../src/repositories/tripRepository';
 import {BookmarkSource, Trip} from '../src/types';
-import {generateText} from 'ai';
-import {apple} from '@react-native-ai/apple';
-import {bookmarkPrompt} from '../src/prompts/bookmark';
 import {useShareIntentHandler} from '../src/hooks/useShareIntent';
-import {parseAiJsonResponse} from "../utils/parseAiResponse";
+import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
+import AIExtractionSection from '../src/components/bookmark/AIExtractionSection';
 
 export default function AddBookmarkScreen() {
     const router = useRouter();
@@ -26,9 +35,6 @@ export default function AddBookmarkScreen() {
     const [trips, setTrips] = useState<Trip[]>([]);
     const [selectedTripIds, setSelectedTripIds] = useState<number[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isExtracting, setIsExtracting] = useState(false);
-    const [extractedData, setExtractedData] = useState<any>(null);
-    const [extractionError, setExtractionError] = useState('');
 
     // Check if in dev environment
     const isDev = process.env.EXPO_PUBLIC_ENV === 'dev';
@@ -55,7 +61,6 @@ export default function AddBookmarkScreen() {
             }
         });
 
-        // Clean up share data when component unmounts
         return () => {
             subscription.remove();
             console.log('[Bookmark] Component unmounting, clearing share data');
@@ -85,48 +90,24 @@ export default function AddBookmarkScreen() {
         });
     };
 
-    const extractDataWithAI = async () => {
-        console.log('[Bookmark] Starting AI extraction...');
-        setIsExtracting(true);
-        setExtractionError('');
-        setExtractedData(null);
+    const handleCancel = () => {
+        console.log('[Bookmark] Cancel button pressed, clearing share data');
+        clearShareData();
 
-        try {
-            // Use description as the article content to extract from
-            const articleContent = params.content || params.description || params.title;
-
-            if (!articleContent) {
-                setExtractionError('No content available to extract');
-                return;
-            }
-
-            console.log('[Bookmark] Extracting from content:', articleContent);
-
-            // Generate text using Apple Intelligence
-            const result = await generateText({
-                prompt: `${bookmarkPrompt}\n${articleContent}`,
-                model: apple(),
-            });
-
-            console.log('[Bookmark] AI Response:', result.text);
-
-            // Try to parse the JSON response
-            try {
-                const parsed = parseAiJsonResponse(result.text);
-                setExtractedData(parsed);
-                console.log('[Bookmark] Parsed data:', parsed);
-            } catch (parseError) {
-                console.error('[Bookmark] Failed to parse JSON:', parseError);
-                setExtractionError(`Failed to parse response: ${result.text}`);
-            }
-
-        } catch (err) {
-            const errorMsg = err instanceof Error ? err.message : 'Unknown error';
-            setExtractionError(errorMsg);
-            console.error('[Bookmark] AI Extraction Error:', err);
-        } finally {
-            setIsExtracting(false);
+        // Return to the source app by closing the current app
+        // This simulates pressing the back button to return to the sharing app
+        if (Platform.OS === 'ios') {
+            // On iOS, we can't programmatically close the app, but we can navigate back
+            // which will return control to the sharing app
+            Linking.openURL('app-settings:');
+        } else if (Platform.OS === 'android') {
+            // On Android, we can use BackHandler to simulate back press
+            // which will return to the sharing app
+            require('react-native').BackHandler.exitApp();
         }
+
+        // Fallback: just go back in navigation
+        router.back();
     };
 
     const handleSave = () => {
@@ -146,10 +127,18 @@ export default function AddBookmarkScreen() {
             [
                 {
                     text: 'OK',
-                    onPress: () => router.back(),
+                    onPress: () => {
+                        clearShareData();
+                        router.back();
+                    },
                 },
             ]
         );
+    };
+
+    const handleExtractionComplete = (data: any) => {
+        console.log('[Bookmark] AI extraction completed:', data);
+        // TODO: Use extracted data to enhance bookmark
     };
 
     const getSourceBadgeColor = (source: string) => {
@@ -186,16 +175,11 @@ export default function AddBookmarkScreen() {
     return (
         <ThemedView className="flex-1">
             {/* Header */}
-            <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="close" size={28} color="#374151"/>
-                </TouchableOpacity>
-                <Text className="text-lg font-bold text-gray-800">Add Bookmark</Text>
-                <TouchableOpacity onPress={handleSave}>
-                    <Text className="text-blue-600 font-semibold text-base">Save</Text>
-                </TouchableOpacity>
-            </View>
-
+            <ConfirmGlassButtonBar
+                onCancel={handleCancel}
+                onConfirm={handleSave}
+                disabled={false}
+            />
             <ScrollView className="flex-1">
                 {/* Preview Card */}
                 <View className="m-4 bg-white rounded-xl shadow-md overflow-hidden">
@@ -253,110 +237,10 @@ export default function AddBookmarkScreen() {
 
                 {/* AI Extraction Section */}
                 {isDev && (
-                    <View className="m-4">
-                        <Text className="text-base font-bold text-gray-800 mb-3">
-                            🤖 AI Data Extraction Test
-                        </Text>
-
-                        <TouchableOpacity
-                            onPress={extractDataWithAI}
-                            disabled={isExtracting}
-                            className={`bg-purple-600 p-4 rounded-xl flex-row items-center justify-center ${
-                                isExtracting ? 'opacity-50' : ''
-                            }`}>
-                            {isExtracting ? (
-                                <>
-                                    <ActivityIndicator color="white" size="small"/>
-                                    <Text className="text-white font-semibold ml-2">Extracting...</Text>
-                                </>
-                            ) : (
-                                <>
-                                    <Ionicons name="sparkles" size={20} color="white"/>
-                                    <Text className="text-white font-semibold ml-2">
-                                        Extract Data with AI
-                                    </Text>
-                                </>
-                            )}
-                        </TouchableOpacity>
-
-                        {/* Extraction Error */}
-                        {extractionError && (
-                            <View className="mt-3 bg-red-50 p-4 rounded-xl border border-red-200">
-                                <View className="flex-row items-start">
-                                    <Ionicons name="alert-circle" size={20} color="#DC2626"/>
-                                    <View className="flex-1 ml-2">
-                                        <Text className="text-red-600 font-semibold mb-1">
-                                            Extraction Failed
-                                        </Text>
-                                        <Text className="text-red-500 text-sm">
-                                            {extractionError}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                        )}
-
-                        {/* Extracted Data Display */}
-                        {extractedData && (
-                            <View className="mt-3 bg-green-50 p-4 rounded-xl border border-green-200">
-                                <View className="flex-row items-center mb-3">
-                                    <Ionicons name="checkmark-circle" size={20} color="#16A34A"/>
-                                    <Text className="text-green-700 font-semibold ml-2">
-                                        Extraction Successful ✨
-                                    </Text>
-                                </View>
-
-                                {extractedData.viewpoints && extractedData.viewpoints.length > 0 ? (
-                                    extractedData.viewpoints.map((viewpoint: any, index: number) => (
-                                        <View key={index} className="mb-3 bg-white p-3 rounded-lg">
-                                            <View className="flex-row items-center mb-2">
-                                                <Ionicons name="location" size={16} color="#7C3AED"/>
-                                                <Text className="text-purple-700 font-bold ml-1">
-                                                    {viewpoint.location}
-                                                </Text>
-                                            </View>
-
-                                            {viewpoint.keyPoints && viewpoint.keyPoints.length > 0 && (
-                                                <View className="ml-5">
-                                                    <Text className="text-gray-600 text-xs font-semibold mb-1">
-                                                        Key Points:
-                                                    </Text>
-                                                    {viewpoint.keyPoints.map((point: string, pIndex: number) => (
-                                                        <View key={pIndex} className="flex-row mb-1">
-                                                            <Text className="text-gray-500 text-xs mr-2">•</Text>
-                                                            <Text className="text-gray-700 text-xs flex-1">
-                                                                {point}
-                                                            </Text>
-                                                        </View>
-                                                    ))}
-                                                </View>
-                                            )}
-                                        </View>
-                                    ))
-                                ) : (
-                                    <Text className="text-gray-600 text-sm">
-                                        No viewpoints extracted
-                                    </Text>
-                                )}
-
-                                {/* Raw JSON for debugging */}
-                                <View className="mt-3 pt-3 border-t border-green-200">
-                                    <Text className="text-green-700 text-xs font-semibold mb-2">
-                                        Raw JSON:
-                                    </Text>
-                                    <ScrollView
-                                        horizontal
-                                        className="bg-gray-800 p-2 rounded"
-                                        showsHorizontalScrollIndicator={false}
-                                    >
-                                        <Text className="text-green-400 text-xs font-mono">
-                                            {JSON.stringify(extractedData, null, 2)}
-                                        </Text>
-                                    </ScrollView>
-                                </View>
-                            </View>
-                        )}
-                    </View>
+                    <AIExtractionSection
+                        content={params.content || params.description || params.title}
+                        onExtractionComplete={handleExtractionComplete}
+                    />
                 )}
 
                 {/* Trip Selection */}
