@@ -12,10 +12,27 @@ export function ShareIntentHandler() {
     const {shareData, clearShareData, hasShareIntent} = useShareIntentHandler();
     const [isProcessing, setIsProcessing] = useState(false);
     const processingRef = useRef(false);
+    const lastShareIdRef = useRef<string | null>(null);
 
     useEffect(() => {
         // Only process if we have actual share data and not already processing
         if (shareData && hasShareIntent && !processingRef.current) {
+            // Create a unique ID for this share intent
+            const currentShareId = JSON.stringify({
+                files: shareData.files?.map(f => f.path),
+                text: shareData.text,
+                webUrl: shareData.webUrl,
+            });
+
+            // If this is a new share intent (different from last one), clear old data first
+            if (lastShareIdRef.current && lastShareIdRef.current !== currentShareId) {
+                console.log('[ShareIntentHandler] New share intent detected, clearing old data');
+                clearShareData();
+                setIsProcessing(false);
+                processingRef.current = false;
+            }
+
+            lastShareIdRef.current = currentShareId;
             console.log('[ShareIntentHandler] Processing share intent:', shareData);
 
             const handleShareIntent = async () => {
@@ -43,6 +60,11 @@ export function ShareIntentHandler() {
 
                                 console.log('[ShareIntentHandler] Extracted bookmark data:', bookmarkData);
 
+                                // Clear share data before navigating
+                                clearShareData();
+                                setIsProcessing(false);
+                                processingRef.current = false;
+
                                 // Navigate to add-bookmark screen
                                 router.push({
                                     pathname: '/add-bookmark',
@@ -56,8 +78,6 @@ export function ShareIntentHandler() {
                                     },
                                 });
 
-                                clearShareData();
-                                setIsProcessing(false);
                                 return;
                             } catch (error) {
                                 console.error('[ShareIntentHandler] Error extracting bookmark metadata:', error);
@@ -90,6 +110,11 @@ export function ShareIntentHandler() {
                         const newPath = await copySharedFileToAppDirectory(firstFile.path, 'receipt');
                         console.log('[ShareIntentHandler] Copied shared file to:', newPath);
 
+                        // Clear share data before navigating
+                        clearShareData();
+                        setIsProcessing(false);
+                        processingRef.current = false;
+
                         // Navigate to add-receipt with the image
                         router.push({
                             pathname: '/add-receipt',
@@ -101,6 +126,11 @@ export function ShareIntentHandler() {
                             },
                         });
                     } else if (shareData.text || shareData.webUrl) {
+                        // Clear share data before navigating
+                        clearShareData();
+                        setIsProcessing(false);
+                        processingRef.current = false;
+
                         // Handle text/URL shares
                         router.push({
                             pathname: '/add-receipt',
@@ -111,11 +141,6 @@ export function ShareIntentHandler() {
                             },
                         });
                     }
-
-                    // Clear share data after processing
-                    clearShareData();
-                    setIsProcessing(false);
-                    processingRef.current = false;
                 } catch (error) {
                     console.error('[ShareIntentHandler] Error processing share intent:', error);
                     Alert.alert('Error', 'Failed to process shared content');

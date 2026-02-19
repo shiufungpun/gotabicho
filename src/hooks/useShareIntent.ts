@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {useShareIntent} from 'expo-share-intent';
+import {AppState, AppStateStatus} from 'react-native';
 
 export interface ShareIntentFile {
     path: string;
@@ -73,6 +74,22 @@ export function useShareIntentHandler() {
             }
         }
     }, [hasShareIntent, shareIntent]);
+
+    // Listen for app state changes to clear share data when app goes to background
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+            if (nextAppState === 'background' || nextAppState === 'inactive') {
+                console.log('[ShareIntent] App going to background, clearing share data');
+                if (shareData) {
+                    clearShareData();
+                }
+            }
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, [shareData]);
 
     const clearShareData = () => {
         setShareData(null);

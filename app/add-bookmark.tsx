@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View,} from 'react-native';
+import {ActivityIndicator, Alert, AppState, Image, ScrollView, Text, TouchableOpacity, View,} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {ThemedText, ThemedView} from '../src/components';
@@ -8,9 +8,11 @@ import {BookmarkSource, Trip} from '../src/types';
 import {generateText} from 'ai';
 import {apple} from '@react-native-ai/apple';
 import {bookmarkPrompt} from '../src/prompts/bookmark';
+import {useShareIntentHandler} from '../src/hooks/useShareIntent';
 
 export default function AddBookmarkScreen() {
     const router = useRouter();
+    const {clearShareData} = useShareIntentHandler();
     const params = useLocalSearchParams<{
         title: string;
         description: string;
@@ -39,6 +41,23 @@ export default function AddBookmarkScreen() {
 
         loadTrips();
     }, []);
+
+    // Clear share data when app goes to background or component unmounts
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (nextAppState === 'background' || nextAppState === 'inactive') {
+                console.log('[Bookmark] App going to background, clearing share data');
+                clearShareData();
+            }
+        });
+
+        // Clean up share data when component unmounts
+        return () => {
+            subscription.remove();
+            console.log('[Bookmark] Component unmounting, clearing share data');
+            clearShareData();
+        };
+    }, [clearShareData]);
 
     const loadTrips = async () => {
         try {
