@@ -8,6 +8,7 @@ export const attractions = sqliteTable('attractions', {
         .references(() => bookmarks.id, {onDelete: 'cascade'}),
     title: text('title').notNull(),
     type: text('type').notNull(), // 'sight', 'shopping', or 'play'
+    country: text('country'),
     location: text('location'),
     address: text('address'),
     notes: text('notes'),
@@ -37,4 +38,5 @@ export const attractionTags = sqliteTable('attraction_tags', {
 
 export type AttractionTag = typeof attractionTags.$inferSelect;
 export type NewAttractionTag = typeof attractionTags.$inferInsert;
+
 

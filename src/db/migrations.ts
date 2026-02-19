@@ -151,6 +151,7 @@ export async function migrateAttractionsTable(): Promise<void> {
                     bookmark_id INTEGER NOT NULL,
                     title TEXT NOT NULL,
                     type TEXT NOT NULL,
+                    country TEXT,
                     location TEXT,
                     address TEXT,
                     notes TEXT,
@@ -167,6 +168,16 @@ export async function migrateAttractionsTable(): Promise<void> {
             console.log('[Migration] Successfully created attractions table');
         } else {
             console.log('[Migration] attractions table already exists');
+
+            // Check if country column exists
+            const tableInfo = await db.getAllAsync('PRAGMA table_info(attractions)');
+            const hasCountry = tableInfo.some((col: any) => col.name === 'country');
+
+            if (!hasCountry) {
+                console.log('[Migration] Adding country column to attractions table');
+                await db.execAsync('ALTER TABLE attractions ADD COLUMN country TEXT');
+                console.log('[Migration] Successfully added country column');
+            }
         }
 
         // Check if attraction_tags table exists
