@@ -18,11 +18,13 @@ import {getAllTrips} from '../src/repositories/tripRepository';
 import {BookmarkSource, Trip} from '../src/types';
 import {useShareIntentHandler} from '../src/hooks/useShareIntent';
 import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
-import AIExtractionSection from '../src/components/bookmark/AIExtractionSection';
+import {createBookmark, linkBookmarkToTrips} from '../src/repositories/bookmarkRepository';
+import {useAIExtraction} from '../src/providers';
 
 export default function AddBookmarkScreen() {
     const router = useRouter();
     const {clearShareData} = useShareIntentHandler();
+    const {queueExtraction} = useAIExtraction();
     const params = useLocalSearchParams<{
         title: string;
         description: string;
@@ -35,9 +37,6 @@ export default function AddBookmarkScreen() {
     const [trips, setTrips] = useState<Trip[]>([]);
     const [selectedTripIds, setSelectedTripIds] = useState<number[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-
-    // Check if in dev environment
-    const isDev = process.env.EXPO_PUBLIC_ENV === 'dev';
 
     // Log extracted data on mount
     useEffect(() => {
@@ -106,35 +105,56 @@ export default function AddBookmarkScreen() {
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         console.log('[Bookmark] Save button pressed');
         console.log('[Bookmark] Selected trip IDs:', selectedTripIds);
 
-        if (selectedTripIds.length === 0) {
-            console.log('[Bookmark] No trips selected - saving standalone bookmark');
-        } else {
-            console.log('[Bookmark] Saving bookmark linked to trips:', selectedTripIds);
+        try {
+            // Create bookmark in database
+            const bookmarkId = await createBookmark({
+                title: params.title || 'Untitled Bookmark',
+                description: params.description || null,
+                url: params.url || null,
+                thumbnail_url: params.imageUrl || null,
+                source: params.source || null,
+                visited: false,
+            });
+
+            console.log('[Bookmark] Created bookmark with ID:', bookmarkId);
+
+            // Link to selected trips
+            if (selectedTripIds.length > 0) {
+                await linkBookmarkToTrips(bookmarkId, selectedTripIds);
+                console.log('[Bookmark] Linked to trips:', selectedTripIds);
+            }
+
+            // Queue AI extraction in background
+            const contentForExtraction = params.content || params.description || params.title || '';
+            await queueExtraction(bookmarkId, contentForExtraction);
+            console.log('[Bookmark] Queued AI extraction');
+
+            // Clear share data first
+            clearShareData();
+
+            // Platform-specific navigation
+            if (Platform.OS === 'ios') {
+                // On iOS, dismiss the modal and navigate to bookmark detail page
+                console.log('[Bookmark] iOS: Dismissing modal and navigating to bookmark detail');
+                // Dismiss the current modal to get back to main screen
+                router.dismiss();
+                // Then navigate to the bookmark detail page
+                setTimeout(() => {
+                    router.push(`/bookmark/${bookmarkId}`);
+                }, 100);
+            } else {
+                // On Android, exit to return to share app
+                console.log('[Bookmark] Android: Exiting app to return to share source');
+                BackHandler.exitApp();
+            }
+        } catch (error) {
+            console.error('[Bookmark] Error saving bookmark:', error);
+            Alert.alert('Error', 'Failed to save bookmark. Please try again.');
         }
-
-        // TODO: Implement actual save to database
-        Alert.alert(
-            'Bookmark Preview',
-            'This is a preview. Check console for logged data. Database save not implemented yet.',
-            [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        clearShareData();
-                        router.back();
-                    },
-                },
-            ]
-        );
-    };
-
-    const handleExtractionComplete = (data: any) => {
-        console.log('[Bookmark] AI extraction completed:', data);
-        // TODO: Use extracted data to enhance bookmark
     };
 
     const getSourceBadgeColor = (source: string) => {
@@ -231,13 +251,6 @@ export default function AddBookmarkScreen() {
                     </View>
                 </View>
 
-                {/* AI Extraction Section */}
-                {isDev && (
-                    <AIExtractionSection
-                        content={params.content || params.description || params.title}
-                        onExtractionComplete={handleExtractionComplete}
-                    />
-                )}
 
                 {/* Trip Selection */}
                 <View className="m-4">

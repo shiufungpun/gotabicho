@@ -5,3 +5,4 @@ export {AppProvider} from './AppProvider';
 export {ThemeProvider, useThemeContext} from './ThemeProvider';
 export {DatabaseProvider, useDatabaseContext} from './DatabaseProvider';
 export {ActiveTripProvider, useActiveTripContext} from './ActiveTripProvider';
+export {AIExtractionProvider, useAIExtraction} from './AIExtractionProvider';

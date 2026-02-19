@@ -131,6 +131,31 @@ export async function migrateBookmarksTable(): Promise<void> {
 }
 
 /**
+ * Add thumbnail_url column to bookmarks table if it doesn't exist
+ * This is a migration helper for existing databases
+ */
+export async function migrateBookmarksThumbnailUrl(): Promise<void> {
+    try {
+        const db = await getSQLiteDB();
+
+        // Check if column exists
+        const tableInfo = await db.getAllAsync('PRAGMA table_info(bookmarks)');
+        const hasThumbnailUrl = tableInfo.some((col: any) => col.name === 'thumbnail_url');
+
+        if (!hasThumbnailUrl) {
+            console.log('[Migration] Adding thumbnail_url column to bookmarks table');
+            await db.execAsync('ALTER TABLE bookmarks ADD COLUMN thumbnail_url TEXT');
+            console.log('[Migration] Successfully added thumbnail_url column');
+        } else {
+            console.log('[Migration] thumbnail_url column already exists');
+        }
+    } catch (error) {
+        console.error('[Migration] Error migrating bookmarks table:', error);
+        // Don't throw - allow app to continue
+    }
+}
+
+/**
  * Create attractions and attraction_tags tables if they don't exist
  * This is a migration helper for existing databases
  */

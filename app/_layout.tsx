@@ -61,6 +61,19 @@ function AppContent() {
                     }}
                 />
                 <Stack.Screen
+                    name="bookmark/[id]"
+                    options={{
+                        presentation: 'card',
+                        headerShown: true,
+                        headerStyle: {
+                            backgroundColor: colors.background
+                        },
+                        headerShadowVisible: false,
+                        title: 'Bookmark',
+                        headerBackTitle: '返回',
+                    }}
+                />
+                <Stack.Screen
                     name="receipt/[id]"
                     options={{
                         title: 'Receipt Details',

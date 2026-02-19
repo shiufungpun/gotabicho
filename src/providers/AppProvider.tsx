@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react';
 import {ThemeProvider} from './ThemeProvider';
 import {DatabaseProvider} from './DatabaseProvider';
+import {AIExtractionProvider} from './AIExtractionProvider';
 
 interface AppProviderProps {
     children: ReactNode;
@@ -25,7 +26,9 @@ export function AppProvider({children}: AppProviderProps) {
     return (
         <ThemeProvider>
             <DatabaseProvider>
-                {children}
+                <AIExtractionProvider>
+                    {children}
+                </AIExtractionProvider>
             </DatabaseProvider>
         </ThemeProvider>
     );
