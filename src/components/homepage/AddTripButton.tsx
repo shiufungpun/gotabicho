@@ -11,7 +11,7 @@ const AddTripButton = () => {
     return (
         <GlassContainer spacing={10} style={styles.glassContainerStyle}>
             <TouchableOpacity onPress={() => {
-                router.navigate(`/add-trip`)
+                router.navigate(`/trip/add`)
             }}>
                 <GlassView style={styles.glassButton} isInteractive>
                     <PlusIcon size={30} color={colors.text}/>

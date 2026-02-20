@@ -8,7 +8,7 @@ const AddTripCard: React.FC = () => {
     return (
         <ThemedCard className="p-4 rounded-lg h-full justify-center items-center">
             <TouchableOpacity
-                onPress={() => router.push('/add-trip')}
+                onPress={() => router.push('/trip/add')}
             >
                 <ThemedText textStyle={"header"} variant={"tertiary"} className={"text-2xl"}>旅</ThemedText>
             </TouchableOpacity>

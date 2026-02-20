@@ -67,7 +67,7 @@ export function ShareIntentHandler() {
 
                                 // Navigate to add-bookmark screen
                                 router.push({
-                                    pathname: '/add-bookmark',
+                                    pathname: '/bookmark/add',
                                     params: {
                                         title: bookmarkData.title,
                                         description: bookmarkData.description || '',

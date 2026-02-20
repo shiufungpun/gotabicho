@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import {Alert, KeyboardAvoidingView, Platform, Switch, TextInput, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
-import {createTrip} from '../src/repositories/tripRepository';
-import {useTheme} from '../src/theme';
-import {ThemedCard, ThemedText} from "../src/components";
-import Slider from "@react-native-community/slider";
-import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
+
 import DatePicker from "react-native-date-picker";
+import {useTheme} from "../../src/theme";
+import {createTrip} from "../../src/repositories/tripRepository";
+import ConfirmGlassButtonBar from "../../src/components/ui/ConfirmGlassButtonBar";
+import {ThemedCard, ThemedText} from "../../src/components";
+import Slider from "@react-native-community/slider";
 
 export default function AddTripScreen() {
     const [name, setName] = useState('');

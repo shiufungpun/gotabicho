@@ -13,13 +13,14 @@ import {
 } from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
-import {ThemedText, ThemedView} from '../src/components';
-import {getAllTrips} from '../src/repositories/tripRepository';
-import {BookmarkSource, Trip} from '../src/types';
-import {useShareIntentHandler} from '../src/hooks/useShareIntent';
-import ConfirmGlassButtonBar from "../src/components/ui/ConfirmGlassButtonBar";
-import {createBookmark, linkBookmarkToTrips} from '../src/repositories/bookmarkRepository';
-import {useAIExtraction} from '../src/providers';
+
+import {useShareIntentHandler} from "../../src/hooks/useShareIntent";
+import {useAIExtraction} from "../../src/providers";
+import {BookmarkSource, Trip} from "../../src/types";
+import {getAllTrips} from "../../src/repositories/tripRepository";
+import {createBookmark, linkBookmarkToTrips} from "../../src/repositories/bookmarkRepository";
+import {ThemedText, ThemedView} from "../../src/components";
+import ConfirmGlassButtonBar from "../../src/components/ui/ConfirmGlassButtonBar";
 
 export default function AddBookmarkScreen() {
     const router = useRouter();

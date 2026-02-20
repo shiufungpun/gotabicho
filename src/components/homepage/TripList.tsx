@@ -37,7 +37,7 @@ const TripList = ({trips}: {
             )}
             ListEmptyComponent={
                 <TouchableOpacity
-                    onPress={() => router.push('/add-trip')}
+                    onPress={() => router.push('/trip/add')}
                 >
                     <ThemedText variant="tertiary" className="text-center mt-10">
                         No trips yet. Create one!
