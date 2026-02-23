@@ -220,13 +220,13 @@ export default function AddBookmarkScreen() {
                         </View>
 
                         {/* Title */}
-                        <Text className="text-xl font-bold text-gray-800 mb-2">
-                            {params.title}
-                        </Text>
+                        {/*<Text className="text-xl font-bold text-gray-800 mb-2">*/}
+                        {/*    {params.title}*/}
+                        {/*</Text>*/}
 
                         {/* Description */}
                         {params.description && (
-                            <Text className="text-sm text-gray-600 mb-3" numberOfLines={3}>
+                            <Text className="text-sm text-gray-600 mb-3">
                                 {params.description}
                             </Text>
                         )}

@@ -27,6 +27,7 @@ export async function extractInstagramMetadata(url: string): Promise<ExtractedBo
             url,
             source: BookmarkSource.Instagram,
             imageUrl: null,
+            content: "",
         };
     }
 }
