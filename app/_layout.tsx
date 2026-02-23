@@ -31,6 +31,10 @@ function AppContent() {
                     <Label>Home</Label>
                     <Icon sf="house.fill" drawable="custom_android_drawable"/>
                 </NativeTabs.Trigger>
+                <NativeTabs.Trigger name="bookmark">
+                    <Icon sf="bookmark" drawable="custom_settings_drawable"/>
+                    <Label>Bookmarks</Label>
+                </NativeTabs.Trigger>
                 <NativeTabs.Trigger name="ai-test">
                     <Icon sf="gear" drawable="custom_settings_drawable"/>
                     <Label>Settings</Label>

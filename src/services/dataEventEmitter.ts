@@ -27,3 +27,8 @@ export const notifyTripChange = () => {
 export const notifyReceiptChange = () => {
     dataChangeEmitter.emit();
 };
+
+export const notifyBookmarkChange = () => {
+    dataChangeEmitter.emit();
+};
+

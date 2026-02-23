@@ -11,7 +11,74 @@ import {
     NewTripBookmark,
     tripBookmarks
 } from '../db/schema';
-import {desc, eq} from 'drizzle-orm';
+import {desc, eq, sql} from 'drizzle-orm';
+
+/**
+ * Get all bookmarks ordered by created_at DESC, with attraction count
+ */
+export const getAllBookmarks = async (): Promise<BookmarkWithCount[]> => {
+    const db = await getDB();
+
+    const rows = await db
+        .select({
+            id: bookmarks.id,
+            title: bookmarks.title,
+            description: bookmarks.description,
+            url: bookmarks.url,
+            thumbnail_url: bookmarks.thumbnail_url,
+            source: bookmarks.source,
+            visited: bookmarks.visited,
+            created_at: bookmarks.created_at,
+            updated_at: bookmarks.updated_at,
+            attraction_count: sql<number>`(SELECT COUNT(*) FROM ${attractions} WHERE ${attractions.bookmark_id} = ${bookmarks.id})`,
+        })
+        .from(bookmarks)
+        .orderBy(desc(bookmarks.created_at));
+
+    return rows;
+};
+
+/**
+ * Get all attractions ordered by created_at DESC, with parent bookmark title
+ */
+export const getAllAttractions = async (): Promise<AttractionWithBookmark[]> => {
+    const db = await getDB();
+
+    const rows = await db
+        .select({
+            id: attractions.id,
+            bookmark_id: attractions.bookmark_id,
+            title: attractions.title,
+            type: attractions.type,
+            country: attractions.country,
+            location: attractions.location,
+            address: attractions.address,
+            notes: attractions.notes,
+            visited: attractions.visited,
+            created_at: attractions.created_at,
+            updated_at: attractions.updated_at,
+            bookmark_title: bookmarks.title,
+        })
+        .from(attractions)
+        .innerJoin(bookmarks, eq(attractions.bookmark_id, bookmarks.id))
+        .orderBy(desc(attractions.created_at));
+
+    // Fetch tags for each attraction
+    const result = await Promise.all(
+        rows.map(async (row) => {
+            const tags = await db
+                .select()
+                .from(attractionTags)
+                .where(eq(attractionTags.attraction_id, row.id));
+            return {
+                ...row,
+                tags: tags.map(t => t.tag),
+            };
+        })
+    );
+
+    return result;
+};
 
 /**
  * Create a new bookmark
@@ -191,6 +258,15 @@ export interface AttractionWithTags extends Attraction {
 
 export interface BookmarkWithAttractions extends Bookmark {
     attractions: AttractionWithTags[];
+}
+
+export interface BookmarkWithCount extends Bookmark {
+    attraction_count: number;
+}
+
+export interface AttractionWithBookmark extends Attraction {
+    bookmark_title: string;
+    tags: string[];
 }
 
 

@@ -7,6 +7,10 @@ export default function BookmarkLayout() {
     return (
         <Stack screenOptions={{headerShown: false}}>
             <Stack.Screen
+                name="index"
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
                 name="[id]"
                 options={{
                     presentation: 'card',

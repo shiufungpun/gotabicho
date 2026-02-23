@@ -5,7 +5,8 @@ import {Ionicons} from '@expo/vector-icons';
 import {
     BookmarkWithAttractions,
     getBookmarkById,
-    updateAttractionVisited
+    updateAttractionVisited,
+    updateBookmarkVisited,
 } from '../../src/repositories/bookmarkRepository';
 import {useAIExtraction} from '../../src/providers';
 import {BookmarkSource} from '../../src/types';
@@ -56,6 +57,16 @@ export default function BookmarkDetailScreen() {
             loadBookmark(); // Reload to update UI
         } catch (error) {
             console.error('[BookmarkDetail] Error updating visited status:', error);
+        }
+    };
+
+    const handleToggleBookmarkVisited = async () => {
+        if (!bookmark) return;
+        try {
+            await updateBookmarkVisited(bookmark.id, !bookmark.visited);
+            setBookmark(prev => prev ? {...prev, visited: !prev.visited} : prev);
+        } catch (error) {
+            console.error('[BookmarkDetail] Error updating bookmark visited status:', error);
         }
     };
 
@@ -194,7 +205,7 @@ export default function BookmarkDetailScreen() {
                     <View className="p-4">
                         {/* Source Badge */}
                         {bookmark.source && (
-                            <View className="flex-row items-center mb-3">
+                            <View className="flex-row items-center justify-between mb-3">
                                 <View
                                     className={`${getSourceBadgeColor(bookmark.source)} px-3 py-1 rounded-full flex-row items-center`}>
                                     <Ionicons
@@ -206,6 +217,24 @@ export default function BookmarkDetailScreen() {
                                         {bookmark.source}
                                     </Text>
                                 </View>
+                                {/* Bookmark visited toggle */}
+                                <TouchableOpacity
+                                    onPress={handleToggleBookmarkVisited}
+                                    className={`flex-row items-center px-3 py-1 rounded-full border-2 ${
+                                        bookmark.visited
+                                            ? 'bg-green-500 border-green-500'
+                                            : 'bg-white border-gray-300'
+                                    }`}>
+                                    <Ionicons
+                                        name={bookmark.visited ? 'checkmark-circle' : 'ellipse-outline'}
+                                        size={14}
+                                        color={bookmark.visited ? 'white' : '#9CA3AF'}
+                                    />
+                                    <Text
+                                        className={`text-xs font-semibold ml-1 ${bookmark.visited ? 'text-white' : 'text-gray-400'}`}>
+                                        {bookmark.visited ? 'Visited' : 'Mark visited'}
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                         )}
 
