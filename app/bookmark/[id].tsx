@@ -21,6 +21,7 @@ export default function BookmarkDetailScreen() {
     const [bookmark, setBookmark] = useState<BookmarkWithAttractions | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
     useEffect(() => {
         loadBookmark();
@@ -207,6 +208,31 @@ export default function BookmarkDetailScreen() {
             <ScrollView className="flex-1">
                 {/* Bookmark Header Card */}
                 <View className="m-4 bg-white rounded-xl shadow-md overflow-hidden">
+
+                    {/* Processing Banner */}
+                    {isProcessing && (
+                        <View className="mx-4 mb-4 bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-row items-center flex-1">
+                                    <ActivityIndicator size="small" color="#7C3AED"/>
+                                    <View className="ml-3 flex-1">
+                                        <Text className="text-purple-800 font-semibold">
+                                            {extractionStatus?.status === 'queued' ? 'Queued for extraction...' : 'Extracting attractions...'}
+                                        </Text>
+                                        <Text className="text-purple-600 text-xs mt-1">
+                                            AI is analyzing the content
+                                        </Text>
+                                    </View>
+                                </View>
+                                {/*<TouchableOpacity*/}
+                                {/*    onPress={handleCancelExtraction}*/}
+                                {/*    className="bg-purple-200 px-3 py-2 rounded-lg">*/}
+                                {/*    <Text className="text-purple-800 text-xs font-semibold">Cancel</Text>*/}
+                                {/*</TouchableOpacity>*/}
+                            </View>
+                        </View>
+                    )}
+
                     {/* Thumbnail */}
                     {bookmark.thumbnail_url ? (
                         <Image
@@ -264,9 +290,25 @@ export default function BookmarkDetailScreen() {
 
                         {/* Description */}
                         {bookmark.description && (
-                            <Text className="text-sm text-gray-600 mb-3">
-                                {bookmark.description}
-                            </Text>
+                            <View className="mb-3">
+                                <Text
+                                    className="text-sm text-gray-600"
+                                    numberOfLines={isDescriptionExpanded ? undefined : 3}>
+                                    {bookmark.description}
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => setIsDescriptionExpanded(prev => !prev)}
+                                    className="flex-row items-center mt-1">
+                                    <Text className="text-xs text-blue-500 font-semibold">
+                                        {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                                    </Text>
+                                    <Ionicons
+                                        name={isDescriptionExpanded ? 'chevron-up' : 'chevron-down'}
+                                        size={12}
+                                        color="#3B82F6"
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         )}
 
                         {/* URL */}
@@ -281,29 +323,6 @@ export default function BookmarkDetailScreen() {
                     </View>
                 </View>
 
-                {/* Processing Banner */}
-                {isProcessing && (
-                    <View className="mx-4 mb-4 bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
-                        <View className="flex-row items-center justify-between">
-                            <View className="flex-row items-center flex-1">
-                                <ActivityIndicator size="small" color="#7C3AED"/>
-                                <View className="ml-3 flex-1">
-                                    <Text className="text-purple-800 font-semibold">
-                                        {extractionStatus?.status === 'queued' ? 'Queued for extraction...' : 'Extracting attractions...'}
-                                    </Text>
-                                    <Text className="text-purple-600 text-xs mt-1">
-                                        AI is analyzing the content
-                                    </Text>
-                                </View>
-                            </View>
-                            <TouchableOpacity
-                                onPress={handleCancelExtraction}
-                                className="bg-purple-200 px-3 py-2 rounded-lg">
-                                <Text className="text-purple-800 text-xs font-semibold">Cancel</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
 
                 {/* Error Banner */}
                 {extractionStatus?.status === 'failed' && (
