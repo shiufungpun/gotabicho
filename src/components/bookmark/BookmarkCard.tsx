@@ -10,6 +10,7 @@ interface BookmarkCardProps {
     bookmark: BookmarkWithCount;
     onPress: () => void;
     onToggleVisited: () => void;
+    onDelete: () => void;
 }
 
 function getSourceBadgeColor(source: string | null) {
@@ -34,7 +35,7 @@ function getSourceIcon(source: string | null): any {
     }
 }
 
-export function BookmarkCard({bookmark, onPress, onToggleVisited}: BookmarkCardProps) {
+export function BookmarkCard({bookmark, onPress, onToggleVisited, onDelete}: BookmarkCardProps) {
     const {colors} = useTheme();
     const badgeColor = getSourceBadgeColor(bookmark.source);
 
@@ -99,6 +100,23 @@ export function BookmarkCard({bookmark, onPress, onToggleVisited}: BookmarkCardP
                             }}
                         >
                             {bookmark.visited && <Ionicons name="checkmark" size={16} color="white"/>}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                onDelete();
+                            }}
+                            style={{
+                                width: 28,
+                                height: 28,
+                                borderRadius: 14,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginLeft: 6,
+                            }}
+                        >
+                            <Ionicons name="trash-outline" size={18} color={colors.error ?? '#EF4444'}/>
                         </TouchableOpacity>
                     </View>
 

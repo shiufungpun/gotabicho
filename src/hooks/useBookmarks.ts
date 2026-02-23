@@ -2,6 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {
     AttractionWithBookmark,
     BookmarkWithCount,
+    deleteBookmark,
     getAllAttractions,
     getAllBookmarks,
     updateAttractionVisited,
@@ -52,6 +53,20 @@ export const useBookmarks = () => {
         );
     }, []);
 
-    return {bookmarks, attractions, loading, refresh: load, toggleBookmarkVisited, toggleAttractionVisited};
+    const removeBookmark = useCallback(async (id: number) => {
+        await deleteBookmark(id);
+        setBookmarks(prev => prev.filter(b => b.id !== id));
+        setAttractions(prev => prev.filter(a => a.bookmark_id !== id));
+    }, []);
+
+    return {
+        bookmarks,
+        attractions,
+        loading,
+        refresh: load,
+        toggleBookmarkVisited,
+        toggleAttractionVisited,
+        removeBookmark
+    };
 };
 

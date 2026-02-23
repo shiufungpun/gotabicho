@@ -37,6 +37,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
     const [queue, setQueue] = useState<ExtractionQueueItem[]>([]);
     const [currentProcessing, setCurrentProcessing] = useState<number | null>(null);
     const [statusMap, setStatusMap] = useState<Map<number, ExtractionStatus>>(new Map());
+    const statusMapRef = useRef<Map<number, ExtractionStatus>>(new Map());
     const isProcessingRef = useRef(false);
 
     // Load queue from AsyncStorage on mount
@@ -56,6 +57,14 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
         }
     }, [queue]);
 
+    const updateStatusMap = (updater: (prev: Map<number, ExtractionStatus>) => Map<number, ExtractionStatus>) => {
+        setStatusMap(prev => {
+            const newMap = updater(prev);
+            statusMapRef.current = newMap;
+            return newMap;
+        });
+    };
+
     const loadQueue = async () => {
         try {
             const stored = await AsyncStorage.getItem(QUEUE_STORAGE_KEY);
@@ -72,6 +81,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
                         status: 'queued',
                     });
                 });
+                statusMapRef.current = newStatusMap;
                 setStatusMap(newStatusMap);
             }
         } catch (error) {
@@ -100,7 +110,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
         setQueue(prev => [...prev, {bookmarkId, content}]);
 
         // Update status
-        setStatusMap(prev => {
+        updateStatusMap(prev => {
             const newMap = new Map(prev);
             newMap.set(bookmarkId, {bookmarkId, status: 'queued'});
             return newMap;
@@ -114,7 +124,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
         setQueue(prev => prev.filter(item => item.bookmarkId !== bookmarkId));
 
         // Update status
-        setStatusMap(prev => {
+        updateStatusMap(prev => {
             const newMap = new Map(prev);
             newMap.delete(bookmarkId);
             return newMap;
@@ -143,7 +153,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
         setCurrentProcessing(item.bookmarkId);
 
         // Update status to processing
-        setStatusMap(prev => {
+        updateStatusMap(prev => {
             const newMap = new Map(prev);
             newMap.set(item.bookmarkId, {bookmarkId: item.bookmarkId, status: 'processing'});
             return newMap;
@@ -166,8 +176,8 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
             const parsed = parseAiJsonResponse(result.text);
             console.log('[AIExtraction] Parsed data:', parsed);
 
-            // Check if extraction was cancelled while processing
-            const currentStatus = statusMap.get(item.bookmarkId);
+            // Check if extraction was cancelled while processing (use ref to avoid stale closure)
+            const currentStatus = statusMapRef.current.get(item.bookmarkId);
             if (!currentStatus || currentStatus.status !== 'processing') {
                 console.log('[AIExtraction] Extraction was cancelled, discarding results');
                 return;
@@ -180,7 +190,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
             }
 
             // Update status to completed
-            setStatusMap(prev => {
+            updateStatusMap(prev => {
                 const newMap = new Map(prev);
                 newMap.set(item.bookmarkId, {bookmarkId: item.bookmarkId, status: 'completed'});
                 return newMap;
@@ -191,7 +201,7 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
             console.error('[AIExtraction] Error processing extraction:', error);
 
             const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-            setStatusMap(prev => {
+            updateStatusMap(prev => {
                 const newMap = new Map(prev);
                 newMap.set(item.bookmarkId, {
                     bookmarkId: item.bookmarkId,

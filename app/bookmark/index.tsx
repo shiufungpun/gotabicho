@@ -1,5 +1,5 @@
 import React, {useMemo, useRef, useState} from 'react';
-import {Animated, RefreshControl, TouchableOpacity, View,} from 'react-native';
+import {Alert, Animated, RefreshControl, TouchableOpacity, View,} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
@@ -23,7 +23,15 @@ const HEADER_MIN_HEIGHT = 70;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default function BookmarkIndexScreen() {
-    const {bookmarks, attractions, loading, refresh, toggleBookmarkVisited, toggleAttractionVisited} = useBookmarks();
+    const {
+        bookmarks,
+        attractions,
+        loading,
+        refresh,
+        toggleBookmarkVisited,
+        toggleAttractionVisited,
+        removeBookmark
+    } = useBookmarks();
     const {queueExtraction} = useAIExtraction();
     const {colors} = useTheme();
     const insets = useSafeAreaInsets();
@@ -66,6 +74,21 @@ export default function BookmarkIndexScreen() {
         router.push(`/bookmark/${bookmarkId}`);
     };
 
+    const handleDeleteBookmark = (id: number, title: string) => {
+        Alert.alert(
+            'Delete Bookmark',
+            `Are you sure you want to delete "${title}"? This will also remove all its attractions.`,
+            [
+                {text: 'Cancel', style: 'cancel'},
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => removeBookmark(id),
+                },
+            ]
+        );
+    };
+
     const tabBarHeight = 48;
     const filterBarHeight = 48;
     const contentTopPadding = HEADER_MAX_HEIGHT + insets.top + tabBarHeight + filterBarHeight + 8;
@@ -83,6 +106,7 @@ export default function BookmarkIndexScreen() {
                                 bookmark={item}
                                 onPress={() => router.push(`/bookmark/${item.id}`)}
                                 onToggleVisited={() => toggleBookmarkVisited(item.id, item.visited ?? false)}
+                                onDelete={() => handleDeleteBookmark(item.id, item.title)}
                             />
                         );
                     }

@@ -4,6 +4,7 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {
     BookmarkWithAttractions,
+    deleteBookmark,
     getBookmarkById,
     updateAttractionVisited,
     updateBookmarkVisited,
@@ -82,6 +83,24 @@ export default function BookmarkDetailScreen() {
                     onPress: () => {
                         cancelExtraction(bookmarkId);
                         setRefreshKey(prev => prev + 1);
+                    },
+                },
+            ]
+        );
+    };
+
+    const handleDeleteBookmark = () => {
+        Alert.alert(
+            'Delete Bookmark',
+            `Are you sure you want to delete "${bookmark?.title}"? This will also remove all its attractions.`,
+            [
+                {text: 'Cancel', style: 'cancel'},
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        await deleteBookmark(bookmarkId);
+                        router.back();
                     },
                 },
             ]
@@ -185,7 +204,56 @@ export default function BookmarkDetailScreen() {
 
     return (
         <View className="flex-1 bg-gray-50">
-            <ScrollView className="flex-1">
+            {/* Nav header */}
+            <View style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingHorizontal: 16,
+                paddingTop: 52,
+                paddingBottom: 8,
+            }}>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 18,
+                        backgroundColor: 'rgba(255,255,255,0.9)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        shadowColor: '#000',
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                        elevation: 3,
+                    }}
+                >
+                    <Ionicons name="chevron-back" size={22} color="#111"/>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={handleDeleteBookmark}
+                    style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 18,
+                        backgroundColor: 'rgba(255,255,255,0.9)',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        shadowColor: '#000',
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                        elevation: 3,
+                    }}
+                >
+                    <Ionicons name="trash-outline" size={20} color="#EF4444"/>
+                </TouchableOpacity>
+            </View>
+            <ScrollView className="flex-1" contentContainerStyle={{paddingTop: 96}}>
                 {/* Bookmark Header Card */}
                 <View className="m-4 bg-white rounded-xl shadow-md overflow-hidden">
                     {/* Thumbnail */}
