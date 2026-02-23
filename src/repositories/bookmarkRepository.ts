@@ -236,6 +236,15 @@ export const deleteBookmark = async (id: number): Promise<void> => {
 };
 
 /**
+ * Update bookmark title
+ */
+export const updateBookmarkTitle = async (id: number, title: string): Promise<void> => {
+    const db = await getDB();
+    await db.update(bookmarks).set({title, updated_at: Date.now()}).where(eq(bookmarks.id, id));
+    console.log('[BookmarkRepo] Updated bookmark title:', id, title);
+};
+
+/**
  * Update bookmark visited status
  */
 export const updateBookmarkVisited = async (id: number, visited: boolean): Promise<void> => {

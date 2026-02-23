@@ -4,7 +4,7 @@ import {generateText} from 'ai';
 import {apple} from '@react-native-ai/apple';
 import {bookmarkPrompt} from '../prompts/bookmark';
 import {parseAiJsonResponse} from '../../utils/parseAiResponse';
-import {saveAttractions} from '../repositories/bookmarkRepository';
+import {saveAttractions, updateBookmarkTitle} from '../repositories/bookmarkRepository';
 
 const QUEUE_STORAGE_KEY = '@extraction_queue';
 
@@ -185,6 +185,12 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
 
             // Save attractions to database
             if (parsed.items && Array.isArray(parsed.items)) {
+                // Update bookmark title if AI extracted one
+                if (parsed.title && typeof parsed.title === 'string') {
+                    await updateBookmarkTitle(item.bookmarkId, parsed.title);
+                    console.log('[AIExtraction] Updated bookmark title:', parsed.title);
+                }
+
                 await saveAttractions(item.bookmarkId, parsed.items);
                 console.log('[AIExtraction] Saved', parsed.items.length, 'attractions');
             }
