@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {useLocalSearchParams, useRouter} from 'expo-router';
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {
     BookmarkWithAttractions,
@@ -16,6 +16,7 @@ export default function BookmarkDetailScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
     const bookmarkId = parseInt(id || '0');
     const router = useRouter();
+    const navigation = useNavigation();
     const {getExtractionStatus, cancelExtraction} = useAIExtraction();
 
     const [bookmark, setBookmark] = useState<BookmarkWithAttractions | null>(null);
@@ -26,6 +27,13 @@ export default function BookmarkDetailScreen() {
     useEffect(() => {
         loadBookmark();
     }, [bookmarkId, refreshKey]);
+
+    // Update page title when bookmark is loaded
+    useEffect(() => {
+        if (bookmark?.title) {
+            navigation.setOptions({title: bookmark.title});
+        }
+    }, [bookmark?.title]);
 
     // Auto-refresh when extraction completes
     useEffect(() => {
