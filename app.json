@@ -31,12 +31,6 @@
         }
       ],
       [
-        "react-native-maps",
-        {
-          "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY_HERE"
-        }
-      ],
-      [
         "expo-share-intent",
         {
           "iosActivationRules": {
@@ -74,7 +68,12 @@
         "VIBRATE",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSy你的完整Android Google Maps API Key"
+        }
+      }
     },
     "extra": {
       "router": {},
