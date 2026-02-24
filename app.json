@@ -25,6 +25,18 @@
       "expo-router",
       "expo-sqlite",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Gotabicho to access your location to center the map."
+        }
+      ],
+      [
+        "react-native-maps",
+        {
+          "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY_HERE"
+        }
+      ],
+      [
         "expo-share-intent",
         {
           "iosActivationRules": {
@@ -59,7 +71,9 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "SYSTEM_ALERT_WINDOW",
-        "VIBRATE"
+        "VIBRATE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
       ]
     },
     "extra": {

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
+import {ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useLocalSearchParams, useRouter} from 'expo-router';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@expo/vector-icons';
 import {
     BookmarkWithAttractions,
@@ -16,8 +17,8 @@ export default function BookmarkDetailScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
     const bookmarkId = parseInt(id || '0');
     const router = useRouter();
-    const navigation = useNavigation();
-    const {getExtractionStatus, cancelExtraction} = useAIExtraction();
+    const insets = useSafeAreaInsets();
+    const {getExtractionStatus} = useAIExtraction();
 
     const [bookmark, setBookmark] = useState<BookmarkWithAttractions | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -28,12 +29,6 @@ export default function BookmarkDetailScreen() {
         loadBookmark();
     }, [bookmarkId, refreshKey]);
 
-    // Update page title when bookmark is loaded
-    useEffect(() => {
-        if (bookmark?.title) {
-            navigation.setOptions({title: bookmark.title});
-        }
-    }, [bookmark?.title]);
 
     // Auto-refresh when extraction completes
     useEffect(() => {
@@ -78,24 +73,6 @@ export default function BookmarkDetailScreen() {
         } catch (error) {
             console.error('[BookmarkDetail] Error updating bookmark visited status:', error);
         }
-    };
-
-    const handleCancelExtraction = () => {
-        Alert.alert(
-            'Cancel Extraction',
-            'Are you sure you want to cancel the AI extraction for this bookmark?',
-            [
-                {text: 'No', style: 'cancel'},
-                {
-                    text: 'Yes, Cancel',
-                    style: 'destructive',
-                    onPress: () => {
-                        cancelExtraction(bookmarkId);
-                        setRefreshKey(prev => prev + 1);
-                    },
-                },
-            ]
-        );
     };
 
     const handleDeleteBookmark = () => {
@@ -212,10 +189,37 @@ export default function BookmarkDetailScreen() {
     const attractionTypes = ['sight', 'restaurant', 'shopping', 'play', 'hotel'];
 
     return (
-        <View className="flex-1 bg-gray-50">
-            <ScrollView className="flex-1">
+        <View style={[detailStyles.root, {paddingTop: insets.top || 16}]}>
+            {/* ── Modal drag handle + header ─────────────────────────────── */}
+            <View style={detailStyles.modalHeader}>
+                {/* Drag handle pill */}
+                <View style={detailStyles.dragHandle}/>
+                <View style={detailStyles.headerRow}>
+                    <Text style={detailStyles.headerTitle} numberOfLines={1}>
+                        {bookmark.title}
+                    </Text>
+                    {/* Delete */}
+                    <TouchableOpacity
+                        onPress={handleDeleteBookmark}
+                        style={[detailStyles.closeButton, {marginRight: 8}]}
+                        hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+                    >
+                        <Ionicons name="trash-outline" size={16} color="#EF4444"/>
+                    </TouchableOpacity>
+                    {/* Dismiss */}
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        style={detailStyles.closeButton}
+                        hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+                    >
+                        <Ionicons name="close" size={18} color="#6B7280"/>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <ScrollView style={detailStyles.scroll} showsVerticalScrollIndicator={false}>
                 {/* Bookmark Header Card */}
-                <View className="m-4 bg-white rounded-xl shadow-md overflow-hidden">
+                <View className="mx-4 mb-4 bg-white rounded-xl shadow-md overflow-hidden">
 
                     {/* Processing Banner */}
                     {isProcessing && (
@@ -232,11 +236,6 @@ export default function BookmarkDetailScreen() {
                                         </Text>
                                     </View>
                                 </View>
-                                {/*<TouchableOpacity*/}
-                                {/*    onPress={handleCancelExtraction}*/}
-                                {/*    className="bg-purple-200 px-3 py-2 rounded-lg">*/}
-                                {/*    <Text className="text-purple-800 text-xs font-semibold">Cancel</Text>*/}
-                                {/*</TouchableOpacity>*/}
                             </View>
                         </View>
                     )}
@@ -458,10 +457,56 @@ export default function BookmarkDetailScreen() {
                 </View>
 
                 {/* Bottom spacing */}
-                <View className="h-8"/>
+                <View style={{height: Math.max(insets.bottom, 16) + 16}}/>
             </ScrollView>
         </View>
     );
 }
 
-
+const detailStyles = StyleSheet.create({
+    root: {
+        flex: 1,
+        backgroundColor: '#F9FAFB',
+    },
+    scroll: {
+        flex: 1,
+    },
+    modalHeader: {
+        paddingHorizontal: 16,
+        paddingBottom: 8,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#E5E7EB',
+    },
+    dragHandle: {
+        width: 36,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: '#D1D5DB',
+        alignSelf: 'center',
+        marginTop: 8,
+        marginBottom: 10,
+    },
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingBottom: 8,
+    },
+    headerTitle: {
+        flex: 1,
+        fontSize: 17,
+        fontWeight: '600',
+        color: '#1F2937',
+        marginRight: 8,
+    },
+    closeButton: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        backgroundColor: '#F3F4F6',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+    },
+});
