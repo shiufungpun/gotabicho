@@ -1,13 +1,12 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, RefreshControl, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
+import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import {useBookmarks} from '../../src/hooks/useBookmarks';
 import {useTheme} from '../../src/theme';
-import {ThemedText, ThemedView} from '../../src/components';
-import {FilterChips} from '../../src/components/bookmark/FilterChips';
-import {AddBookmarkModal} from '../../src/components/bookmark/AddBookmarkModal';
+import {AddBookmarkModal, FilterChips, GlassButton, ThemedText, ThemedView} from '../../src/components';
 import {MapPin, MapPinsView} from '../../src/components/bookmark/MapPinsView';
 import {MinimalCard} from '../../src/components/bookmark/MinimalCard';
 import {BOOKMARK_PIN_COLORS, getMockCoordinate} from '../../src/helpers/mockCoordinates';
@@ -38,6 +37,7 @@ export default function BookmarkIndexScreen() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
+    const sheetRef = useRef<TrueSheet>(null);
     const listRef = useRef<FlatList>(null);
 
     // ─── filtered data ────────────────────────────────────────────────────────
@@ -82,6 +82,8 @@ export default function BookmarkIndexScreen() {
             setSelectedId(id);
             const index = activeItems.findIndex(i => i.id === id);
             if (index !== -1) {
+                // Expand the sheet so the list is visible, then scroll to item
+                sheetRef.current?.resize(1);
                 listRef.current?.scrollToIndex({index, animated: true, viewPosition: 0.3});
             }
         },
@@ -94,6 +96,75 @@ export default function BookmarkIndexScreen() {
         refresh();
         router.push(`/bookmark/${bookmarkId}`);
     };
+
+    const handleOpenSheet = useCallback(() => {
+        sheetRef.current?.present();
+    }, []);
+
+    // ─── sheet header (tabs + filter chips) ──────────────────────────────────
+    const SheetHeader = (
+        <View
+            className="border-b"
+            style={{backgroundColor: colors.surface, borderBottomColor: colors.border}}
+        >
+            {/* Drag handle */}
+            <View className="items-center py-2">
+                <View
+                    className="w-9 h-1 rounded-full"
+                    style={{backgroundColor: colors.border}}
+                />
+            </View>
+
+            {/* Tabs */}
+            <View className="flex-row h-10">
+                {(['bookmarks', 'attractions'] as Tab[]).map(tab => (
+                    <TouchableOpacity
+                        key={tab}
+                        onPress={() => {
+                            setActiveTab(tab);
+                            setSelectedId(null);
+                        }}
+                        className="flex-1 items-center justify-center border-b-2"
+                        style={{borderBottomColor: activeTab === tab ? colors.primary : 'transparent'}}
+                    >
+                        <ThemedText
+                            style={{
+                                fontSize: 13,
+                                fontWeight: activeTab === tab ? '700' : '400',
+                                color: activeTab === tab ? colors.primary : colors.textSecondary,
+                                textTransform: 'capitalize',
+                            }}
+                        >
+                            {tab}
+                        </ThemedText>
+                    </TouchableOpacity>
+                ))}
+            </View>
+
+            {/* Filter chips */}
+            <View className="h-11 justify-center">
+                {activeTab === 'bookmarks' ? (
+                    <FilterChips
+                        options={SOURCE_FILTERS}
+                        selected={sourceFilter}
+                        onChange={f => {
+                            setSourceFilter(f);
+                            setSelectedId(null);
+                        }}
+                    />
+                ) : (
+                    <FilterChips
+                        options={ATTRACTION_TYPES}
+                        selected={typeFilter}
+                        onChange={f => {
+                            setTypeFilter(f);
+                            setSelectedId(null);
+                        }}
+                    />
+                )}
+            </View>
+        </View>
+    );
 
     // ─── render card ──────────────────────────────────────────────────────────
     const renderItem = useCallback(
@@ -129,33 +200,9 @@ export default function BookmarkIndexScreen() {
 
     // ─── layout ───────────────────────────────────────────────────────────────
     return (
-        <ThemedView style={styles.root}>
-            {/* ── Top bar ─────────────────────────────────────────────────── */}
-            <View
-                style={[
-                    styles.topBar,
-                    {
-                        paddingTop: insets.top + 8,
-                        backgroundColor: colors.surface,
-                        borderBottomColor: colors.border,
-                    },
-                ]}
-            >
-                <Text
-                    style={[styles.title, {color: colors.text, fontFamily: 'HinaMincho_400Regular'}]}
-                >
-                    Bookmarks
-                </Text>
-                <TouchableOpacity
-                    onPress={() => setShowAddModal(true)}
-                    style={[styles.addButton, {backgroundColor: colors.primary}]}
-                >
-                    <Ionicons name="add" size={22} color="white"/>
-                </TouchableOpacity>
-            </View>
-
-            {/* ── Map (top ~45%) ───────────────────────────────────────────── */}
-            <View style={styles.mapContainer}>
+        <ThemedView className="flex-1">
+            {/* ── Full-screen map background ───────────────────────────── */}
+            <View className="absolute inset-0">
                 <MapPinsView
                     pins={pins}
                     selectedId={selectedId}
@@ -163,103 +210,71 @@ export default function BookmarkIndexScreen() {
                 />
             </View>
 
-            {/* ── Tab + filter bar ────────────────────────────────────────── */}
-            <View style={[styles.controlBar, {backgroundColor: colors.surface, borderBottomColor: colors.border}]}>
-                {/* Tabs */}
-                <View style={styles.tabs}>
-                    {(['bookmarks', 'attractions'] as Tab[]).map(tab => (
-                        <TouchableOpacity
-                            key={tab}
-                            onPress={() => {
-                                setActiveTab(tab);
-                                setSelectedId(null);
-                            }}
-                            style={[
-                                styles.tab,
-                                {
-                                    borderBottomColor:
-                                        activeTab === tab ? colors.primary : 'transparent',
-                                },
-                            ]}
-                        >
-                            <ThemedText
-                                style={{
-                                    fontSize: 13,
-                                    fontWeight: activeTab === tab ? '700' : '400',
-                                    color:
-                                        activeTab === tab
-                                            ? colors.primary
-                                            : colors.textSecondary,
-                                    textTransform: 'capitalize',
-                                }}
-                            >
-                                {tab}
-                            </ThemedText>
-                        </TouchableOpacity>
-                    ))}
-                </View>
 
-                {/* Filter chips */}
-                <View style={styles.filterRow}>
-                    {activeTab === 'bookmarks' ? (
-                        <FilterChips
-                            options={SOURCE_FILTERS}
-                            selected={sourceFilter}
-                            onChange={f => {
-                                setSourceFilter(f);
-                                setSelectedId(null);
-                            }}
-                        />
-                    ) : (
-                        <FilterChips
-                            options={ATTRACTION_TYPES}
-                            selected={typeFilter}
-                            onChange={f => {
-                                setTypeFilter(f);
-                                setSelectedId(null);
-                            }}
-                        />
-                    )}
-                </View>
+            {/* ── Floating glass button ── */}
+            <View
+                style={{
+                    position: 'absolute',
+                    bottom: insets.bottom + 63,
+                    alignSelf: 'center',
+                }}
+            >
+                <GlassButton
+                    icon={<Ionicons name="menu" size={22} color="#000"/>}
+                    onPress={handleOpenSheet}
+                />
             </View>
 
-            {/* ── Card list (bottom ~55%) ──────────────────────────────────── */}
-            <FlatList
-                ref={listRef}
-                style={styles.list}
-                data={activeItems}
-                keyExtractor={(item: any) => item.id.toString()}
-                renderItem={renderItem}
-                contentContainerStyle={styles.listContent}
-                onScrollToIndexFailed={() => {
-                }}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={loading}
-                        onRefresh={refresh}
-                        tintColor={colors.primary}
-                    />
-                }
-                ListEmptyComponent={
-                    <View style={styles.empty}>
-                        <Ionicons
-                            name={activeTab === 'bookmarks' ? 'bookmark-outline' : 'map-outline'}
-                            size={48}
-                            color={colors.textTertiary}
+            {/* ── Bottom sheet with card list ───────────────────────────── */}
+            <TrueSheet
+                ref={sheetRef}
+                detents={[0.18, 0.5, 1]}
+                dismissible={true}
+                dimmed={false}
+                scrollable
+                header={SheetHeader}
+                headerStyle={{backgroundColor: colors.surface}}
+                backgroundColor={colors.surface}
+                cornerRadius={20}
+                initialDetentIndex={1}
+            >
+                <FlatList
+                    ref={listRef}
+                    data={activeItems}
+                    keyExtractor={(item: any) => item.id.toString()}
+                    renderItem={renderItem}
+                    contentContainerClassName="pt-1 pb-8"
+                    nestedScrollEnabled
+                    onScrollToIndexFailed={() => {
+                    }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={loading}
+                            onRefresh={refresh}
+                            tintColor={colors.primary}
                         />
-                        <ThemedText
-                            variant="tertiary"
-                            style={styles.emptyText}
-                        >
-                            {activeTab === 'bookmarks'
-                                ? 'No bookmarks yet.\nTap + to add your first one!'
-                                : 'No attractions found.\nSave bookmarks and let AI extract them.'}
-                        </ThemedText>
-                    </View>
-                }
-            />
+                    }
+                    ListEmptyComponent={
+                        <View className="items-center pt-10 px-8">
+                            <Ionicons
+                                name={activeTab === 'bookmarks' ? 'bookmark-outline' : 'map-outline'}
+                                size={48}
+                                color={colors.textTertiary}
+                            />
+                            <ThemedText
+                                variant="tertiary"
+                                className="text-center mt-2.5 text-sm"
+                            >
+                                {activeTab === 'bookmarks'
+                                    ? 'No bookmarks yet.\nTap + to add your first one!'
+                                    : 'No attractions found.\nSave bookmarks and let AI extract them.'}
+                            </ThemedText>
+                        </View>
+                    }
+                />
+            </TrueSheet>
 
-            {/* ── Add Bookmark Modal ───────────────────────────────────────── */}
+            {/* ── Add Bookmark Modal ────────────────────────────────────── */}
             <AddBookmarkModal
                 visible={showAddModal}
                 onClose={() => setShowAddModal(false)}
@@ -268,64 +283,3 @@ export default function BookmarkIndexScreen() {
         </ThemedView>
     );
 }
-
-const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-    },
-    topBar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingBottom: 10,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    title: {
-        fontSize: 28,
-    },
-    addButton: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    mapContainer: {
-        flex: 4,   // ~44% of remaining space
-    },
-    controlBar: {
-        borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    tabs: {
-        flexDirection: 'row',
-        height: 40,
-    },
-    tab: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomWidth: 2,
-    },
-    filterRow: {
-        height: 44,
-        justifyContent: 'center',
-    },
-    list: {
-        flex: 5,   // ~56% of remaining space
-    },
-    listContent: {
-        paddingTop: 4,
-        paddingBottom: 16,
-    },
-    empty: {
-        alignItems: 'center',
-        paddingTop: 40,
-        paddingHorizontal: 32,
-    },
-    emptyText: {
-        textAlign: 'center',
-        marginTop: 10,
-        fontSize: 14,
-    },
-});
