@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.mizutamine.gotabicho'
+    namespace 'com.shiufungpun.gotabicho'
     defaultConfig {
-        applicationId 'com.mizutamine.gotabicho'
+        applicationId 'com.shiufungpun.gotabicho'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

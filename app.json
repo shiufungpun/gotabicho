@@ -50,7 +50,7 @@
       ]
     ],
     "ios": {
-      "bundleIdentifier": "com.mizutamine.gotabicho",
+      "bundleIdentifier": "com.shiufungpun.gotabicho",
       "buildNumber": "1",
       "supportsTablet": true,
       "infoPlist": {
@@ -59,7 +59,7 @@
       "appleTeamId": "CDVM7WYH49"
     },
     "android": {
-      "package": "com.mizutamine.gotabicho",
+      "package": "com.shiufungpun.gotabicho",
       "versionCode": 1,
       "permissions": [
         "INTERNET",

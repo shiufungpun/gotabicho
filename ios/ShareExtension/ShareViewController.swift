@@ -10,7 +10,7 @@ import Social
 import UIKit
 
 class ShareViewController: UIViewController {
-  let hostAppGroupIdentifier = "group.com.mizutamine.gotabicho"
+  let hostAppGroupIdentifier = "group.com.shiufungpun.gotabicho"
   let shareProtocol = "gotabicho"
   let sharedKey = "gotabichoShareKey"
   var sharedMedia: [SharedMediaFile] = []
