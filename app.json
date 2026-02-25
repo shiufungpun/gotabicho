@@ -55,7 +55,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": false
-      }
+      },
+      "appleTeamId": "CDVM7WYH49"
     },
     "android": {
       "package": "com.mizutamine.gotabicho",
@@ -67,7 +68,9 @@
         "SYSTEM_ALERT_WINDOW",
         "VIBRATE",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ],
       "config": {
         "googleMaps": {
