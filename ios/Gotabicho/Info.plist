@@ -3,7 +3,7 @@
 <plist version="1.0">
   <dict>
     <key>AppGroupIdentifier</key>
-    <string>group.com.shiufungpun.gotabicho</string>
+    <string>group.com.minemizuta.gotabicho</string>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
@@ -30,7 +30,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>gotabicho</string>
-          <string>com.shiufungpun.gotabicho</string>
+          <string>com.minemizuta.gotabicho</string>
         </array>
       </dict>
       <dict>

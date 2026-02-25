@@ -1,4 +1,4 @@
-package com.shiufungpun.gotabicho
+package com.minemizuta.gotabicho
 
 import android.os.Build
 import android.os.Bundle

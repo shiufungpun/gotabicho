@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.shiufungpun.gotabicho'
+    namespace 'com.minemizuta.gotabicho'
     defaultConfig {
-        applicationId 'com.shiufungpun.gotabicho'
+        applicationId 'com.minemizuta.gotabicho'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,4 +1,4 @@
-package com.shiufungpun.gotabicho
+package com.minemizuta.gotabicho
 import com.facebook.react.common.assets.ReactFontManager
 
 import android.app.Application

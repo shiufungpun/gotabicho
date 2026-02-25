@@ -50,16 +50,16 @@
       ]
     ],
     "ios": {
-      "bundleIdentifier": "com.shiufungpun.gotabicho",
+      "bundleIdentifier": "com.minemizuta.gotabicho",
       "buildNumber": "1",
       "supportsTablet": true,
       "infoPlist": {
         "UIViewControllerBasedStatusBarAppearance": false
       },
-      "appleTeamId": "CDVM7WYH49"
+      "appleTeamId": "Q3YQPK384Q"
     },
     "android": {
-      "package": "com.shiufungpun.gotabicho",
+      "package": "com.minemizuta.gotabicho",
       "versionCode": 1,
       "permissions": [
         "INTERNET",
