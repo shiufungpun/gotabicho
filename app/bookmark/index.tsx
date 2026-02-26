@@ -31,7 +31,7 @@ export default function BookmarkIndexScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
 
-    const [activeTab, setActiveTab] = useState<Tab>('bookmarks');
+    const [activeTab, setActiveTab] = useState<Tab>('attractions');
     const [sourceFilter, setSourceFilter] = useState('All');
     const [typeFilter, setTypeFilter] = useState('All');
     const [showAddModal, setShowAddModal] = useState(false);
@@ -54,25 +54,26 @@ export default function BookmarkIndexScreen() {
     const activeItems: any[] =
         activeTab === 'bookmarks' ? filteredBookmarks : filteredAttractions;
 
-    // ─── map pins ─────────────────────────────────────────────────────────────
+    // ─── map pins (always use attractions) ───────────────────────────────────
     const pins: MapPin[] = useMemo(() => {
-        return activeItems.map((item, index) => ({
+        return filteredAttractions.map((item, index) => ({
             id: item.id,
             coordinate: getMockCoordinate(item.id, index),
-            color:
-                activeTab === 'bookmarks'
-                    ? BOOKMARK_PIN_COLORS[index % BOOKMARK_PIN_COLORS.length]
-                    : getTypeColor(item.type),
+            color: getTypeColor(item.type),
         }));
-    }, [activeItems, activeTab]);
+    }, [filteredAttractions]);
 
     // ─── handlers ─────────────────────────────────────────────────────────────
     const handleCardPress = useCallback(
         (item: any) => {
-            const targetId =
-                activeTab === 'bookmarks' ? item.id : item.bookmark_id;
             setSelectedId(item.id);
-            router.push(`/bookmark/${targetId}`);
+            if (activeTab === 'bookmarks') {
+                // Bookmarks navigate directly to the bookmark details page
+                router.push(`/bookmark/${item.id}`);
+            } else {
+                // Attractions navigate to the parent bookmark details page
+                router.push(`/bookmark/${item.bookmark_id}`);
+            }
         },
         [activeTab, router],
     );
@@ -117,7 +118,7 @@ export default function BookmarkIndexScreen() {
 
             {/* Tabs */}
             <View className="flex-row h-10">
-                {(['bookmarks', 'attractions'] as Tab[]).map(tab => (
+                {(['attractions', 'bookmarks'] as Tab[]).map(tab => (
                     <TouchableOpacity
                         key={tab}
                         onPress={() => {
