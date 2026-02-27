@@ -5,14 +5,15 @@ export default function TripLayout() {
     const {colors} = useTheme();
 
     return (
-        <Stack screenOptions={{headerShown: false}}>
+        <Stack screenOptions={{headerShown: true}}>
             <Stack.Screen
                 name="[id]"
                 options={{
                     headerStyle: {
-                        backgroundColor: colors.background
+                        backgroundColor: colors.background,
                     },
                     headerShadowVisible: false,
+                    headerBackVisible: true
                 }}
             />
             <Stack.Screen

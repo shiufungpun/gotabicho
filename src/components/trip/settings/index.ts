@@ -4,4 +4,5 @@ export {BudgetCard} from './BudgetCard';
 export {DatesCard} from './DatesCard';
 export {ParticipantRow} from './ParticipantRow';
 export {AddParticipantCard} from './AddParticipantCard';
+export {default as EditTripSheet} from './EditTripSheet';
 
