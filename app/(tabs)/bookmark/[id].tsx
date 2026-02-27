@@ -9,9 +9,9 @@ import {
     getBookmarkById,
     updateAttractionVisited,
     updateBookmarkVisited,
-} from '../../src/repositories/bookmarkRepository';
-import {useAIExtraction} from '../../src/providers';
-import {BookmarkSource} from '../../src/types';
+} from '../../../src/repositories/bookmarkRepository';
+import {useAIExtraction} from '../../../src/providers';
+import {BookmarkSource} from '../../../src/types';
 
 export default function BookmarkDetailScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();

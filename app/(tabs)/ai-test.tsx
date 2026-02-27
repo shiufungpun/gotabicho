@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import {ActivityIndicator, ScrollView, TextInput, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useRouter} from 'expo-router';
-import {ThemedText, ThemedView} from '../src/components';
-import {useTheme} from '../src/theme';
+import {ThemedText, ThemedView} from '../../src/components';
+import {useTheme} from '../../src/theme';
 import {generateText} from 'ai';
 import {apple} from '@react-native-ai/apple';
 

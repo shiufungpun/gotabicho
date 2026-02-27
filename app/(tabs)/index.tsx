@@ -2,12 +2,14 @@ import React, {useRef, useState} from 'react';
 import {Animated, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useRouter} from 'expo-router';
-import {TripDetails, useTrips} from '../src/hooks/useTrips';
-import {useTheme} from '../src/theme';
-import {ThemedText, ThemedView} from '../src/components';
-import TripCard from "../src/containers/TripCard";
-import TripCardCarousel from "../src/components/homepage/TripCardCarousel";
-import AddTripButton from "../src/components/homepage/AddTripButton";
+import {TrueSheet} from '@lodev09/react-native-true-sheet';
+import {TripDetails, useTrips} from '../../src/hooks/useTrips';
+import {useTheme} from '../../src/theme';
+import {ThemedText, ThemedView} from '../../src/components';
+import TripCard from "../../src/containers/TripCard";
+import TripCardCarousel from "../../src/components/homepage/TripCardCarousel";
+import AddTripButton from "../../src/components/homepage/AddTripButton";
+import AddTripSheet from "../../src/components/homepage/AddTripSheet";
 
 export default function TripListScreen() {
     const [useCarousel, setUseCarousel] = useState(false) // Set to false to use FlatList instead
@@ -15,8 +17,8 @@ export default function TripListScreen() {
     const insets = useSafeAreaInsets();
     const scrollY = useRef(new Animated.Value(0)).current;
     const {colors} = useTheme();
-    const [isFavorite, setIsFavorite] = useState(false);
     const router = useRouter();
+    const sheetRef = useRef<TrueSheet>(null);
 
     const HEADER_MAX_HEIGHT = 100 + insets.top;
     const HEADER_MIN_HEIGHT = 70 + insets.top;
@@ -124,7 +126,8 @@ export default function TripListScreen() {
                 </Animated.View>
                 {!loading && renderList()}
             </ThemedView>
-            <AddTripButton/>
+            <AddTripButton onPress={() => sheetRef.current?.present()}/>
+            <AddTripSheet ref={sheetRef}/>
         </>
     );
 }

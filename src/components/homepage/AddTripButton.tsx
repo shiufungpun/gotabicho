@@ -1,18 +1,18 @@
 import React from 'react';
-import {GlassContainer, GlassView} from "expo-glass-effect";
+import {GlassContainer, GlassView} from 'expo-glass-effect';
 import {StyleSheet, TouchableOpacity} from 'react-native';
-import {PlusIcon} from "lucide-react-native";
-import {useTheme} from "../../theme";
-import {useRouter} from "expo-router";
+import {PlusIcon} from 'lucide-react-native';
+import {useTheme} from '../../theme';
 
-const AddTripButton = () => {
+interface AddTripButtonProps {
+    onPress: () => void;
+}
+
+const AddTripButton = ({onPress}: AddTripButtonProps) => {
     const {colors} = useTheme();
-    const router = useRouter();
     return (
         <GlassContainer spacing={10} style={styles.glassContainerStyle}>
-            <TouchableOpacity onPress={() => {
-                router.navigate(`/trip/add`)
-            }}>
+            <TouchableOpacity onPress={onPress}>
                 <GlassView style={styles.glassButton} isInteractive>
                     <PlusIcon size={30} color={colors.text}/>
                 </GlassView>
@@ -23,12 +23,11 @@ const AddTripButton = () => {
 
 export default AddTripButton;
 
-
 const styles = StyleSheet.create({
     glassContainerStyle: {
         position: 'absolute',
-        top: "88%",
-        left: "80%",
+        top: '88%',
+        left: '80%',
         width: 250,
         height: 100,
         flexDirection: 'row',
@@ -41,5 +40,5 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
 });

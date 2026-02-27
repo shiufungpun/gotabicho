@@ -9,20 +9,10 @@ export default function TripLayout() {
             <Stack.Screen
                 name="[id]"
                 options={{
-                    headerShown: true,
                     headerStyle: {
                         backgroundColor: colors.background
                     },
                     headerShadowVisible: false,
-                    title: '',
-                    headerBackTitle: '返回',
-                }}
-            />
-            <Stack.Screen
-                name="add"
-                options={{
-                    presentation: 'formSheet',
-                    headerShown: false,
                 }}
             />
         </Stack>

@@ -20,9 +20,6 @@ export default function TripLayout() {
                 <Icon sf="gear" drawable="settings"/>
                 <Label>設定</Label>
             </NativeTabs.Trigger>
-            {/*<NativeTabs.Trigger name="searchReceipt" role={"search"}>*/}
-            {/*    <Label>Search</Label>*/}
-            {/*</NativeTabs.Trigger>*/}
         </NativeTabs>
     );
 }

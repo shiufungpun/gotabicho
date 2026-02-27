@@ -4,15 +4,15 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
-import {useBookmarks} from '../../src/hooks/useBookmarks';
-import {useTheme} from '../../src/theme';
-import {AddBookmarkModal, FilterChips, GlassButton, ThemedText, ThemedView} from '../../src/components';
-import {MapPin, MapPinsView} from '../../src/components/bookmark/MapPinsView';
-import {MinimalCard} from '../../src/components/bookmark/MinimalCard';
-import {BOOKMARK_PIN_COLORS, getMockCoordinate} from '../../src/helpers/mockCoordinates';
-import {getTypeColor, getTypeIcon} from '../../src/components/bookmark/AttractionCard';
-import {useAIExtraction} from '../../src/providers';
-import {BookmarkSource} from '../../src/types';
+import {useBookmarks} from '../../../src/hooks/useBookmarks';
+import {useTheme} from '../../../src/theme';
+import {AddBookmarkModal, FilterChips, GlassButton, ThemedText, ThemedView} from '../../../src/components';
+import {MapPin, MapPinsView} from '../../../src/components/bookmark/MapPinsView';
+import {MinimalCard} from '../../../src/components/bookmark/MinimalCard';
+import {BOOKMARK_PIN_COLORS, getMockCoordinate} from '../../../src/helpers/mockCoordinates';
+import {getTypeColor, getTypeIcon} from '../../../src/components/bookmark/AttractionCard';
+import {useAIExtraction} from '../../../src/providers';
+import {BookmarkSource} from '../../../src/types';
 
 type Tab = 'bookmarks' | 'attractions';
 

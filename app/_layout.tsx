@@ -5,7 +5,7 @@ import {Iansui_400Regular} from '@expo-google-fonts/iansui';
 import {ThemedText, ThemedView} from '../src/components';
 import {AppProvider, useDatabaseContext} from "../src/providers";
 import {ShareIntentHandler} from '../src/components/share_instent/share_intent';
-import {Icon, Label, NativeTabs} from "expo-router/unstable-native-tabs";
+import {Stack} from 'expo-router';
 
 function AppContent() {
     const {isReady} = useDatabaseContext();
@@ -26,20 +26,17 @@ function AppContent() {
     return (
         <>
             <ShareIntentHandler/>
-            <NativeTabs>
-                <NativeTabs.Trigger name="index">
-                    <Label>Home</Label>
-                    <Icon sf="house.fill" drawable="custom_android_drawable"/>
-                </NativeTabs.Trigger>
-                <NativeTabs.Trigger name="bookmark">
-                    <Icon sf="bookmark" drawable="custom_settings_drawable"/>
-                    <Label>Bookmarks</Label>
-                </NativeTabs.Trigger>
-                <NativeTabs.Trigger name="ai-test">
-                    <Icon sf="gear" drawable="custom_settings_drawable"/>
-                    <Label>Settings</Label>
-                </NativeTabs.Trigger>
-            </NativeTabs>
+            <Stack screenOptions={{headerShown: false}}>
+                {/* Main tab group */}
+                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                {/* Full-screen stack screens outside tabs */}
+                <Stack.Screen name="receipt" options={{headerShown: false}}/>
+                <Stack.Screen name="trip" options={{headerShown: false}}/>
+                <Stack.Screen
+                    name="add-receipt"
+                    options={{presentation: 'modal', headerShown: false}}
+                />
+            </Stack>
         </>
     );
 }
