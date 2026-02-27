@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {SectionList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SectionList, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Animated, {
     Extrapolation,
@@ -8,13 +8,12 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated';
-import {useLocalSearchParams, useRouter} from 'expo-router';
+import {useLocalSearchParams} from 'expo-router';
 import {useTripDetails} from '../../../src/hooks/useTripDetails';
 import {ReceiptWithDetails} from '../../../src/types';
 import {useTheme} from '../../../src/theme';
 import {ThemedText, ThemedView} from '../../../src/components';
-import {tripCardContent} from "../../../src/containers/TripCard";
-import {GlassView} from "expo-glass-effect";
+import {ReceiptItem, ReceiptSectionHeader, TripDetailsHeader} from '../../../src/containers/trips';
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
@@ -24,12 +23,10 @@ const HEADER_MIN_HEIGHT = 100;
 export default function TripDetailsScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
     const tripId = parseInt(id || '0');
-    const router = useRouter();
     const {trip, receipts, participants} = useTripDetails(tripId);
     const insets = useSafeAreaInsets();
     const scrollY = useSharedValue(0);
     const {colors} = useTheme();
-
 
     const myId = useMemo(() => {
         return participants.find(p => p.name === 'You')?.id;
@@ -38,13 +35,14 @@ export default function TripDetailsScreen() {
     const receiptSections = useMemo(() => {
         if (!receipts) return [];
 
-        const sorted = [...receipts].sort((a, b) => {
-            return new Date(b.date).getTime() - new Date(a.date).getTime();
-        });
+        const sorted = [...receipts].sort((a, b) =>
+            new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime()
+        );
 
         const grouped: { title: string; data: ReceiptWithDetails[] }[] = [];
 
         sorted.forEach(receipt => {
+            if (!receipt.date) return;
             const dateObj = new Date(receipt.date);
             if (isNaN(dateObj.getTime())) return;
 
@@ -61,8 +59,7 @@ export default function TripDetailsScreen() {
         return grouped;
     }, [receipts]);
 
-
-    const {totalSpent, budget, categoryPieData} = useMemo(() => {
+    const {totalSpent} = useMemo(() => {
         let spent = 0;
         const categoryMap: { [key: string]: number } = {};
 
@@ -74,24 +71,8 @@ export default function TripDetailsScreen() {
             });
         });
 
-        const chartColors = colors.chartColors;
-        let colorIndex = 0;
-
-        const pieData = Object.keys(categoryMap).map(key => {
-            const val = categoryMap[key];
-            const color = chartColors[colorIndex % chartColors.length];
-            colorIndex++;
-            return {value: val, color: color, text: key};
-        });
-
-        return {
-            totalSpent: spent,
-            budget: trip?.total_budget || 0,
-            categoryPieData: pieData
-        };
-    }, [receipts, trip, colors]);
-
-    const progress = budget > 0 ? Math.min(totalSpent / budget, 1) : 0;
+        return {totalSpent: spent};
+    }, [receipts]);
 
     const scrollHandler = useAnimatedScrollHandler(event => {
         scrollY.value = event.contentOffset.y;
@@ -127,122 +108,37 @@ export default function TripDetailsScreen() {
         return {opacity};
     });
 
-    const renderSectionHeader = ({section}: any) => {
-        const title = section.title;
-        const dateObj = new Date(title);
-        const day = dateObj.getDate();
-        const month = dateObj.toLocaleString('default', {month: 'short'});
-        const year = dateObj.getFullYear();
-        const todayYear = new Date().getFullYear();
-
-        const displayDate = year === todayYear ? `${month} ${day}` : `${month} ${day}, ${year}`;
-
-        return (
-            <View className="flex-row items-center py-2 pl-4 z-10">
-                <View className="w-[40px] items-center mr-2"/>
-                {/*<View className="bg-blue-100 px-3 py-1 rounded-full">*/}
-                <GlassView style={styles.dateGlass} isInteractive>
-                    <Text className="text-blue-800 font-bold text-xs">{displayDate}</Text>
-                </GlassView>
-                {/*</View>*/}
-            </View>
-        );
-    };
-
-    const renderReceiptItem = ({item, index, section}: any) => {
-        const receiptItem = item as ReceiptWithDetails;
-        let myShare = 0;
-        if (myId) {
-            receiptItem.items.forEach(rItem => {
-                const share = rItem.shares.find(s => s.participant_id === myId);
-                if (share) {
-                    myShare += share.share_amount;
-                }
-            });
-        }
-
-        const isSplit = myShare > 0 && Math.abs(myShare - receiptItem.total_amount) > 0.01;
-        const displayAmount = isSplit
-            ? `${receiptItem.currency} ${myShare.toLocaleString()} (${receiptItem.total_amount.toLocaleString()})`
-            : `${receiptItem.currency} ${receiptItem.total_amount.toLocaleString()}`;
-
-        const isLastItem = index === section.data.length - 1;
-
-        return (
-            <View className="flex-row mx-4 mb-0">
-                <View className="w-[40px] items-center mr-2">
-                    <View
-                        className="absolute w-[2px] bg-gray-300 left-1/2 -ml-[1px]"
-                        style={{
-                            top: 0,
-                            bottom: isLastItem ? '50%' : -10
-                        }}
-                    />
-                    <View className="w-3 h-3 bg-blue-100 rounded-full mt-8 border-2 border-white z-10"/>
-                </View>
-
-                <TouchableOpacity
-                    onPress={() => router.push(`/receipt/${receiptItem.id}`)}
-                    className="flex-1 bg-white p-4 mb-3 rounded-xl shadow-sm flex-row justify-between items-center"
-                >
-                    <View className="flex-1">
-                        <Text className="text-gray-900 font-bold text-base">{receiptItem.store_name || 'Expense'}</Text>
-                        <View className="flex-row items-center mt-1">
-                            {receiptItem.items.length > 0 ? (
-                                <Text className="text-gray-500 text-xs mr-2 px-1.5 py-0.5 bg-gray-100 rounded">
-                                    {receiptItem.items[0].category}
-                                </Text>
-                            ) : (
-                                <Text
-                                    className="text-gray-500 text-xs mr-2 px-1.5 py-0.5 bg-gray-100 rounded">General</Text>
-                            )}
-                        </View>
-                    </View>
-                    <View>
-                        <Text className="text-gray-900 font-bold text-right">{displayAmount}</Text>
-                        {isSplit && <Text className="text-gray-400 text-[10px] text-right">Split</Text>}
-                    </View>
-                </TouchableOpacity>
-            </View>
-        );
-    };
-
     if (!trip) {
         return (
             <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ThemedText variant={"warning"}>Trip not found</ThemedText>
+                <ThemedText variant="warning">Trip not found</ThemedText>
             </ThemedView>
         );
     }
 
     return (
         <ThemedView style={{flex: 1}}>
-            <Animated.View
-                style={[
-                    headerAnimatedStyle,
-                    {backgroundColor: colors.card}
-                ]}
-                className={"m-5 rounded-3xl overflow-hidden"}
-            >
-                <Animated.View style={[contentOpacityStyle]} className={"p-5"}>
-                    {tripCardContent(trip)}
-                </Animated.View>
-
-                <Animated.View style={[styles.smallHeaderContent, smallHeaderOpacityStyle, {paddingTop: insets.top}]}>
-                    <Text className="text-white text-lg font-bold">Expenses</Text>
-                    <Text className="text-gray-300 text-sm ml-2">Total: {totalSpent.toLocaleString()}</Text>
-                </Animated.View>
-            </Animated.View>
+            <TripDetailsHeader
+                trip={trip}
+                totalSpent={totalSpent}
+                headerAnimatedStyle={headerAnimatedStyle}
+                contentOpacityStyle={contentOpacityStyle}
+                smallHeaderOpacityStyle={smallHeaderOpacityStyle}
+                cardBackgroundColor={colors.card}
+                paddingTop={insets.top}
+            />
 
             <AnimatedSectionList
                 sections={receiptSections}
                 keyExtractor={(item: any) => item.id.toString()}
-                renderItem={renderReceiptItem}
-                renderSectionHeader={renderSectionHeader}
+                renderItem={({item}: any) => (
+                    <ReceiptItem receipt={item as ReceiptWithDetails} myId={myId}/>
+                )}
+                renderSectionHeader={({section}: any) => (
+                    <ReceiptSectionHeader title={section.title}/>
+                )}
                 stickySectionHeadersEnabled={true}
-                contentContainerStyle={{
-                    paddingBottom: 100
-                }}
+                contentContainerStyle={{paddingBottom: 100}}
                 onScroll={scrollHandler}
                 scrollEventThrottle={16}
                 ListEmptyComponent={
@@ -255,22 +151,3 @@ export default function TripDetailsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    smallHeaderContent: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: HEADER_MIN_HEIGHT,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    dateGlass: {
-        width: 50,
-        height: 25,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-});
