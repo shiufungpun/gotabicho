@@ -68,7 +68,7 @@ export function ThemedText({style, variant = 'primary', textStyle = 'content', .
             case 'content':
                 return {fontSize: 24, fontWeight: '400' as const};
             case 'body':
-                return {fontSize: 18, fontWeight: '400' as const};
+                return {fontSize: 20, fontWeight: '400' as const};
             case 'caption':
                 return {fontSize: 22, fontWeight: '400' as const};
             case 'placeholder':

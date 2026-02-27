@@ -1,9 +1,12 @@
-import {Stack} from 'expo-router';
+import {Stack, useRouter} from 'expo-router';
 import {useTheme} from '../../src/theme';
+import {TouchableOpacity} from "react-native";
+import React from "react";
+import {ChevronLeftIcon} from "lucide-react-native";
 
 export default function TripLayout() {
-    const {colors} = useTheme();
-
+    const {colors} = useTheme()
+    const router = useRouter();
     return (
         <Stack screenOptions={{headerShown: true}}>
             <Stack.Screen
@@ -13,7 +16,20 @@ export default function TripLayout() {
                         backgroundColor: colors.background,
                     },
                     headerShadowVisible: false,
-                    headerBackVisible: true
+                    headerTintColor: colors.text,
+                    headerTitleStyle: {
+                        fontSize: 18,
+                        fontWeight: '600',
+                    },
+                    headerLeft: () => {
+                        return (
+                            <TouchableOpacity className={"pl-1"} onPress={() => {
+                                router.back();
+                            }}>
+                                <ChevronLeftIcon size={24} color={colors.text}/>
+                            </TouchableOpacity>
+                        );
+                    }, // Hide back button on the main trip screen
                 }}
             />
             <Stack.Screen
