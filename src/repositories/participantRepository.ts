@@ -30,6 +30,16 @@ export const updateParticipantBudget = async (id: number, budget_total: number |
         .where(eq(participants.id, id));
 };
 
+export const updateParticipant = async (
+    id: number,
+    fields: { name: string; budget_total: number | null },
+): Promise<void> => {
+    const db = await getDB();
+    await db.update(participants)
+        .set({name: fields.name, budget_total: fields.budget_total, updated_at: Date.now()})
+        .where(eq(participants.id, id));
+};
+
 export const deleteParticipant = async (id: number): Promise<void> => {
     const db = await getDB();
     // Check if it's "You"

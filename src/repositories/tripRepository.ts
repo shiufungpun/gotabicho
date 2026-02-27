@@ -69,6 +69,17 @@ export const createTrip = async (trip: Omit<Trip, 'id' | 'created_at' | 'updated
 };
 
 
+export const updateTrip = async (
+    id: number,
+    fields: Partial<Pick<Trip, 'name' | 'start_date' | 'end_date' | 'base_currency' | 'total_budget'>>,
+): Promise<void> => {
+    const db = await getDB();
+    await db.update(trips)
+        .set({...fields, updated_at: Date.now()})
+        .where(eq(trips.id, id));
+    notifyTripChange();
+};
+
 export const deleteTrip = async (id: number): Promise<void> => {
     const db = await getDB();
     await db.delete(trips).where(eq(trips.id, id));

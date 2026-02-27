@@ -7,21 +7,24 @@ import {
     Switch,
     TextInput,
     TouchableOpacity,
-    View
+    View,
 } from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import DatePicker from 'react-native-date-picker';
 import Slider from '@react-native-community/slider';
+import {Picker} from '@react-native-picker/picker';
 import {useRouter} from 'expo-router';
 import {useTheme} from '../../theme';
 import {createTrip} from '../../repositories/tripRepository';
 import {ThemedCard, ThemedText} from '../index';
 import ConfirmGlassButtonBar from '../ui/ConfirmGlassButtonBar';
+import {CURRENCIES, getCurrencySymbol} from '../../constants/currencies';
 
 const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
     const [name, setName] = useState('');
     const [hasBudget, setHasBudget] = useState(false);
     const [budgetValue, setBudgetValue] = useState(100000);
+    const [currency, setCurrency] = useState('JPY');
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [showStartPicker, setShowStartPicker] = useState(false);
@@ -41,6 +44,7 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
         setName('');
         setHasBudget(false);
         setBudgetValue(100000);
+        setCurrency('JPY');
         setStartDate(new Date());
         setEndDate(new Date());
     };
@@ -50,12 +54,10 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
             Alert.alert('Error', 'Please enter a trip name');
             return;
         }
-
         if (endDate < startDate) {
             Alert.alert('Error', 'End date cannot be earlier than start date');
             return;
         }
-
         setSaving(true);
         try {
             const result = await createTrip({
@@ -63,7 +65,7 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                 total_budget: hasBudget ? budgetValue : null,
                 start_date: startDate.toISOString().split('T')[0],
                 end_date: endDate.toISOString().split('T')[0],
-                base_currency: 'JPY',
+                base_currency: currency,
             });
             dismiss();
             resetForm();
@@ -81,13 +83,10 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
         dismiss();
     };
 
-    const formatDate = (date: Date) => {
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
+    const formatDate = (date: Date) =>
+        date.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+
+    const symbol = getCurrencySymbol(currency);
 
     return (
         <TrueSheet
@@ -104,7 +103,7 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                     contentContainerStyle={{paddingBottom: 40}}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {/* Header bar with confirm / cancel buttons */}
+                    {/* Header bar */}
                     <ConfirmGlassButtonBar
                         title="New Trip"
                         onConfirm={handleSave}
@@ -112,25 +111,45 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                         onCancel={handleCancel}
                     />
 
-                    <View style={{marginHorizontal: 20}}>
+                    <View className="mx-5">
                         <ThemedCard>
                             {/* Trip Name */}
                             <ThemedText variant="primary" textStyle="content" className="mb-2">
                                 Trip Name
                             </ThemedText>
                             <TextInput
-                                className="border rounded-xl p-4 text-lg"
+                                className="border rounded-xl p-4 text-lg font-hina"
                                 style={{
                                     borderColor: colors.border,
                                     color: colors.text,
                                     backgroundColor: colors.surface,
-                                    fontFamily: 'HinaMincho_400Regular',
                                 }}
                                 value={name}
                                 onChangeText={setName}
                                 placeholder="e.g. Hokkaido Ski Trip"
                                 placeholderTextColor={colors.textTertiary}
                             />
+
+                            {/* Currency Picker */}
+                            <ThemedText variant="primary" textStyle="content" className="mt-4 mb-2">
+                                Currency
+                            </ThemedText>
+                            <View
+                                className="border rounded-xl overflow-hidden"
+                                style={{borderColor: colors.border, backgroundColor: colors.surface}}
+                            >
+                                <Picker
+                                    selectedValue={currency}
+                                    onValueChange={setCurrency}
+                                    style={{color: colors.text}}
+                                    dropdownIconColor={colors.textSecondary}
+                                    itemStyle={{color: colors.text}}
+                                >
+                                    {CURRENCIES.map(c => (
+                                        <Picker.Item key={c.value} label={c.label} value={c.value}/>
+                                    ))}
+                                </Picker>
+                            </View>
 
                             {/* Budget Toggle */}
                             <View className="flex-row justify-between items-center mt-4 mb-2">
@@ -152,7 +171,7 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                                         textStyle="caption"
                                         className="text-center text-[28px] font-semibold mb-2"
                                     >
-                                        ¥{budgetValue.toLocaleString('ja-JP')}
+                                        {symbol}{budgetValue.toLocaleString()}
                                     </ThemedText>
                                     <Slider
                                         style={{width: '100%', height: 40}}
@@ -166,10 +185,10 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                                     />
                                     <View className="flex-row justify-between px-1">
                                         <ThemedText variant="tertiary" textStyle="caption">
-                                            ¥10,000
+                                            10,000
                                         </ThemedText>
                                         <ThemedText variant="tertiary" textStyle="caption">
-                                            ¥1,000,000
+                                            1,000,000
                                         </ThemedText>
                                     </View>
                                 </View>
@@ -213,14 +232,14 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                 open={showStartPicker}
                 date={startDate}
                 mode="date"
+                title="Select Start Date"
+                confirmText="Confirm"
+                cancelText="Cancel"
                 onConfirm={(date) => {
                     setShowStartPicker(false);
                     setStartDate(date);
                 }}
                 onCancel={() => setShowStartPicker(false)}
-                title="Select Start Date"
-                confirmText="Confirm"
-                cancelText="Cancel"
             />
             <DatePicker
                 modal
@@ -228,14 +247,14 @@ const AddTripSheet = forwardRef<TrueSheet>((_, ref) => {
                 date={endDate}
                 mode="date"
                 minimumDate={startDate}
+                title="Select End Date"
+                confirmText="Confirm"
+                cancelText="Cancel"
                 onConfirm={(date) => {
                     setShowEndPicker(false);
                     setEndDate(date);
                 }}
                 onCancel={() => setShowEndPicker(false)}
-                title="Select End Date"
-                confirmText="Confirm"
-                cancelText="Cancel"
             />
         </TrueSheet>
     );

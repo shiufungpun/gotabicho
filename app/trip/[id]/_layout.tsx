@@ -1,11 +1,6 @@
-import {useLocalSearchParams} from 'expo-router';
-import {useTheme} from '../../../src/theme';
 import {Icon, Label, NativeTabs} from 'expo-router/unstable-native-tabs';
 
 export default function TripLayout() {
-    const {id} = useLocalSearchParams<{ id: string }>();
-    const {colors} = useTheme();
-
     return (
         <NativeTabs>
             <NativeTabs.Trigger name="index">
@@ -23,3 +18,4 @@ export default function TripLayout() {
         </NativeTabs>
     );
 }
+

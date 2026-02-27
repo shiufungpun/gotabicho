@@ -15,6 +15,16 @@ export default function TripLayout() {
                     headerShadowVisible: false,
                 }}
             />
+            <Stack.Screen
+                name="[id]/edit-participants"
+                options={{
+                    headerShown: true,
+                    title: 'Participants',
+                    headerStyle: {backgroundColor: colors.background},
+                    headerTintColor: colors.text,
+                    headerShadowVisible: false,
+                }}
+            />
         </Stack>
     );
 }
