@@ -15,5 +15,6 @@ export {BookmarkSheetHeader} from './bookmark/BookmarkSheetHeader';
 export type {BookmarkTab} from './bookmark/BookmarkSheetHeader';
 export {BookmarkListItem} from './bookmark/BookmarkListItem';
 export {BookmarkPreviewCard} from './bookmark/BookmarkPreviewCard';
+export {BookmarkHeroHeader} from './bookmark/BookmarkHeroHeader';
 export {ExtractionStatusBanner} from './bookmark/ExtractionStatusBanner';
 export {AttractionGroupSection} from './bookmark/AttractionGroupSection';

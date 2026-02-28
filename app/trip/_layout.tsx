@@ -1,8 +1,7 @@
 import {Stack, useRouter} from 'expo-router';
 import {useTheme} from '../../src/theme';
-import {TouchableOpacity} from "react-native";
 import React from "react";
-import {ChevronLeftIcon} from "lucide-react-native";
+import {HeaderBackButton} from '@react-navigation/elements';
 
 export default function TripLayout() {
     const {colors} = useTheme()
@@ -23,13 +22,12 @@ export default function TripLayout() {
                     },
                     headerLeft: () => {
                         return (
-                            <TouchableOpacity className={"pl-1"} onPress={() => {
-                                router.dismissAll();
-                            }}>
-                                <ChevronLeftIcon size={24} color={colors.text}/>
-                            </TouchableOpacity>
+                            <HeaderBackButton
+                                onPress={() => router.dismissAll()}
+                                tintColor={colors.text}
+                            />
                         );
-                    },
+                    }
                 }}
             />
             <Stack.Screen

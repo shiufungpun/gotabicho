@@ -11,7 +11,7 @@ import {
     updateBookmarkVisited,
 } from '../../../../src/repositories/bookmarkRepository';
 import {useAIExtraction} from '../../../../src/providers';
-import {AttractionGroupSection, BookmarkPreviewCard, ExtractionStatusBanner,} from '../../../../src/components';
+import {AttractionGroupSection, BookmarkHeroHeader, ExtractionStatusBanner,} from '../../../../src/components';
 
 export default function BookmarkDetailScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -117,9 +117,21 @@ export default function BookmarkDetailScreen() {
 
     return (
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-            {/* Extraction status banner (processing / error) */}
+
+            {/* ── Hero header (full-bleed thumbnail) ─────────────────── */}
+            <BookmarkHeroHeader
+                thumbnailUrl={bookmark.thumbnail_url}
+                source={bookmark.source}
+                visited={bookmark.visited as unknown as boolean}
+                onToggleVisited={handleToggleBookmarkVisited}
+                onBack={() => router.back()}
+                onDelete={handleDeleteBookmark}
+                topInset={insets.top}
+            />
+
+            {/* ── Extraction status banner (below hero) ──────────────── */}
             {extractionStatus && extractionStatus.status !== 'completed' && (
-                <View className="mt-4">
+                <View className="mt-3">
                     <ExtractionStatusBanner
                         status={extractionStatus.status}
                         error={extractionStatus.error}
@@ -127,28 +139,34 @@ export default function BookmarkDetailScreen() {
                 </View>
             )}
 
-            {/* Bookmark preview card */}
-            <View className="mx-4 mb-4 mt-4">
-                <BookmarkPreviewCard
-                    title={bookmark.title}
-                    description={bookmark.description}
-                    url={bookmark.url}
-                    source={bookmark.source}
-                    thumbnailUrl={bookmark.thumbnail_url}
-                    visited={bookmark.visited as unknown as boolean}
-                    onToggleVisited={handleToggleBookmarkVisited}
-                />
+            {/* ── Bookmark content ────────────────────────────────────── */}
+            <View className="px-4 pt-4 pb-2 bg-white ">
+                {/* Title */}
+                {bookmark.title && (
+                    <Text className="text-xl font-bold text-gray-800 mb-2" numberOfLines={3}>
+                        {bookmark.title}
+                    </Text>
+                )}
+
+                {/* Description */}
+                {bookmark.description && (
+                    <ExpandableDescription description={bookmark.description}/>
+                )}
+
+                {/* URL */}
+                {bookmark.url && (
+                    <View className="flex-row items-center mt-2">
+                        <Ionicons name="link" size={14} color="#9CA3AF"/>
+                        <Text className="text-xs text-gray-400 ml-2 flex-1" numberOfLines={1}>
+                            {bookmark.url}
+                        </Text>
+                    </View>
+                )}
             </View>
 
-            {/* Attractions section */}
-            <View className="mx-4 mb-4">
-                <View className="flex-row items-center justify-between mb-3">
-                    <Text className="text-lg font-bold text-gray-800">🗺️ Attractions</Text>
-                    <TouchableOpacity onPress={handleDeleteBookmark} className="p-2">
-                        <Ionicons name="trash-outline" size={20} color="#EF4444"/>
-                    </TouchableOpacity>
-                </View>
-
+            {/* ── Attractions section ─────────────────────────────────── */}
+            <View className="mx-4 mt-4 mb-4">
+                <Text className="text-lg font-bold text-gray-800 mb-3">🗺️ Attractions</Text>
                 <AttractionGroupSection
                     attractions={bookmark.attractions}
                     onToggleVisited={handleToggleVisited}
@@ -161,8 +179,35 @@ export default function BookmarkDetailScreen() {
     );
 }
 
+// ─── Small local helper: expandable description ────────────────────────────
+function ExpandableDescription({description}: { description: string }) {
+    const [expanded, setExpanded] = useState(false);
+    return (
+        <View className="mb-1">
+            <Text
+                className="text-sm text-gray-600"
+                numberOfLines={expanded ? undefined : 3}>
+                {description}
+            </Text>
+            <TouchableOpacity
+                onPress={() => setExpanded(prev => !prev)}
+                className="flex-row items-center mt-1">
+                <Text className="text-xs text-blue-500 font-semibold">
+                    {expanded ? 'Show less' : 'Show more'}
+                </Text>
+                <Ionicons
+                    name={expanded ? 'chevron-up' : 'chevron-down'}
+                    size={12}
+                    color="#3B82F6"
+                />
+            </TouchableOpacity>
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
     scroll: {
         flex: 1,
+        backgroundColor: '#F9FAFB',
     },
 });
