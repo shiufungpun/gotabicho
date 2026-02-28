@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, AppState, BackHandler, Image, Platform, ScrollView, Text, View,} from 'react-native';
+import {ActivityIndicator, Alert, AppState, BackHandler, Platform, ScrollView, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
-import {Ionicons} from '@expo/vector-icons';
 
 import {useShareIntentHandler} from "../../../src/hooks/useShareIntent";
 import {useAIExtraction} from "../../../src/providers";
-import {BookmarkSource, Trip} from "../../../src/types";
+import {Trip} from "../../../src/types";
 import {getAllTrips} from "../../../src/repositories/tripRepository";
 import {createBookmark, linkBookmarkToTrips} from "../../../src/repositories/bookmarkRepository";
-import {ThemedText, ThemedView} from "../../../src/components";
+import {BookmarkPreviewCard, ThemedText, ThemedView} from "../../../src/components";
 import ConfirmGlassButtonBar from "../../../src/components/ui/ConfirmGlassButtonBar";
 
 export default function AddBookmarkScreen() {
@@ -91,7 +90,7 @@ export default function AddBookmarkScreen() {
             // On iOS, we can't programmatically close the app due to App Store guidelines
             // Instead, navigate to home screen and the user can manually switch back
             // The share extension will automatically dismiss when they switch apps
-            router.replace('/');
+            router.dismissAll();
         }
     };
 
@@ -147,27 +146,6 @@ export default function AddBookmarkScreen() {
         }
     };
 
-    const getSourceBadgeColor = (source: string) => {
-        switch (source) {
-            case BookmarkSource.Instagram:
-                return 'bg-pink-500';
-            case BookmarkSource.Threads:
-                return 'bg-black';
-            default:
-                return 'bg-gray-500';
-        }
-    };
-
-    const getSourceIcon = (source: string) => {
-        switch (source) {
-            case BookmarkSource.Instagram:
-                return 'logo-instagram';
-            case BookmarkSource.Threads:
-                return 'chatbubble-ellipses';
-            default:
-                return 'link';
-        }
-    };
 
     if (isLoading) {
         return (
@@ -188,57 +166,15 @@ export default function AddBookmarkScreen() {
             />
             <ScrollView className="flex-1">
                 {/* Preview Card */}
-                <View className="m-4 bg-white rounded-xl shadow-md overflow-hidden">
-                    {/* Thumbnail */}
-                    {params.imageUrl ? (
-                        <Image
-                            source={{uri: params.imageUrl}}
-                            className="w-full h-48"
-                            resizeMode="cover"
-                        />
-                    ) : (
-                        <View className="w-full h-48 bg-gray-200 justify-center items-center">
-                            <Ionicons name="image-outline" size={64} color="#9CA3AF"/>
-                        </View>
-                    )}
-
-                    {/* Content */}
-                    <View className="p-4">
-                        {/* Source Badge */}
-                        <View className="flex-row items-center mb-3">
-                            <View
-                                className={`${getSourceBadgeColor(params.source)} px-3 py-1 rounded-full flex-row items-center`}>
-                                <Ionicons
-                                    name={getSourceIcon(params.source) as any}
-                                    size={14}
-                                    color="white"
-                                />
-                                <Text className="text-white text-xs font-semibold ml-1 capitalize">
-                                    {params.source}
-                                </Text>
-                            </View>
-                        </View>
-
-                        {/* Title */}
-                        {/*<Text className="text-xl font-bold text-gray-800 mb-2">*/}
-                        {/*    {params.title}*/}
-                        {/*</Text>*/}
-
-                        {/* Description */}
-                        {params.description && (
-                            <Text className="text-sm text-gray-600 mb-3">
-                                {params.description}
-                            </Text>
-                        )}
-
-                        {/* URL */}
-                        <View className="flex-row items-center mt-2">
-                            <Ionicons name="link" size={16} color="#9CA3AF"/>
-                            <Text className="text-xs text-gray-400 ml-2" numberOfLines={1}>
-                                {params.url}
-                            </Text>
-                        </View>
-                    </View>
+                <View className="mx-5">
+                    <BookmarkPreviewCard
+                        title={params.title}
+                        description={params.description}
+                        url={params.url}
+                        source={params.source}
+                        thumbnailUrl={params.imageUrl}
+                        showTitle={false}
+                    />
                 </View>
 
 

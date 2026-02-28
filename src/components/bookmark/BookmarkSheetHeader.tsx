@@ -6,6 +6,7 @@ import {BookmarkSource} from '../../types';
 
 export type BookmarkTab = 'bookmarks' | 'attractions';
 
+
 const ATTRACTION_TYPES = ['All', 'sight', 'restaurant', 'shopping', 'play', 'hotel'];
 const SOURCE_FILTERS = ['All', BookmarkSource.Instagram, BookmarkSource.Threads, BookmarkSource.Other];
 
@@ -58,14 +59,14 @@ export function BookmarkSheetHeader({
                                 textTransform: 'capitalize',
                             }}
                         >
-                            {tab}
+                            {tab === 'attractions' ? '景點' : '收藏'}
                         </ThemedText>
                     </TouchableOpacity>
                 ))}
             </View>
 
             {/* Filter chips */}
-            <View className="h-11 justify-center">
+            <View className="h-15 justify-center">
                 {activeTab === 'bookmarks' ? (
                     <FilterChips
                         options={SOURCE_FILTERS}

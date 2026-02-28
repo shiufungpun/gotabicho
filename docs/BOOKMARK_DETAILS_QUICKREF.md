@@ -50,7 +50,7 @@ cancelExtraction(bookmarkId);
 |------------------------------------------|------------------------------------|
 | `src/providers/AIExtractionProvider.tsx` | Global extraction queue management |
 | `src/repositories/bookmarkRepository.ts` | Database operations for bookmarks  |
-| `app/bookmark/[id].tsx`                  | Bookmark detail page               |
+| `app/bookmark/index.tsx`                 | Bookmark detail page               |
 | `app/add-bookmark.tsx`                   | Save bookmark flow                 |
 | `app/trip/[id]/bookmarks.tsx`            | Trip bookmarks list                |
 

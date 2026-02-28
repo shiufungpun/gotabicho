@@ -10,7 +10,6 @@ export default function BookmarkLayout() {
             <Stack.Screen
                 name="[id]"
                 options={{
-                    presentation: 'formSheet',
                     headerShown: false,
                 }}
             />

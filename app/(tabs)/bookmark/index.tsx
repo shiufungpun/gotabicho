@@ -1,21 +1,23 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList} from 'react-native';
+import {FlatList, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import {useBookmarks} from '../../../src/hooks/useBookmarks';
-import {AddBookmarkModal, ThemedView} from '../../../src/components';
-import {BookmarkTab} from '../../../src/components/bookmark/BookmarkSheetHeader';
+import {AddBookmarkModal, BookmarkTab, GlassButton, ThemedView} from '../../../src/components';
 import {MapPin} from '../../../src/components/bookmark/MapPinsView';
 import {getMockCoordinate} from '../../../src/helpers/mockCoordinates';
 import {getTypeColor} from '../../../src/components/bookmark/AttractionCard';
 import {useAIExtraction} from '../../../src/providers';
 import {BookmarkSource} from '../../../src/types';
 import {BookmarkMapContainer, BookmarkSheetContainer,} from '../../../src/containers/bookmark';
+import {Ionicons} from "@expo/vector-icons";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export default function BookmarkIndexScreen() {
     const {bookmarks, attractions, loading, refresh} = useBookmarks();
     const {queueExtraction} = useAIExtraction();
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     const [activeTab, setActiveTab] = useState<BookmarkTab>('attractions');
     const [sourceFilter, setSourceFilter] = useState('All');
@@ -108,8 +110,21 @@ export default function BookmarkIndexScreen() {
                 pins={pins}
                 selectedId={selectedId}
                 onPinPress={handlePinPress}
-                onOpenSheet={handleOpenSheet}
             />
+
+            {/* Floating glass button to open the bottom sheet */}
+            <View
+                style={{
+                    position: 'absolute',
+                    bottom: insets.bottom + 63,
+                    alignSelf: 'center',
+                }}
+            >
+                <GlassButton
+                    icon={<Ionicons name="menu" size={22} color="#000"/>}
+                    onPress={handleOpenSheet}
+                />
+            </View>
 
             <BookmarkSheetContainer
                 ref={sheetRef}

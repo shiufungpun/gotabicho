@@ -4,35 +4,13 @@ import {Ionicons} from '@expo/vector-icons';
 import {ThemedCard, ThemedText} from '../index';
 import {useTheme} from '../../theme';
 import {BookmarkWithCount} from '../../repositories/bookmarkRepository';
-import {BookmarkSource} from '../../types';
+import {getSourceBadgeColor, getSourceIcon} from '../../helpers/bookmarkHelpers';
 
 interface BookmarkCardProps {
     bookmark: BookmarkWithCount;
     onPress: () => void;
     onToggleVisited: () => void;
     onDelete: () => void;
-}
-
-function getSourceBadgeColor(source: string | null) {
-    switch (source) {
-        case BookmarkSource.Instagram:
-            return '#EC4899';
-        case BookmarkSource.Threads:
-            return '#000000';
-        default:
-            return '#6B7280';
-    }
-}
-
-function getSourceIcon(source: string | null): any {
-    switch (source) {
-        case BookmarkSource.Instagram:
-            return 'logo-instagram';
-        case BookmarkSource.Threads:
-            return 'chatbubble-ellipses';
-        default:
-            return 'link';
-    }
 }
 
 export function BookmarkCard({bookmark, onPress, onToggleVisited, onDelete}: BookmarkCardProps) {
@@ -77,7 +55,7 @@ export function BookmarkCard({bookmark, onPress, onToggleVisited, onDelete}: Boo
                             paddingHorizontal: 8,
                             paddingVertical: 3,
                         }}>
-                            <Ionicons name={getSourceIcon(bookmark.source)} size={12} color="white"/>
+                            <Ionicons name={getSourceIcon(bookmark.source) as any} size={12} color="white"/>
                             <ThemedText style={{color: 'white', fontSize: 11, fontWeight: '600', marginLeft: 4}}>
                                 {bookmark.source ?? 'other'}
                             </ThemedText>
@@ -137,4 +115,3 @@ export function BookmarkCard({bookmark, onPress, onToggleVisited, onDelete}: Boo
         </TouchableOpacity>
     );
 }
-

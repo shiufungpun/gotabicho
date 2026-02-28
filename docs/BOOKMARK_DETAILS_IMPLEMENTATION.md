@@ -66,7 +66,7 @@ and displays them in an organized view.
     - `linkBookmarkToTrips()` - Many-to-many linking
     - `updateAttractionVisited()` - Toggle visited status
 
-3. **`app/bookmark/[id].tsx`** (390 lines)
+3. **`app/bookmark/index.tsx`** (390 lines)
     - Bookmark detail page with extraction status
     - Grouped attractions by type with icons/colors
     - Visit checkboxes, cancel extraction button

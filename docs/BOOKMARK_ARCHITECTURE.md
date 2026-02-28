@@ -252,7 +252,7 @@ src/
 app/
 ├── add-bookmark.tsx                  ← Save bookmark flow
 ├── bookmark/
-│   └── [id].tsx                      ← Detail page
+│   └── index.tsx                      ← Detail page
 └── trip/
     └── [id]/
         └── bookmarks.tsx             ← Trip bookmarks list
