@@ -24,12 +24,12 @@ export default function TripLayout() {
                     headerLeft: () => {
                         return (
                             <TouchableOpacity className={"pl-1"} onPress={() => {
-                                router.back();
+                                router.dismissAll();
                             }}>
                                 <ChevronLeftIcon size={24} color={colors.text}/>
                             </TouchableOpacity>
                         );
-                    }, // Hide back button on the main trip screen
+                    },
                 }}
             />
             <Stack.Screen

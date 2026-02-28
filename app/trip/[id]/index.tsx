@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {SectionList, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Animated, {
@@ -8,7 +8,7 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated';
-import {useLocalSearchParams, useNavigation} from 'expo-router';
+import {useLocalSearchParams} from 'expo-router';
 import {useTripDetails} from '../../../src/hooks/useTripDetails';
 import {ReceiptWithDetails} from '../../../src/types';
 import {useTheme} from '../../../src/theme';
@@ -27,18 +27,6 @@ export default function TripDetailsScreen() {
     const insets = useSafeAreaInsets();
     const scrollY = useSharedValue(0);
     const {colors} = useTheme();
-    const navigation = useNavigation();
-
-    // Set header title to trip name with a 20-character limit
-    useEffect(() => {
-        if (trip?.name) {
-            const MAX_TITLE_LENGTH = 20;
-            const title = trip.name.length > MAX_TITLE_LENGTH
-                ? trip.name.slice(0, MAX_TITLE_LENGTH) + '…'
-                : trip.name;
-            navigation.setOptions({title});
-        }
-    }, [trip?.name, navigation]);
 
     const myId = useMemo(() => {
         return participants.find(p => p.name === 'You')?.id;
