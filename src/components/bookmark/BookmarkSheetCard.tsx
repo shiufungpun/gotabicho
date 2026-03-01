@@ -25,12 +25,6 @@ export function BookmarkSheetCard({bookmark, onPress}: BookmarkSheetCardProps) {
             style={({pressed}) => ({
                 backgroundColor: colors.card,
                 opacity: pressed ? 0.82 : 1,
-                // Shadow — dynamic values not expressible via NativeWind utility classes
-                shadowColor: '#000',
-                shadowOpacity: 0.07,
-                shadowRadius: 4,
-                shadowOffset: {width: 0, height: 2},
-                elevation: 2,
             })}
         >
             {/* ── Thumbnail ──────────────────────────────────────────────── */}

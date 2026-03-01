@@ -117,7 +117,7 @@ export function BookmarkHeroHeader({
                     style={{
                         position: 'absolute',
                         top: topInset + 4,
-                        left: 4,
+                        left: 10,
                     }}
                 >
                     <HeaderBackButton

@@ -130,11 +130,8 @@ export default function AddBookmarkScreen() {
                 // On iOS, dismiss the modal and navigate to bookmark detail page
                 console.log('[Bookmark] iOS: Dismissing modal and navigating to bookmark detail');
                 // Dismiss the current modal to get back to main screen
-                router.dismiss();
-                // Then navigate to the bookmark detail page
-                setTimeout(() => {
-                    router.push(`/bookmark/${bookmarkId}`);
-                }, 100);
+                router.dismissAll();
+                router.navigate(`/bookmark/${bookmarkId}`);
             } else {
                 // On Android, exit to return to share app
                 console.log('[Bookmark] Android: Exiting app to return to share source');
