@@ -5,6 +5,7 @@ import {apple} from '@react-native-ai/apple';
 import {bookmarkPrompt} from '../prompts/bookmark';
 import {parseAiJsonResponse} from '../../utils/parseAiResponse';
 import {saveAttractions, updateBookmarkTitle} from '../repositories/bookmarkRepository';
+import {notifyBookmarkChange} from '../services/dataEventEmitter';
 
 const QUEUE_STORAGE_KEY = '@extraction_queue';
 
@@ -201,6 +202,9 @@ export function AIExtractionProvider({children}: AIExtractionProviderProps) {
                 newMap.set(item.bookmarkId, {bookmarkId: item.bookmarkId, status: 'completed'});
                 return newMap;
             });
+
+            // Notify listing + detail pages to refresh
+            notifyBookmarkChange();
 
             console.log('[AIExtraction] Extraction completed for bookmark:', item.bookmarkId);
         } catch (error) {

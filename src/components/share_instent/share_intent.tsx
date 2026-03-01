@@ -5,6 +5,7 @@ import {useShareIntentHandler} from '../../hooks/useShareIntent';
 import {copySharedFileToAppDirectory} from '../../helpers/fileHelpers';
 import {getActiveTrip} from '../../repositories/tripRepository';
 import {extractBookmarkMetadata} from '../../services/bookmarkHandlers';
+import {getBookmarkByUrl} from '../../repositories/bookmarkRepository';
 import {BookmarkSource, detectBookmarkSource} from '../../types';
 
 export function ShareIntentHandler() {
@@ -60,10 +61,19 @@ export function ShareIntentHandler() {
 
                                 console.log('[ShareIntentHandler] Extracted bookmark data:', bookmarkData);
 
+                                // Check for duplicate URL before navigating
+                                const existingId = await getBookmarkByUrl(bookmarkData.url);
+
                                 // Clear share data before navigating
                                 clearShareData();
                                 setIsProcessing(false);
                                 processingRef.current = false;
+
+                                if (existingId) {
+                                    console.log('[ShareIntentHandler] Duplicate URL found, redirecting to existing bookmark:', existingId);
+                                    router.push(`/(tabs)/bookmark/${existingId}`);
+                                    return;
+                                }
 
                                 // Navigate to add-bookmark screen
                                 router.push({

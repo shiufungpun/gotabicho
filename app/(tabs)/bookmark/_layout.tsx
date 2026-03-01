@@ -16,7 +16,7 @@ export default function BookmarkLayout() {
             <Stack.Screen
                 name="add"
                 options={{
-                    presentation: 'modal',
+                    presentation: 'pageSheet',
                     headerShown: false,
                 }}
             />

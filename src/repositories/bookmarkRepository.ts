@@ -99,6 +99,19 @@ export const createBookmark = async (data: Omit<NewBookmark, 'created_at' | 'upd
 };
 
 /**
+ * Find an existing bookmark by URL. Returns the bookmark id if found, null otherwise.
+ */
+export const getBookmarkByUrl = async (url: string): Promise<number | null> => {
+    const db = await getDB();
+    const result = await db
+        .select({id: bookmarks.id})
+        .from(bookmarks)
+        .where(eq(bookmarks.url, url))
+        .limit(1);
+    return result.length > 0 ? result[0].id : null;
+};
+
+/**
  * Get a bookmark by ID with all its attractions
  */
 export const getBookmarkById = async (id: number): Promise<BookmarkWithAttractions | null> => {

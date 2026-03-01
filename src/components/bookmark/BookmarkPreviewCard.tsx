@@ -14,6 +14,7 @@ interface BookmarkPreviewCardProps {
     onToggleVisited?: () => void;
     /** Whether to show the title (defaults to true) */
     showTitle?: boolean;
+    defaultExpanded?: boolean;
 }
 
 /**
@@ -31,8 +32,9 @@ export function BookmarkPreviewCard({
                                         visited,
                                         onToggleVisited,
                                         showTitle = true,
+                                        defaultExpanded = false,
                                     }: BookmarkPreviewCardProps) {
-    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(defaultExpanded);
     const showVisitedToggle = onToggleVisited !== undefined;
 
     return (

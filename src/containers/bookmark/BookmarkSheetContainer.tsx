@@ -59,7 +59,7 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
         return (
             <TrueSheet
                 ref={ref}
-                detents={[0.18, 0.5, 1]}
+                detents={[0.4, 1]}
                 dismissible={true}
                 dimmed={false}
                 scrollable
@@ -67,7 +67,7 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
                 headerStyle={{backgroundColor: colors.surface}}
                 backgroundColor={colors.surface}
                 cornerRadius={20}
-                initialDetentIndex={0}
+                initialDetentIndex={-1}
             >
                 <BookmarkListContainer
                     listRef={listRef}

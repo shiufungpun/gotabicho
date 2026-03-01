@@ -7,6 +7,7 @@ import {useAIExtraction} from "../../../src/providers";
 import {Trip} from "../../../src/types";
 import {getAllTrips} from "../../../src/repositories/tripRepository";
 import {createBookmark, linkBookmarkToTrips} from "../../../src/repositories/bookmarkRepository";
+import {notifyBookmarkChange} from "../../../src/services/dataEventEmitter";
 import {BookmarkPreviewCard, ThemedText, ThemedView} from "../../../src/components";
 import ConfirmGlassButtonBar from "../../../src/components/ui/ConfirmGlassButtonBar";
 
@@ -90,7 +91,7 @@ export default function AddBookmarkScreen() {
             // On iOS, we can't programmatically close the app due to App Store guidelines
             // Instead, navigate to home screen and the user can manually switch back
             // The share extension will automatically dismiss when they switch apps
-            router.dismissAll();
+            router.back();
         }
     };
 
@@ -122,21 +123,15 @@ export default function AddBookmarkScreen() {
             await queueExtraction(bookmarkId, contentForExtraction);
             console.log('[Bookmark] Queued AI extraction');
 
+            // Notify bookmark listing to refresh
+            notifyBookmarkChange();
+
             // Clear share data first
             clearShareData();
 
-            // Platform-specific navigation
-            if (Platform.OS === 'ios') {
-                // On iOS, dismiss the modal and navigate to bookmark detail page
-                console.log('[Bookmark] iOS: Dismissing modal and navigating to bookmark detail');
-                // Dismiss the current modal to get back to main screen
-                router.dismissAll();
-                router.navigate(`/bookmark/${bookmarkId}`);
-            } else {
-                // On Android, exit to return to share app
-                console.log('[Bookmark] Android: Exiting app to return to share source');
-                BackHandler.exitApp();
-            }
+            // Replace the add sheet with the detail page so it's fully dismissed
+            console.log('[Bookmark] Navigating to bookmark detail:', bookmarkId);
+            router.replace(`/(tabs)/bookmark/${bookmarkId}`);
         } catch (error) {
             console.error('[Bookmark] Error saving bookmark:', error);
             Alert.alert('Error', 'Failed to save bookmark. Please try again.');
@@ -171,6 +166,7 @@ export default function AddBookmarkScreen() {
                         source={params.source}
                         thumbnailUrl={params.imageUrl}
                         showTitle={false}
+                        defaultExpanded={true}
                     />
                 </View>
 

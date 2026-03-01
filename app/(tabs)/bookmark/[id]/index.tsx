@@ -12,6 +12,7 @@ import {
 } from '../../../../src/repositories/bookmarkRepository';
 import {useAIExtraction} from '../../../../src/providers';
 import {AttractionGroupSection, BookmarkHeroHeader, ExtractionStatusBanner,} from '../../../../src/components';
+import {dataChangeEmitter, notifyBookmarkChange} from '../../../../src/services/dataEventEmitter';
 
 export default function BookmarkDetailScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
@@ -27,18 +28,12 @@ export default function BookmarkDetailScreen() {
         loadBookmark();
     }, [bookmarkId]);
 
-    // Auto-refresh while extraction is in progress
+    // Re-load whenever a data change is emitted (e.g. AI extraction completed)
     useEffect(() => {
-        const interval = setInterval(() => {
-            const status = getExtractionStatus(bookmarkId);
-            if (status?.status === 'completed') {
-                console.log('[BookmarkDetail] Extraction completed, refreshing...');
-                loadBookmark();
-                clearInterval(interval);
-            }
-        }, 2000);
-
-        return () => clearInterval(interval);
+        const unsubscribe = dataChangeEmitter.subscribe(() => {
+            loadBookmark();
+        });
+        return () => unsubscribe();
     }, [bookmarkId]);
 
     const loadBookmark = async () => {
@@ -56,7 +51,7 @@ export default function BookmarkDetailScreen() {
     const handleToggleVisited = async (attractionId: number, currentVisited: boolean) => {
         try {
             await updateAttractionVisited(attractionId, !currentVisited);
-            loadBookmark();
+            notifyBookmarkChange();
         } catch (error) {
             console.error('[BookmarkDetail] Error updating visited status:', error);
         }
@@ -66,7 +61,7 @@ export default function BookmarkDetailScreen() {
         if (!bookmark) return;
         try {
             await updateBookmarkVisited(bookmark.id, !bookmark.visited);
-            setBookmark(prev => prev ? {...prev, visited: !prev.visited} : prev);
+            notifyBookmarkChange();
         } catch (error) {
             console.error('[BookmarkDetail] Error updating bookmark visited status:', error);
         }
@@ -83,6 +78,7 @@ export default function BookmarkDetailScreen() {
                     style: 'destructive',
                     onPress: async () => {
                         await deleteBookmark(bookmarkId);
+                        notifyBookmarkChange();
                         router.back();
                     },
                 },
