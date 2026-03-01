@@ -112,66 +112,69 @@ export default function BookmarkDetailScreen() {
     const extractionStatus = getExtractionStatus(bookmarkId);
 
     return (
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View className="flex-1 bg-gray-50">
+            <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}
+                        contentInsetAdjustmentBehavior="never">
 
-            {/* ── Hero header (full-bleed thumbnail) ─────────────────── */}
-            <BookmarkHeroHeader
-                thumbnailUrl={bookmark.thumbnail_url}
-                source={bookmark.source}
-                visited={bookmark.visited as unknown as boolean}
-                onToggleVisited={handleToggleBookmarkVisited}
-                onBack={() => router.back()}
-                onDelete={handleDeleteBookmark}
-                topInset={insets.top}
-            />
+                {/* ── Hero header (full-bleed thumbnail) ─────────────────── */}
+                <BookmarkHeroHeader
+                    thumbnailUrl={bookmark.thumbnail_url}
+                    source={bookmark.source}
+                    visited={bookmark.visited as unknown as boolean}
+                    onToggleVisited={handleToggleBookmarkVisited}
+                    onBack={() => router.back()}
+                    onDelete={handleDeleteBookmark}
+                    topInset={insets.top}
+                />
 
-            {/* ── Extraction status banner (below hero) ──────────────── */}
-            {extractionStatus && extractionStatus.status !== 'completed' && (
-                <View className="mt-3">
-                    <ExtractionStatusBanner
-                        status={extractionStatus.status}
-                        error={extractionStatus.error}
-                    />
-                </View>
-            )}
-
-            {/* ── Bookmark content ────────────────────────────────────── */}
-            <View className="px-4 pt-4 pb-2 bg-white ">
-                {/* Title */}
-                {bookmark.title && (
-                    <Text className="text-xl font-bold text-gray-800 mb-2" numberOfLines={3}>
-                        {bookmark.title}
-                    </Text>
-                )}
-
-                {/* Description */}
-                {bookmark.description && (
-                    <ExpandableDescription description={bookmark.description}/>
-                )}
-
-                {/* URL */}
-                {bookmark.url && (
-                    <View className="flex-row items-center mt-2">
-                        <Ionicons name="link" size={14} color="#9CA3AF"/>
-                        <Text className="text-xs text-gray-400 ml-2 flex-1" numberOfLines={1}>
-                            {bookmark.url}
-                        </Text>
+                {/* ── Extraction status banner (below hero) ──────────────── */}
+                {extractionStatus && extractionStatus.status !== 'completed' && (
+                    <View className="mt-3">
+                        <ExtractionStatusBanner
+                            status={extractionStatus.status}
+                            error={extractionStatus.error}
+                        />
                     </View>
                 )}
-            </View>
 
-            {/* ── Attractions section ─────────────────────────────────── */}
-            <View className="mx-4 mt-4 mb-4">
-                <Text className="text-lg font-bold text-gray-800 mb-3">🗺️ Attractions</Text>
-                <AttractionGroupSection
-                    attractions={bookmark.attractions}
-                    onToggleVisited={handleToggleVisited}
-                />
-            </View>
+                {/* ── Bookmark content ────────────────────────────────────── */}
+                <View className="px-4 pt-4 pb-2 bg-white ">
+                    {/* Title */}
+                    {bookmark.title && (
+                        <Text className="text-xl font-bold text-gray-800 mb-2" numberOfLines={3}>
+                            {bookmark.title}
+                        </Text>
+                    )}
 
-            {/* Bottom spacing */}
-            <View style={{height: Math.max(insets.bottom, 16) + 16}}/>
-        </ScrollView>
+                    {/* Description */}
+                    {bookmark.description && (
+                        <ExpandableDescription description={bookmark.description}/>
+                    )}
+
+                    {/* URL */}
+                    {bookmark.url && (
+                        <View className="flex-row items-center mt-2">
+                            <Ionicons name="link" size={14} color="#9CA3AF"/>
+                            <Text className="text-xs text-gray-400 ml-2 flex-1" numberOfLines={1}>
+                                {bookmark.url}
+                            </Text>
+                        </View>
+                    )}
+                </View>
+
+                {/* ── Attractions section ─────────────────────────────────── */}
+                <View className="mx-4 mt-4 mb-4">
+                    <Text className="text-lg font-bold text-gray-800 mb-3">🗺️ Attractions</Text>
+                    <AttractionGroupSection
+                        attractions={bookmark.attractions}
+                        onToggleVisited={handleToggleVisited}
+                    />
+                </View>
+
+                {/* Bottom spacing */}
+                <View style={{height: Math.max(insets.bottom, 16) + 16}}/>
+            </ScrollView>
+        </View>
     );
 }
 
@@ -204,6 +207,6 @@ function ExpandableDescription({description}: { description: string }) {
 const styles = StyleSheet.create({
     scroll: {
         flex: 1,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: 'transparent',
     },
 });

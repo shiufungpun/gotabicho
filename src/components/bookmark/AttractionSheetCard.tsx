@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {ThemedText} from '../index';
 import {useTheme} from '../../theme';
@@ -19,91 +19,76 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
     return (
         <Pressable
             onPress={() => onPress(attraction)}
-            style={({pressed}) => [
-                styles.card,
-                {
-                    backgroundColor: isSelected ? colors.primaryLight : colors.card,
-                    borderColor: isSelected ? colors.primary : colors.border,
-                    borderWidth: isSelected ? 1.5 : 1,
-                    opacity: pressed ? 0.85 : 1,
-                },
-            ]}
+            className="flex-row items-center mx-3 my-1 px-3 py-2.5"
+            style={({pressed}) => ({
+                backgroundColor: isSelected ? colors.primaryLight : colors.card,
+                borderWidth: isSelected ? 1.5 : 0,
+                borderColor: isSelected ? colors.primary : undefined,
+                opacity: pressed ? 0.82 : 1,
+            })}
         >
-            {/* Left: type icon in colored circle */}
-            <View style={[styles.iconCircle, {backgroundColor: typeColor}]}>
-                <Ionicons
-                    name={getTypeIcon(attraction.type) as any}
-                    size={14}
-                    color="#fff"
-                />
-            </View>
 
-            {/* Center: title + location + parent bookmark */}
-            <View style={styles.content}>
-                <ThemedText numberOfLines={1} style={[styles.title, {color: colors.text}]}>
+            {/* ── Text block ─────────────────────────────────────────────── */}
+            <View className="flex-1 justify-center mr-2">
+                <ThemedText numberOfLines={2} variant="primary" textStyle="body">
                     {attraction.title}
                 </ThemedText>
 
-                {/* Location row */}
-                <View style={styles.row}>
-                    <Ionicons name="location-outline" size={11} color={colors.textTertiary}/>
-                    <ThemedText numberOfLines={1} style={[styles.meta, {color: colors.textTertiary}]}>
-                        {attraction.location ?? ''}
-                    </ThemedText>
-                </View>
+                {/* Location + parent bookmark pills */}
+                {/* Location pill */}
+                {attraction.location ? (
+                    <View
+                        className="flex-row items-center rounded-full py-[3px] gap-x-1"
+                    >
+                        <Ionicons name="location-outline" size={11} color={colors.textTertiary}/>
+                        <ThemedText
+                            numberOfLines={1}
+                            variant="tertiary"
+                            style={{fontSize: 11, fontWeight: '500', flexShrink: 1}}
+                        >
+                            {attraction.location}
+                        </ThemedText>
+                    </View>
+                ) : null}
 
-                {/* Parent bookmark row */}
-                <View style={styles.row}>
+                {/* Parent bookmark pill */}
+                <View
+                    className="flex-row items-center rounded-full py-[3px] gap-x-1"
+                >
                     <Ionicons name="bookmark-outline" size={11} color={colors.textTertiary}/>
-                    <ThemedText numberOfLines={1} style={[styles.meta, {color: colors.textTertiary}]}>
+                    <ThemedText
+                        numberOfLines={1}
+                        variant="tertiary"
+                        style={{fontSize: 11, fontWeight: '500', flexShrink: 1}}
+                    >
                         {attraction.bookmark_title}
                     </ThemedText>
                 </View>
             </View>
+
+            {/* ── Type icon circle ───────────────────────────────────────── */}
+            <View
+                style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: typeColor,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 12,
+                    flexShrink: 0,
+                }}
+            >
+                <Ionicons
+                    name={getTypeIcon(attraction.type) as any}
+                    size={16}
+                    color="#fff"
+                />
+            </View>
+            {/* ── Chevron ────────────────────────────────────────────────── */}
+            <Ionicons name="chevron-forward" size={14} color={colors.textTertiary}/>
         </Pressable>
     );
 }
 
-const styles = StyleSheet.create({
-    card: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginHorizontal: 12,
-        marginVertical: 4,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOpacity: 0.06,
-        shadowRadius: 3,
-        shadowOffset: {width: 0, height: 1},
-        elevation: 1,
-    },
-    iconCircle: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 10,
-        flexShrink: 0,
-    },
-    content: {
-        flex: 1,
-        gap: 2,
-    },
-    title: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 3,
-    },
-    meta: {
-        fontSize: 12,
-        flex: 1,
-    },
-});
 
