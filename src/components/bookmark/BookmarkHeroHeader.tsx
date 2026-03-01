@@ -4,6 +4,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import {Ionicons} from '@expo/vector-icons';
 import {HeaderBackButton} from '@react-navigation/elements';
 import {getSourceBadgeClass, getSourceIcon} from '../../helpers/bookmarkHelpers';
+import {useTheme} from "../../theme";
 
 interface BookmarkHeroHeaderProps {
     thumbnailUrl?: string | null;
@@ -36,7 +37,9 @@ export function BookmarkHeroHeader({
                                        onDelete,
                                        topInset = 0,
                                    }: BookmarkHeroHeaderProps) {
+    const {colors} = useTheme();
     const showVisitedToggle = onToggleVisited !== undefined;
+
 
     return (
         <View className="w-full h-72 overflow-hidden bg-gray-200">
@@ -143,7 +146,7 @@ export function BookmarkHeroHeader({
                         justifyContent: 'center',
                     }}
                 >
-                    <Ionicons name="trash-outline" size={24} color="red"/>
+                    <Ionicons name="trash-outline" size={24} color={colors.error}/>
                 </TouchableOpacity>
             )}
         </View>

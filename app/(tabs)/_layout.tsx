@@ -4,16 +4,16 @@ export default function TabsLayout() {
     return (
         <NativeTabs>
             <NativeTabs.Trigger name="index">
-                <Label>Home</Label>
-                <Icon sf="house.fill" drawable="custom_android_drawable"/>
+                <Label>旅程</Label>
+                <Icon sf="airplane.ticket" drawable="custom_android_drawable"/>
             </NativeTabs.Trigger>
             <NativeTabs.Trigger name="bookmark">
                 <Icon sf="bookmark" drawable="custom_settings_drawable"/>
-                <Label>Bookmarks</Label>
+                <Label>收藏</Label>
             </NativeTabs.Trigger>
             <NativeTabs.Trigger name="ai-test">
                 <Icon sf="gear" drawable="custom_settings_drawable"/>
-                <Label>Settings</Label>
+                <Label>設定</Label>
             </NativeTabs.Trigger>
         </NativeTabs>
     );

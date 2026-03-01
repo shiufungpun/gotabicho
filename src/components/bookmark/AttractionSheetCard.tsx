@@ -4,7 +4,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {ThemedText} from '../index';
 import {useTheme} from '../../theme';
 import {AttractionWithBookmark} from '../../repositories/bookmarkRepository';
-import {getTypeColor, getTypeIcon} from './AttractionCard';
+import {getTypeColor, getTypeIcon} from '../../helpers/attractionHelpers';
 
 interface AttractionSheetCardProps {
     attraction: AttractionWithBookmark;
@@ -29,7 +29,7 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
         >
 
             {/* ── Text block ─────────────────────────────────────────────── */}
-            <View className="flex-1 justify-center mr-2">
+            <View className="flex-1 justify-center mr-2 gap-y-2">
                 <ThemedText numberOfLines={2} variant="primary" textStyle="body">
                     {attraction.title}
                 </ThemedText>
@@ -38,7 +38,7 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
                 {/* Location pill */}
                 {attraction.location ? (
                     <View
-                        className="flex-row items-center rounded-full py-[3px] gap-x-1"
+                        className="flex-row items-center rounded-full gap-x-1"
                     >
                         <Ionicons name="location-outline" size={11} color={colors.textTertiary}/>
                         <ThemedText
@@ -53,7 +53,7 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
 
                 {/* Parent bookmark pill */}
                 <View
-                    className="flex-row items-center rounded-full py-[3px] gap-x-1"
+                    className="flex-row items-center rounded-full gap-x-1"
                 >
                     <Ionicons name="bookmark-outline" size={11} color={colors.textTertiary}/>
                     <ThemedText
@@ -75,8 +75,7 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
                     backgroundColor: typeColor,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginRight: 12,
-                    flexShrink: 0,
+                    marginRight: 5,
                 }}
             >
                 <Ionicons
@@ -85,8 +84,6 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
                     color="#fff"
                 />
             </View>
-            {/* ── Chevron ────────────────────────────────────────────────── */}
-            <Ionicons name="chevron-forward" size={14} color={colors.textTertiary}/>
         </Pressable>
     );
 }

@@ -70,7 +70,7 @@ export function ThemedText({style, variant = 'primary', textStyle = 'content', .
             case 'body':
                 return {fontSize: 20, fontWeight: '400' as const};
             case 'caption':
-                return {fontSize: 22, fontWeight: '400' as const};
+                return {fontSize: 22, fontWeight: '700' as const};
             case 'placeholder':
                 return {fontSize: 14, fontWeight: '400' as const, fontStyle: 'italic' as const};
             case 'number':

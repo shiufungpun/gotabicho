@@ -163,8 +163,8 @@ export default function BookmarkDetailScreen() {
                 </View>
 
                 {/* ── Attractions section ─────────────────────────────────── */}
-                <View className="mx-4 mt-4 mb-4">
-                    <Text className="text-lg font-bold text-gray-800 mb-3">🗺️ Attractions</Text>
+                <View className="m-4">
+                    {/*<ThemedText className="mb-3 font-bold" textStyle={"caption"}>🗺️ 景點</ThemedText>*/}
                     <AttractionGroupSection
                         attractions={bookmark.attractions}
                         onToggleVisited={handleToggleVisited}

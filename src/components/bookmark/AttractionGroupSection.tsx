@@ -1,32 +1,17 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {getTypeIcon} from './AttractionCard';
+import {
+    ATTRACTION_TYPE_KEYS,
+    ATTRACTION_TYPE_LABELS,
+    getTypeColorClass,
+    getTypeIcon
+} from '../../helpers/attractionHelpers';
 import {AttractionWithTags} from '../../repositories/bookmarkRepository';
 
 interface AttractionGroupSectionProps {
     attractions: AttractionWithTags[];
-    onToggleVisited: (attractionId: number, currentVisited: boolean) => void;
-}
-
-const ATTRACTION_TYPES = ['sight', 'restaurant', 'shopping', 'play', 'hotel'] as const;
-
-/** Maps a type hex colour to its NativeWind bg class. */
-function getTypeColorClass(type: string): string {
-    switch (type) {
-        case 'sight':
-            return 'bg-blue-500';
-        case 'restaurant':
-            return 'bg-orange-500';
-        case 'shopping':
-            return 'bg-purple-500';
-        case 'play':
-            return 'bg-green-500';
-        case 'hotel':
-            return 'bg-pink-500';
-        default:
-            return 'bg-gray-500';
-    }
+    onToggleVisited: (attractionId: number, currentlyVisited: boolean) => void;
 }
 
 /**
@@ -51,7 +36,7 @@ export function AttractionGroupSection({attractions, onToggleVisited}: Attractio
 
     return (
         <View className="space-y-3">
-            {ATTRACTION_TYPES.map(type => {
+            {ATTRACTION_TYPE_KEYS.map(type => {
                 const typeAttractions = grouped[type];
                 if (!typeAttractions || typeAttractions.length === 0) return null;
 
@@ -63,8 +48,8 @@ export function AttractionGroupSection({attractions, onToggleVisited}: Attractio
                                 className={`${getTypeColorClass(type)} w-8 h-8 rounded-full items-center justify-center`}>
                                 <Ionicons name={getTypeIcon(type) as any} size={16} color="white"/>
                             </View>
-                            <Text className="text-base font-bold text-gray-700 ml-2 capitalize">
-                                {type}s ({typeAttractions.length})
+                            <Text className="text-base font-bold text-gray-700 ml-2">
+                                {ATTRACTION_TYPE_LABELS[type]} ({typeAttractions.length})
                             </Text>
                         </View>
 

@@ -7,8 +7,20 @@ import {BookmarkSource} from '../../types';
 export type BookmarkTab = 'bookmarks' | 'attractions';
 
 
-const ATTRACTION_TYPES = ['All', 'sight', 'restaurant', 'shopping', 'play', 'hotel'];
-const SOURCE_FILTERS = ['All', BookmarkSource.Instagram, BookmarkSource.Threads, BookmarkSource.Other];
+const ATTRACTION_TYPES: Record<string, string> = {
+    All: '全部',
+    sight: '景點',
+    restaurant: '餐廳',
+    shopping: '購物',
+    play: '娛樂',
+    hotel: '住宿',
+};
+const SOURCE_FILTERS: Record<string, string> = {
+    All: '全部',
+    [BookmarkSource.Instagram]: BookmarkSource.Instagram,
+    [BookmarkSource.Threads]: BookmarkSource.Threads,
+    [BookmarkSource.Other]: '其他',
+};
 
 interface BookmarkSheetHeaderProps {
     activeTab: BookmarkTab;

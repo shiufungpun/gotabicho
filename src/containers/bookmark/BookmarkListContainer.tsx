@@ -2,10 +2,8 @@ import React, {forwardRef, useCallback} from 'react';
 import {FlatList, RefreshControl, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useTheme} from '../../theme';
-import {BookmarkTab, ThemedText} from '../../components';
+import {AttractionSheetCard, BookmarkSheetCard, BookmarkTab, ThemedText} from '../../components';
 import {AttractionWithBookmark, BookmarkWithCount} from '../../repositories/bookmarkRepository';
-import {BookmarkSheetCard} from '../../components/bookmark/BookmarkSheetCard';
-import {AttractionSheetCard} from '../../components/bookmark/AttractionSheetCard';
 
 interface BookmarkListContainerProps {
     bookmarks: BookmarkWithCount[];

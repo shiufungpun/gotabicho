@@ -6,7 +6,7 @@ import {useBookmarks} from '../../../src/hooks/useBookmarks';
 import {AddBookmarkModal, BookmarkTab, GlassButton, ThemedView} from '../../../src/components';
 import {MapPin} from '../../../src/components/bookmark/MapPinsView';
 import {getMockCoordinate} from '../../../src/helpers/mockCoordinates';
-import {getTypeColor} from '../../../src/components/bookmark/AttractionCard';
+import {getTypeColor} from '../../../src/helpers/attractionHelpers';
 import {useAIExtraction} from '../../../src/providers';
 import {BookmarkSource} from '../../../src/types';
 import {BookmarkMapContainer, BookmarkSheetContainer,} from '../../../src/containers/bookmark';

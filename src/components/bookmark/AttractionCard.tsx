@@ -4,6 +4,10 @@ import {Ionicons} from '@expo/vector-icons';
 import {ThemedCard, ThemedText} from '../index';
 import {useTheme} from '../../theme';
 import {AttractionWithBookmark} from '../../repositories/bookmarkRepository';
+import {getTypeColor, getTypeIcon} from '../../helpers/attractionHelpers';
+
+// Re-export so existing imports from this file keep working
+export {getTypeColor, getTypeIcon};
 
 interface AttractionCardProps {
     attraction: AttractionWithBookmark;
@@ -11,39 +15,6 @@ interface AttractionCardProps {
     onToggleVisited: () => void;
 }
 
-export function getTypeIcon(type: string): any {
-    switch (type) {
-        case 'sight':
-            return 'eye';
-        case 'restaurant':
-            return 'restaurant';
-        case 'shopping':
-            return 'bag';
-        case 'play':
-            return 'game-controller';
-        case 'hotel':
-            return 'bed';
-        default:
-            return 'location';
-    }
-}
-
-export function getTypeColor(type: string): string {
-    switch (type) {
-        case 'sight':
-            return '#3B82F6';
-        case 'restaurant':
-            return '#F97316';
-        case 'shopping':
-            return '#A855F7';
-        case 'play':
-            return '#22C55E';
-        case 'hotel':
-            return '#EC4899';
-        default:
-            return '#6B7280';
-    }
-}
 
 export function AttractionCard({attraction, onPress, onToggleVisited}: AttractionCardProps) {
     const {colors} = useTheme();

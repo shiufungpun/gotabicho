@@ -1,6 +1,6 @@
 import React from 'react';
 import {MinimalCard} from './MinimalCard';
-import {getTypeColor, getTypeIcon} from './AttractionCard';
+import {getTypeColor, getTypeIcon} from '../../helpers/attractionHelpers';
 import {BOOKMARK_PIN_COLORS} from '../../helpers/mockCoordinates';
 import {BookmarkTab} from './BookmarkSheetHeader';
 

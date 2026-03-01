@@ -73,7 +73,8 @@ export function BookmarkSheetCard({bookmark, onPress}: BookmarkSheetCardProps) {
                             size={11}
                             color={colors.textSecondary}
                         />
-                        <ThemedText variant="tertiary" style={{fontSize: 11, fontWeight: '500'}}>
+                        <ThemedText variant="tertiary"
+                                    style={{fontSize: 11, fontWeight: '500', textTransform: "capitalize"}}>
                             {bookmark.source ?? 'other'}
                         </ThemedText>
                     </View>

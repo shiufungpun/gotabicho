@@ -4,13 +4,22 @@ import {ThemedText} from '../index';
 import {useTheme} from '../../theme';
 
 interface FilterChipsProps {
-    options: string[];
+    options: string[] | Record<string, string>;
     selected: string;
     onChange: (value: string) => void;
 }
 
+/** Normalise options into [{key, label}] regardless of input shape */
+function normaliseOptions(options: string[] | Record<string, string>): { key: string; label: string }[] {
+    if (Array.isArray(options)) {
+        return options.map(o => ({key: o, label: o}));
+    }
+    return Object.entries(options).map(([key, label]) => ({key, label}));
+}
+
 export function FilterChips({options, selected, onChange}: FilterChipsProps) {
     const {colors} = useTheme();
+    const items = normaliseOptions(options);
 
     return (
         <ScrollView
@@ -18,30 +27,26 @@ export function FilterChips({options, selected, onChange}: FilterChipsProps) {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 8, gap: 8}}
         >
-            {options.map(option => {
-                const isActive = option === selected;
+            {items.map(({key, label}) => {
+                const isActive = key === selected;
                 return (
                     <TouchableOpacity
-                        key={option}
-                        onPress={() => onChange(option)}
+                        key={key}
+                        onPress={() => onChange(key)}
                         style={{
                             backgroundColor: isActive ? colors.primary : colors.card,
-                            borderRadius: 20,
-                            paddingHorizontal: 14,
-                            paddingVertical: 6,
-                            borderWidth: 1,
                             borderColor: isActive ? colors.primary : colors.border,
                         }}
+                        className={"px-4 py-2 border rounded-full"}
                     >
                         <ThemedText
-                            textStyle="body"
+                            textStyle="number"
                             style={{
-                                fontSize: 13,
                                 fontWeight: '500',
                                 color: isActive ? '#ffffff' : colors.textSecondary,
                             }}
                         >
-                            {option}
+                            {label}
                         </ThemedText>
                     </TouchableOpacity>
                 );
@@ -49,4 +54,3 @@ export function FilterChips({options, selected, onChange}: FilterChipsProps) {
         </ScrollView>
     );
 }
-
