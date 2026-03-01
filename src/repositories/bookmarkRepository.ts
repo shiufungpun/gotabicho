@@ -34,7 +34,7 @@ export const getAllBookmarks = async (): Promise<BookmarkWithCount[]> => {
         })
         .from(bookmarks)
         .orderBy(desc(bookmarks.created_at));
-
+    console.log(rows)
     return rows;
 };
 

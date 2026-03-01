@@ -4,20 +4,23 @@ import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import {useTheme} from '../../theme';
 import {BookmarkSheetHeader, BookmarkTab} from '../../components/bookmark/BookmarkSheetHeader';
 import {BookmarkListContainer} from './BookmarkListContainer';
+import {AttractionWithBookmark, BookmarkWithCount} from '../../repositories/bookmarkRepository';
 
 interface BookmarkSheetContainerProps {
     activeTab: BookmarkTab;
     sourceFilter: string;
     typeFilter: string;
-    items: any[];
+    bookmarks: BookmarkWithCount[];
+    attractions: AttractionWithBookmark[];
     selectedId: number | null;
     loading: boolean;
     onTabChange: (tab: BookmarkTab) => void;
     onSourceFilterChange: (filter: string) => void;
     onTypeFilterChange: (filter: string) => void;
     onRefresh: () => void;
-    onItemPress: (item: any) => void;
-    listRef: React.RefObject<FlatList>;
+    onBookmarkPress: (item: BookmarkWithCount) => void;
+    onAttractionPress: (item: AttractionWithBookmark) => void;
+    listRef: React.RefObject<FlatList | null>;
 }
 
 export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContainerProps>(
@@ -26,14 +29,16 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
             activeTab,
             sourceFilter,
             typeFilter,
-            items,
+            bookmarks,
+            attractions,
             selectedId,
             loading,
             onTabChange,
             onSourceFilterChange,
             onTypeFilterChange,
             onRefresh,
-            onItemPress,
+            onBookmarkPress,
+            onAttractionPress,
             listRef,
         },
         ref,
@@ -65,13 +70,15 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
                 initialDetentIndex={0}
             >
                 <BookmarkListContainer
-                    ref={listRef}
-                    items={items}
+                    listRef={listRef}
+                    bookmarks={bookmarks}
+                    attractions={attractions}
                     activeTab={activeTab}
                     selectedId={selectedId}
                     loading={loading}
                     onRefresh={onRefresh}
-                    onItemPress={onItemPress}
+                    onBookmarkPress={onBookmarkPress}
+                    onAttractionPress={onAttractionPress}
                 />
             </TrueSheet>
         );

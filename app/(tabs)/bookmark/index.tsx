@@ -12,6 +12,7 @@ import {BookmarkSource} from '../../../src/types';
 import {BookmarkMapContainer, BookmarkSheetContainer,} from '../../../src/containers/bookmark';
 import {Ionicons} from "@expo/vector-icons";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {AttractionWithBookmark, BookmarkWithCount} from '../../../src/repositories/bookmarkRepository';
 
 export default function BookmarkIndexScreen() {
     const {bookmarks, attractions, loading, refresh} = useBookmarks();
@@ -39,8 +40,6 @@ export default function BookmarkIndexScreen() {
         return attractions.filter(a => a.type === typeFilter);
     }, [attractions, typeFilter]);
 
-    const activeItems: any[] = activeTab === 'bookmarks' ? filteredBookmarks : filteredAttractions;
-
     // ─── map pins ─────────────────────────────────────────────────────────────
     const pins: MapPin[] = useMemo(
         () =>
@@ -53,28 +52,30 @@ export default function BookmarkIndexScreen() {
     );
 
     // ─── handlers ─────────────────────────────────────────────────────────────
-    const handleCardPress = useCallback(
-        (item: any) => {
-            setSelectedId(item.id);
-            if (activeTab === 'bookmarks') {
-                router.push(`/bookmark/${item.id}`);
-            } else {
-                router.push(`/bookmark/${item.bookmark_id}`);
-            }
+    const handleBookmarkPress = useCallback(
+        (item: BookmarkWithCount) => {
+            router.push(`/bookmark/${item.id}`);
         },
-        [activeTab, router],
+        [router],
+    );
+
+    const handleAttractionPress = useCallback(
+        (item: AttractionWithBookmark) => {
+            setSelectedId(item.id);
+        },
+        [],
     );
 
     const handlePinPress = useCallback(
         (id: number) => {
             setSelectedId(id);
-            const index = activeItems.findIndex(i => i.id === id);
+            const index = filteredAttractions.findIndex(i => i.id === id);
             if (index !== -1) {
                 sheetRef.current?.resize(1);
                 listRef.current?.scrollToIndex({index, animated: true, viewPosition: 0.3});
             }
         },
-        [activeItems],
+        [filteredAttractions],
     );
 
     const handleTabChange = useCallback((tab: BookmarkTab) => {
@@ -132,14 +133,16 @@ export default function BookmarkIndexScreen() {
                 activeTab={activeTab}
                 sourceFilter={sourceFilter}
                 typeFilter={typeFilter}
-                items={activeItems}
+                bookmarks={filteredBookmarks}
+                attractions={filteredAttractions}
                 selectedId={selectedId}
                 loading={loading}
                 onTabChange={handleTabChange}
                 onSourceFilterChange={handleSourceFilterChange}
                 onTypeFilterChange={handleTypeFilterChange}
                 onRefresh={refresh}
-                onItemPress={handleCardPress}
+                onBookmarkPress={handleBookmarkPress}
+                onAttractionPress={handleAttractionPress}
             />
 
             <AddBookmarkModal

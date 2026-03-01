@@ -15,10 +15,11 @@ interface BookmarkListItemProps {
 export function BookmarkListItem({item, index, activeTab, selectedId, onPress}: BookmarkListItemProps) {
     if (activeTab === 'bookmarks') {
         const pinColor = BOOKMARK_PIN_COLORS[index % BOOKMARK_PIN_COLORS.length];
+        const count = Number(item.attraction_count ?? 0);
         return (
             <MinimalCard
                 title={item.title}
-                subtitle={`${item.attraction_count ?? 0} attraction${item.attraction_count !== 1 ? 's' : ''}`}
+                subtitle={`${count} attraction${count !== 1 ? 's' : ''}`}
                 pinColor={pinColor}
                 isSelected={selectedId === item.id}
                 visited={!!item.visited}

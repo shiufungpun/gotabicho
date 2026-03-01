@@ -2,43 +2,94 @@ import React, {forwardRef, useCallback} from 'react';
 import {FlatList, RefreshControl, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useTheme} from '../../theme';
-import {BookmarkListItem, BookmarkTab, ThemedText} from '../../components';
+import {BookmarkTab, ThemedText} from '../../components';
+import {AttractionWithBookmark, BookmarkWithCount} from '../../repositories/bookmarkRepository';
+import {BookmarkSheetCard} from '../../components/bookmark/BookmarkSheetCard';
+import {AttractionSheetCard} from '../../components/bookmark/AttractionSheetCard';
 
 interface BookmarkListContainerProps {
-    items: any[];
+    bookmarks: BookmarkWithCount[];
+    attractions: AttractionWithBookmark[];
     activeTab: BookmarkTab;
     selectedId: number | null;
     loading: boolean;
     onRefresh: () => void;
-    onItemPress: (item: any) => void;
+    onBookmarkPress: (item: BookmarkWithCount) => void;
+    onAttractionPress: (item: AttractionWithBookmark) => void;
+    listRef: React.RefObject<FlatList | null>;
 }
 
 export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerProps>(
     function BookmarkListContainer(
-        {items, activeTab, selectedId, loading, onRefresh, onItemPress},
-        ref,
+        {
+            bookmarks,
+            attractions,
+            activeTab,
+            selectedId,
+            loading,
+            onRefresh,
+            onBookmarkPress,
+            onAttractionPress,
+            listRef
+        },
+        _ref,
     ) {
         const {colors} = useTheme();
 
-        const renderItem = useCallback(
-            ({item, index}: { item: any; index: number }) => (
-                <BookmarkListItem
-                    item={item}
-                    index={index}
-                    activeTab={activeTab}
-                    selectedId={selectedId}
-                    onPress={onItemPress}
+        const renderBookmark = useCallback(
+            ({item}: { item: BookmarkWithCount }) => (
+                <BookmarkSheetCard bookmark={item} onPress={onBookmarkPress}/>
+            ),
+            [onBookmarkPress],
+        );
+
+        const renderAttraction = useCallback(
+            ({item}: { item: AttractionWithBookmark }) => (
+                <AttractionSheetCard
+                    attraction={item}
+                    isSelected={selectedId === item.id}
+                    onPress={onAttractionPress}
                 />
             ),
-            [activeTab, selectedId, onItemPress],
+            [selectedId, onAttractionPress],
         );
+
+        if (activeTab === 'bookmarks') {
+            return (
+                <FlatList
+                    ref={listRef}
+                    data={bookmarks}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderBookmark}
+                    contentContainerClassName="pt-1 pb-8"
+                    nestedScrollEnabled
+                    onScrollToIndexFailed={() => {
+                    }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={loading}
+                            onRefresh={onRefresh}
+                            tintColor={colors.primary}
+                        />
+                    }
+                    ListEmptyComponent={
+                        <View className="items-center pt-10 px-8">
+                            <Ionicons name="bookmark-outline" size={48} color={colors.textTertiary}/>
+                            <ThemedText variant="tertiary" className="text-center mt-2.5 text-sm">
+                                {'No bookmarks yet.\nTap + to add your first one!'}
+                            </ThemedText>
+                        </View>
+                    }
+                />
+            );
+        }
 
         return (
             <FlatList
-                ref={ref}
-                data={items}
-                keyExtractor={(item: any) => item.id.toString()}
-                renderItem={renderItem}
+                ref={listRef}
+                data={attractions}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderAttraction}
                 contentContainerClassName="pt-1 pb-8"
                 nestedScrollEnabled
                 onScrollToIndexFailed={() => {
@@ -52,15 +103,9 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
                 }
                 ListEmptyComponent={
                     <View className="items-center pt-10 px-8">
-                        <Ionicons
-                            name={activeTab === 'bookmarks' ? 'bookmark-outline' : 'map-outline'}
-                            size={48}
-                            color={colors.textTertiary}
-                        />
+                        <Ionicons name="map-outline" size={48} color={colors.textTertiary}/>
                         <ThemedText variant="tertiary" className="text-center mt-2.5 text-sm">
-                            {activeTab === 'bookmarks'
-                                ? 'No bookmarks yet.\nTap + to add your first one!'
-                                : 'No attractions found.\nSave bookmarks and let AI extract them.'}
+                            {'No attractions found.\nSave bookmarks and let AI extract them.'}
                         </ThemedText>
                     </View>
                 }
