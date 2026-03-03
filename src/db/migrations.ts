@@ -235,4 +235,39 @@ export async function migrateAttractionsTable(): Promise<void> {
     }
 }
 
+/**
+ * Create trip_attractions junction table if it doesn't exist
+ */
+export async function migrateTripAttractionsTable(): Promise<void> {
+    try {
+        const db = await getSQLiteDB();
+
+        const tables = await db.getAllAsync(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='trip_attractions'"
+        );
+
+        if (tables.length === 0) {
+            console.log('[Migration] Creating trip_attractions table');
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS trip_attractions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    trip_id INTEGER NOT NULL,
+                    attraction_id INTEGER NOT NULL,
+                    created_at INTEGER,
+                    FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+                    FOREIGN KEY (attraction_id) REFERENCES attractions(id) ON DELETE CASCADE
+                );
+
+                CREATE INDEX IF NOT EXISTS trip_attractions_trip_id_idx ON trip_attractions(trip_id);
+                CREATE INDEX IF NOT EXISTS trip_attractions_attraction_id_idx ON trip_attractions(attraction_id);
+            `);
+            console.log('[Migration] Successfully created trip_attractions table');
+        } else {
+            console.log('[Migration] trip_attractions table already exists');
+        }
+    } catch (error) {
+        console.error('[Migration] Error creating trip_attractions table:', error);
+    }
+}
+
 

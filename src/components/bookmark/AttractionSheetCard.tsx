@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, View} from 'react-native';
+import {Pressable, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {ThemedText} from '../index';
 import {useTheme} from '../../theme';
@@ -9,10 +9,18 @@ import {getTypeColor, getTypeIcon} from '../../helpers/attractionHelpers';
 interface AttractionSheetCardProps {
     attraction: AttractionWithBookmark;
     isSelected: boolean;
+    isChecked?: boolean;
     onPress: (attraction: AttractionWithBookmark) => void;
+    onToggleCheck?: (attraction: AttractionWithBookmark) => void;
 }
 
-export function AttractionSheetCard({attraction, isSelected, onPress}: AttractionSheetCardProps) {
+export function AttractionSheetCard({
+                                        attraction,
+                                        isSelected,
+                                        isChecked = false,
+                                        onPress,
+                                        onToggleCheck,
+                                    }: AttractionSheetCardProps) {
     const {colors} = useTheme();
     const typeColor = getTypeColor(attraction.type);
 
@@ -21,12 +29,36 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
             onPress={() => onPress(attraction)}
             className="flex-row items-center mx-3 my-1 px-3 py-2.5"
             style={({pressed}) => ({
-                backgroundColor: isSelected ? colors.primaryLight : colors.card,
-                borderWidth: isSelected ? 1.5 : 0,
-                borderColor: isSelected ? colors.primary : undefined,
+                backgroundColor: isChecked
+                    ? colors.primaryLight
+                    : isSelected
+                        ? colors.primaryLight
+                        : colors.card,
+                borderWidth: isChecked || isSelected ? 1.5 : 0,
+                borderColor: isChecked || isSelected ? colors.primary : undefined,
+                borderRadius: 12,
                 opacity: pressed ? 0.82 : 1,
             })}
         >
+            {/* ── Selection checkbox (always visible) ───────────────────── */}
+            <TouchableOpacity
+                onPress={() => onToggleCheck?.(attraction)}
+                hitSlop={8}
+                style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: 11,
+                    borderWidth: 2,
+                    borderColor: isChecked ? colors.primary : colors.border,
+                    backgroundColor: isChecked ? colors.primary : 'transparent',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 10,
+                    flexShrink: 0,
+                }}
+            >
+                {isChecked && <Ionicons name="checkmark" size={13} color="#fff"/>}
+            </TouchableOpacity>
 
             {/* ── Text block ─────────────────────────────────────────────── */}
             <View className="flex-1 justify-center mr-2 gap-y-2">
@@ -34,12 +66,9 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
                     {attraction.title}
                 </ThemedText>
 
-                {/* Location + parent bookmark pills */}
                 {/* Location pill */}
                 {attraction.location ? (
-                    <View
-                        className="flex-row items-center rounded-full gap-x-1"
-                    >
+                    <View className="flex-row items-center rounded-full gap-x-1">
                         <Ionicons name="location-outline" size={11} color={colors.textTertiary}/>
                         <ThemedText
                             numberOfLines={1}
@@ -52,9 +81,7 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
                 ) : null}
 
                 {/* Parent bookmark pill */}
-                <View
-                    className="flex-row items-center rounded-full gap-x-1"
-                >
+                <View className="flex-row items-center rounded-full gap-x-1">
                     <Ionicons name="bookmark-outline" size={11} color={colors.textTertiary}/>
                     <ThemedText
                         numberOfLines={1}
@@ -78,14 +105,8 @@ export function AttractionSheetCard({attraction, isSelected, onPress}: Attractio
                     marginRight: 5,
                 }}
             >
-                <Ionicons
-                    name={getTypeIcon(attraction.type) as any}
-                    size={16}
-                    color="#fff"
-                />
+                <Ionicons name={getTypeIcon(attraction.type) as any} size={16} color="#fff"/>
             </View>
         </Pressable>
     );
 }
-
-

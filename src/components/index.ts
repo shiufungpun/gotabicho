@@ -20,3 +20,5 @@ export {BookmarkPreviewCard} from './bookmark/BookmarkPreviewCard';
 export {BookmarkHeroHeader} from './bookmark/BookmarkHeroHeader';
 export {ExtractionStatusBanner} from './bookmark/ExtractionStatusBanner';
 export {AttractionGroupSection} from './bookmark/AttractionGroupSection';
+export {SelectionActionBar} from './bookmark/SelectionActionBar';
+export {TripPickerModal} from './bookmark/TripPickerModal';

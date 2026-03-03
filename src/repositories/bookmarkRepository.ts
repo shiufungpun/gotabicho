@@ -8,7 +8,9 @@ import {
     NewAttraction,
     NewAttractionTag,
     NewBookmark,
+    NewTripAttraction,
     NewTripBookmark,
+    tripAttractions,
     tripBookmarks
 } from '../db/schema';
 import {desc, eq, sql} from 'drizzle-orm';
@@ -271,6 +273,68 @@ export const updateBookmarkVisited = async (id: number, visited: boolean): Promi
 export const updateAttractionVisited = async (id: number, visited: boolean): Promise<void> => {
     const db = await getDB();
     await db.update(attractions).set({visited, updated_at: Date.now()}).where(eq(attractions.id, id));
+};
+
+/**
+ * Link multiple attractions to multiple trips (trip_attractions junction table)
+ */
+export const linkAttractionsToTrips = async (attractionIds: number[], tripIds: number[]): Promise<void> => {
+    if (attractionIds.length === 0 || tripIds.length === 0) return;
+    const db = await getDB();
+    const now = Date.now();
+
+    const links: NewTripAttraction[] = [];
+    for (const tripId of tripIds) {
+        for (const attractionId of attractionIds) {
+            links.push({trip_id: tripId, attraction_id: attractionId, created_at: now});
+        }
+    }
+    // Use INSERT OR IGNORE semantics by catching duplicates silently
+    try {
+        await db.insert(tripAttractions).values(links);
+    } catch (e) {
+        // Insert one-by-one to skip duplicates
+        for (const link of links) {
+            try {
+                await db.insert(tripAttractions).values(link);
+            } catch (_) { /* skip duplicate */
+            }
+        }
+    }
+    console.log('[BookmarkRepo] Linked', attractionIds.length, 'attractions to', tripIds.length, 'trips');
+};
+
+/**
+ * Delete multiple attractions by ids
+ */
+export const deleteAttractions = async (ids: number[]): Promise<void> => {
+    if (ids.length === 0) return;
+    const db = await getDB();
+    const {inArray} = await import('drizzle-orm');
+    await db.delete(attractions).where(inArray(attractions.id, ids));
+    console.log('[BookmarkRepo] Deleted attractions:', ids);
+};
+
+/**
+ * Delete multiple bookmarks by ids (cascades to attractions)
+ */
+export const deleteBookmarks = async (ids: number[]): Promise<void> => {
+    if (ids.length === 0) return;
+    const db = await getDB();
+    const {inArray} = await import('drizzle-orm');
+    await db.delete(bookmarks).where(inArray(bookmarks.id, ids));
+    console.log('[BookmarkRepo] Deleted bookmarks:', ids);
+};
+
+/**
+ * Get attraction ids belonging to a list of bookmark ids
+ */
+export const getAttractionIdsByBookmarkIds = async (bookmarkIds: number[]): Promise<number[]> => {
+    if (bookmarkIds.length === 0) return [];
+    const db = await getDB();
+    const {inArray} = await import('drizzle-orm');
+    const rows = await db.select({id: attractions.id}).from(attractions).where(inArray(attractions.bookmark_id, bookmarkIds));
+    return rows.map(r => r.id);
 };
 
 // Types

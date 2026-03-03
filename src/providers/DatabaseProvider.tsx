@@ -4,7 +4,8 @@ import {
     migrateAttractionsTable,
     migrateBookmarksTable,
     migrateBookmarksThumbnailUrl,
-    migrateReceiptsImagePath
+    migrateReceiptsImagePath,
+    migrateTripAttractionsTable,
 } from '../db/migrations';
 
 interface DatabaseContextValue {
@@ -42,6 +43,9 @@ export function DatabaseProvider({children}: DatabaseProviderProps) {
             })
             .then(() => {
                 return migrateAttractionsTable();
+            })
+            .then(() => {
+                return migrateTripAttractionsTable();
             })
             .then(() => {
                 console.log('Database migrations completed');

@@ -1,5 +1,6 @@
 import {index, integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {bookmarks} from './bookmarks';
+import {trips} from './trips';
 
 export const attractions = sqliteTable('attractions', {
     id: integer('id').primaryKey({autoIncrement: true}),
@@ -38,5 +39,23 @@ export const attractionTags = sqliteTable('attraction_tags', {
 
 export type AttractionTag = typeof attractionTags.$inferSelect;
 export type NewAttractionTag = typeof attractionTags.$inferInsert;
+
+// Junction table for many-to-many relationship between trips and attractions
+export const tripAttractions = sqliteTable('trip_attractions', {
+    id: integer('id').primaryKey({autoIncrement: true}),
+    trip_id: integer('trip_id')
+        .notNull()
+        .references(() => trips.id, {onDelete: 'cascade'}),
+    attraction_id: integer('attraction_id')
+        .notNull()
+        .references(() => attractions.id, {onDelete: 'cascade'}),
+    created_at: integer('created_at'),
+}, (table) => ({
+    tripIdIdx: index('trip_attractions_trip_id_idx').on(table.trip_id),
+    attractionIdIdx: index('trip_attractions_attraction_id_idx').on(table.attraction_id),
+}));
+
+export type TripAttraction = typeof tripAttractions.$inferSelect;
+export type NewTripAttraction = typeof tripAttractions.$inferInsert;
 
 

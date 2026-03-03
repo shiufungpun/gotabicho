@@ -3,6 +3,7 @@ import {FlatList} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import {useTheme} from '../../theme';
 import {BookmarkSheetHeader, BookmarkTab} from '../../components/bookmark/BookmarkSheetHeader';
+import {SelectionActionBar} from '../../components/bookmark/SelectionActionBar';
 import {BookmarkListContainer} from './BookmarkListContainer';
 import {AttractionWithBookmark, BookmarkWithCount} from '../../repositories/bookmarkRepository';
 
@@ -20,6 +21,14 @@ interface BookmarkSheetContainerProps {
     onRefresh: () => void;
     onBookmarkPress: (item: BookmarkWithCount) => void;
     onAttractionPress: (item: AttractionWithBookmark) => void;
+    onBookmarkToggleCheck?: (item: BookmarkWithCount) => void;
+    onAttractionToggleCheck?: (item: AttractionWithBookmark) => void;
+    selectedIds?: Set<number>;
+    isSelecting?: boolean;
+    actionLoading?: boolean;
+    onAddToTrip?: () => void;
+    onDelete?: () => void;
+    onCancelSelection?: () => void;
     listRef: React.RefObject<FlatList | null>;
 }
 
@@ -39,6 +48,14 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
             onRefresh,
             onBookmarkPress,
             onAttractionPress,
+            onBookmarkToggleCheck,
+            onAttractionToggleCheck,
+            selectedIds = new Set(),
+            isSelecting = false,
+            actionLoading = false,
+            onAddToTrip,
+            onDelete,
+            onCancelSelection,
             listRef,
         },
         ref,
@@ -64,6 +81,18 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
                 dimmed={false}
                 scrollable
                 header={header}
+                footer={isSelecting ? (
+                    <SelectionActionBar
+                        count={selectedIds.size}
+                        loading={actionLoading}
+                        onAddToTrip={onAddToTrip ?? (() => {
+                        })}
+                        onDelete={onDelete ?? (() => {
+                        })}
+                        onCancel={onCancelSelection ?? (() => {
+                        })}
+                    />
+                ) : undefined}
                 headerStyle={{backgroundColor: colors.surface}}
                 backgroundColor={colors.surface}
                 cornerRadius={20}
@@ -79,6 +108,9 @@ export const BookmarkSheetContainer = forwardRef<TrueSheet, BookmarkSheetContain
                     onRefresh={onRefresh}
                     onBookmarkPress={onBookmarkPress}
                     onAttractionPress={onAttractionPress}
+                    onBookmarkToggleCheck={onBookmarkToggleCheck}
+                    onAttractionToggleCheck={onAttractionToggleCheck}
+                    selectedIds={selectedIds}
                 />
             </TrueSheet>
         );

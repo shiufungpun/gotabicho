@@ -14,6 +14,9 @@ interface BookmarkListContainerProps {
     onRefresh: () => void;
     onBookmarkPress: (item: BookmarkWithCount) => void;
     onAttractionPress: (item: AttractionWithBookmark) => void;
+    onBookmarkToggleCheck?: (item: BookmarkWithCount) => void;
+    onAttractionToggleCheck?: (item: AttractionWithBookmark) => void;
+    selectedIds?: Set<number>;
     listRef: React.RefObject<FlatList | null>;
 }
 
@@ -28,7 +31,10 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
             onRefresh,
             onBookmarkPress,
             onAttractionPress,
-            listRef
+            onBookmarkToggleCheck,
+            onAttractionToggleCheck,
+            selectedIds = new Set(),
+            listRef,
         },
         _ref,
     ) {
@@ -36,9 +42,14 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
 
         const renderBookmark = useCallback(
             ({item}: { item: BookmarkWithCount }) => (
-                <BookmarkSheetCard bookmark={item} onPress={onBookmarkPress}/>
+                <BookmarkSheetCard
+                    bookmark={item}
+                    isChecked={selectedIds.has(item.id)}
+                    onPress={onBookmarkPress}
+                    onToggleCheck={onBookmarkToggleCheck}
+                />
             ),
-            [onBookmarkPress],
+            [onBookmarkPress, onBookmarkToggleCheck, selectedIds],
         );
 
         const renderAttraction = useCallback(
@@ -46,10 +57,12 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
                 <AttractionSheetCard
                     attraction={item}
                     isSelected={selectedId === item.id}
+                    isChecked={selectedIds.has(item.id)}
                     onPress={onAttractionPress}
+                    onToggleCheck={onAttractionToggleCheck}
                 />
             ),
-            [selectedId, onAttractionPress],
+            [selectedId, onAttractionPress, onAttractionToggleCheck, selectedIds],
         );
 
         if (activeTab === 'bookmarks') {
@@ -64,11 +77,7 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
                     onScrollToIndexFailed={() => {
                     }}
                     refreshControl={
-                        <RefreshControl
-                            refreshing={loading}
-                            onRefresh={onRefresh}
-                            tintColor={colors.primary}
-                        />
+                        <RefreshControl refreshing={loading} onRefresh={onRefresh} tintColor={colors.primary}/>
                     }
                     ListEmptyComponent={
                         <View className="items-center pt-10 px-8">
@@ -93,11 +102,7 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
                 onScrollToIndexFailed={() => {
                 }}
                 refreshControl={
-                    <RefreshControl
-                        refreshing={loading}
-                        onRefresh={onRefresh}
-                        tintColor={colors.primary}
-                    />
+                    <RefreshControl refreshing={loading} onRefresh={onRefresh} tintColor={colors.primary}/>
                 }
                 ListEmptyComponent={
                     <View className="items-center pt-10 px-8">
@@ -111,5 +116,3 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
         );
     },
 );
-
-
