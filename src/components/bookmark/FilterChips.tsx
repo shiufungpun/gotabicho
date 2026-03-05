@@ -44,6 +44,7 @@ export function FilterChips({options, selected, onChange}: FilterChipsProps) {
                             style={{
                                 fontWeight: '500',
                                 color: isActive ? '#ffffff' : colors.textSecondary,
+                                textTransform: "capitalize"
                             }}
                         >
                             {label}

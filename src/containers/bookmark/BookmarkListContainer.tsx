@@ -82,8 +82,8 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
                     ListEmptyComponent={
                         <View className="items-center pt-10 px-8">
                             <Ionicons name="bookmark-outline" size={48} color={colors.textTertiary}/>
-                            <ThemedText variant="tertiary" className="text-center mt-2.5 text-sm">
-                                {'No bookmarks yet.\nTap + to add your first one!'}
+                            <ThemedText variant="tertiary" className="text-center mt-4 text-sm leading-10">
+                                {"請透過社交平台分享至御旅帳\n幫助你整理行程。"}
                             </ThemedText>
                         </View>
                     }
@@ -107,8 +107,8 @@ export const BookmarkListContainer = forwardRef<FlatList, BookmarkListContainerP
                 ListEmptyComponent={
                     <View className="items-center pt-10 px-8">
                         <Ionicons name="map-outline" size={48} color={colors.textTertiary}/>
-                        <ThemedText variant="tertiary" className="text-center mt-2.5 text-sm">
-                            {'No attractions found.\nSave bookmarks and let AI extract them.'}
+                        <ThemedText variant="tertiary" className="text-center mt-4 text-sm leading-10">
+                            {"請透過社交平台分享至御旅帳\n幫助你整理行程。"}
                         </ThemedText>
                     </View>
                 }
